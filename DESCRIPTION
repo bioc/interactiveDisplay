@@ -1,0 +1,22 @@
+Package: interactiveDisplay
+Type: Package
+Title: Package for enabling powerful shiny web displays of Bioconductor
+        objects
+Version: 0.99.12
+Date: 2013-10-07
+Author: Shawn Balcome, Marc Carlson
+Maintainer: Shawn Balcome <balc0022@umn.edu>
+Imports: shiny, Biobase, GenomicRanges, Gviz, RColorBrewer, ggbio,
+        ggplot2, reshape2, rtracklayer, AnnotationDbi, AnnotationHub,
+        httr, grid, GO.db, ggdendro, plyr, gridSVG, XML
+Depends: R (>= 2.10), methods, BiocGenerics
+Suggests: RUnit, hgu95av2.db
+Description: The interactiveDisplay package contains the methods needed to generated
+    interactive Shiny based display methods for Bioconductor objects.
+License: Artistic-2.0
+biocViews: GO GeneExpression Microarray Sequencing Classification
+        Networks QualityControl Visualization NetworkVisualization
+        Genetics DataRepresentation GUI AnnotationData
+Collate: 'interactiveDisplay.R' 'ExpressionSet.R' 'GRanges.R' 'GRangesList.R'
+        'SummarizedExperiment.R' 'test_interactiveDisplay_package.R' 'gridsvgjs.R'
+VignetteBuilder: knitr

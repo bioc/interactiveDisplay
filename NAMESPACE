@@ -1,0 +1,28 @@
+#import(AnnotationDbi)
+#import(AnnotationHub)
+#import(gridSVG)
+#importFrom(httr, content, GET)
+#importFrom(grid, grid.newpage, upViewport)
+#importFrom(GenomicRanges, seqnames,rowData,mcols,'seqlevels<-')
+
+importFrom(ggplot2,ggplot,aes,geom_tile,coord_fixed,scale_fill_gradientn,
+           scale_x_discrete,scale_y_discrete,coord_equal,theme_bw,theme,
+           element_blank,element_text,xlab,ylab,ggtitle)
+
+import(GenomicRanges)
+importFrom(reshape2,melt)
+importFrom(shiny,bootstrapPage,tagList,singleton,h3,conditionalPanel,img,br,
+           sidebarPanel,uiOutput,HTML,actionButton,mainPanel,runApp,tableOutput,
+           selectInput,sliderInput,numericInput,radioButtons,includeHTML,
+           tabsetPanel,tabPanel,plotOutput)
+
+importFrom(plyr,ldply)
+importFrom(grid, convertUnit)
+importFrom(RColorBrewer,brewer.pal)
+import(GO.db)
+importFrom(Gviz,ranges,IdeogramTrack,GenomeAxisTrack,AnnotationTrack,plotTracks)
+importFrom(rtracklayer, ucscGenomes)
+importFrom(XML,saveXML)
+
+exportMethods(display)
+exportMethods(gridsvgjs)
