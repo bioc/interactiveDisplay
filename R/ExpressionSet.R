@@ -1,22 +1,25 @@
-#####################################################################################################
+################################################################################
 ###   ExpressionSet
-#####################################################################################################
+################################################################################
 
 heatcolor1 <- function(inputId1) {
   tagList(
-    shiny::tags$input(id = inputId1, class = "color", value = "F7FF00", onchange = "window.Shiny.onInputChange('color1', this.color.toString())")
+    shiny::tags$input(id = inputId1, class = "color", value = "EDF8B1",
+    onchange = "window.Shiny.onInputChange('color1', this.color.toString())")
   )
 }
 
 heatcolor2 <- function(inputId2) {
   tagList(
-    shiny::tags$input(id = inputId2, class = "color", value = "050505", onchange = "window.Shiny.onInputChange('color2', this.color.toString())")
+    shiny::tags$input(id = inputId2, class = "color", value = "7FCDBB",
+    onchange = "window.Shiny.onInputChange('color2', this.color.toString())")
   )
 }
 
 heatcolor3 <- function(inputId3) {
   tagList(
-    shiny::tags$input(id = inputId3, class = "color", value = "1736FF", onchange = "window.Shiny.onInputChange('color3', this.color.toString())")
+    shiny::tags$input(id = inputId3, class = "color", value = "2C7FB8",
+    onchange = "window.Shiny.onInputChange('color3', this.color.toString())")
   )
 }
 
@@ -25,11 +28,13 @@ heatcolor3 <- function(inputId3) {
   sidebarPanel(
     tableOutput("expinfo"),
     HTML("<hr />"),
-    selectInput("either", "Network/Dendrogram View:  Sample or Probe:", choices = c("probe","sample")),
+    selectInput("either", "Network/Dendrogram View:  Sample or Probe:",
+      choices = c("probe","sample")),
     HTML("<hr />"),
     uiOutput("choose_probe"),
     HTML("<hr />"),
-    selectInput("order", "Show Top or Bottom Ranked,", choices = c("top","bottom")),
+    selectInput("order", "Show Top or Bottom Ranked,",
+      choices = c("top","bottom")),
     selectInput("measure", "Based On:", choices = c("variance","average")),
     uiOutput("pmeancutoff"),
     uiOutput("smeancutoff"),
@@ -44,10 +49,14 @@ heatcolor3 <- function(inputId3) {
     uiOutput("gen_text"),
     HTML("<hr />"),
     numericInput("con_knum", "Number of Clusters:", 5),
-    selectInput("hc_method", "Hierarchical Clustering Method", choices = c("ward", "single", "complete", "average", "mcquitty", "median", "centroid")),
-    selectInput("dist_method", "Distance/Similarity Method", choices = c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski")),
+    selectInput("hc_method", "Hierarchical Clustering Method",
+      choices = c("ward", "single", "complete", "average", 
+                  "mcquitty", "median", "centroid")),
+    selectInput("dist_method", "Distance/Similarity Method",
+    choices = c("euclidean", "maximum", "manhattan", 
+                "canberra", "binary", "minkowski")),
     HTML("<hr />"),
-    radioButtons('rainbow', 'Color Scale',
+    radioButtons('rainbow', 'Heatmap Color Scale',
                  c('Rainbow'='default',
                    'Three Color'='tri'),
                  'Rainbow'),
@@ -174,7 +183,9 @@ setMethod("display",
             else{
               pkg <- get(pkgName)
               if(class(pkg)=="ChipDb"){
-                res <- select(pkg, input$probe, c("ENTREZID","GENENAME"), "PROBEID")
+                res <- select(pkg, input$probe,
+                  c("ENTREZID","GENENAME"),
+                  "PROBEID")
                 return(res)
               }
               else{
@@ -198,7 +209,8 @@ setMethod("display",
             else{
               pkg <- get(pkgName)
               if(class(pkg)=="ChipDb"){
-                res <- select(pkg, input$probe, c("ENTREZID","GENENAME","GO"), "PROBEID")
+                res <- select(pkg, input$probe,
+                  c("ENTREZID","GENENAME","GO"), "PROBEID")
                 res2 <- head(select(GO.db, res$GO, "TERM", "GOID"))
                 return(res2)
               }
@@ -223,15 +235,18 @@ setMethod("display",
         #  Subset probes by average expression
         output$pmeancutoff <- renderUI({
           textInput("pmeancutoff", "Number of Probes to Display", 20)   
-          #textInput("pmeancutoff", "Top Probes by Average Expression", dim(exprs(object))[1])
+          #textInput("pmeancutoff", "Top Probes by Average Expression",
+          #dim(exprs(object))[1])
         })
         
         #  Subset samples by average expression
         output$smeancutoff <- renderUI({   
-          textInput("smeancutoff", "Number of Samples to Display", dim(exprs(object))[2])
+          textInput("smeancutoff", "Number of Samples to Display",
+            dim(exprs(object))[2])
         })
         
-        #  This determines the distance threshold needed for the desired number of edges
+        #  This determines the distance threshold needed for the desired
+        #  number of edges
         cutoff <- reactive({
           data <- data()
           val <- cor(data())
@@ -239,6 +254,22 @@ setMethod("display",
           val[lower.tri(val)] <- 0
           cutoff <- sort(val[val>0],decreasing=TRUE)[input$edgenum]
           cutoff
+        })
+        
+        #  This determines the distance threshold needed for the desired 
+        #  number of edges
+        cutoff_max <- reactive({
+          data <- data()
+          val <- cor(data())
+          diag(val) <- 0
+          val[lower.tri(val)] <- 0
+          cutoff <- 1
+          edgenum <- 1
+          while(!is.na(cutoff)){
+            cutoff <- sort(val[val>0],decreasing=TRUE)[edgenum]
+            edgenum <- edgenum + 1
+          }
+          return(edgenum - 2)
         })
         
         #  Build the network
@@ -257,14 +288,16 @@ setMethod("display",
           }else{
             val[val < cutoff] <- 0
           }
-          conns <- cbind(source=row(val)[val>0]-1, target=col(val)[val>0]-1, weight=val[val>0])
+          conns <- cbind(source=row(val)[val>0]-1, target=col(val)[val>0]-1,
+                           weight=val[val>0])
           if (nrow(conns) == 0){
             conns <- list(source=-1, target=-1, weight=0)
           }
           net <- list()
           net[["names"]] <- colnames(val)
           net[["links"]] <- conns
-          #net[["groups"]] <- as.numeric(cutree(hclust(as.dist(1-val)) , k=input$con_knum))
+          #net[["groups"]] <- as.numeric(cutree(hclust(as.dist(1-val)) ,
+          #  k=input$con_knum))
           #net[["groups"]] <- as.numeric(cutree(hclust(as.dist(1-val)) , k=1))
           net[["groups"]] <- as.numeric(cutree(hc, k=input$con_knum))
           net[["titles"]] <- colnames(val)
@@ -283,7 +316,10 @@ setMethod("display",
           data <- data()
           sliderInput(inputId = "edgenum",
                       label = "Edge Number:",
-                      min = 0, max = (((length(data[1,]))^2)/2 - length(data[1,])/2), value = 1, step = 1,
+                      #min = 0, 
+                      #max = (((length(data[1,]))^2)/2 - length(data[1,])/2),
+                      #value = 1, step = 1,
+                      min = 0, max = cutoff_max(), value = 1, step = 1,
                       animate=animationOptions(interval=2000, loop=FALSE))
         })
         output$gen_text <- renderText({
@@ -293,7 +329,9 @@ setMethod("display",
         
         #  The network SVG
         output$svg <- renderUI({
-          HTML(paste("<div id=\"net\" class=\"shiny-network-output\"><svg /></div>", sep=""))
+          HTML(paste(
+            "<div id=\"net\" class=\"shiny-network-output\"><svg /></div>",
+            sep=""))
         })
         
         #  The heatmap SVG
@@ -304,7 +342,8 @@ setMethod("display",
             return()
           }
           else{
-            gp <- ggheat(my_mat,input$tweak,colorx(),colory(),hc(),hc2(),input$color1,input$color2,input$color3,input$rainbow)
+            gp <- ggheat(my_mat,input$tweak,colorx(),colory(),hc(),hc2(),
+                         input$color1,input$color2,input$color3,input$rainbow)
             svgjs <- grid2jssvg(gp)
             return(svgjs)
           }

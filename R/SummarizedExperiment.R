@@ -1,6 +1,6 @@
-#####################################################################################################
+################################################################################
 ###   SummarizedExperiment 2
-#####################################################################################################
+################################################################################
 
 setMethod("display", 
           signature(object = "SummarizedExperiment"), 
@@ -66,7 +66,8 @@ setMethod("display",
               server = function(input, output){
                 
                 
-                #  Sets max position for the view window slider for the current chromosome.
+                #  Sets max position for the view window slider for the current
+                #  chromosome.
                 max_end <- reactive({
                   if(length(input$chr)==1){
                     return(max(end(object[seqnames(object)==input$chr])))
@@ -76,7 +77,8 @@ setMethod("display",
                   }
                 })
                 
-                #  Sets min position for the view window slider for the current chromosome.
+                #  Sets min position for the view window slider for the current 
+                #  chromosome.
                 min_start <- reactive({
                   if(length(input$chr)==1){
                     min(start(object[seqnames(object)==input$chr]))
@@ -93,7 +95,10 @@ setMethod("display",
                   if(is.numeric(max_end) && is.numeric(min_start)){
                     sliderInput(inputId = "window",
                                 label = "Chromosome Range:",
-                                min = min_start, max = max_end, value = c(min_start,max_end), step = 1
+                                min = min_start,
+                                max = max_end,
+                                value = c(min_start,max_end),
+                                step = 1
                     )
                   }
                   else{
@@ -111,20 +116,28 @@ setMethod("display",
                 
                 #  Ideogram Track
                 #itr <- reactive({
-                #  IdeogramTrack(genome=genome(object)[input$chr], chromosome=input$chr, showId=TRUE, showBandId=TRUE)
+                #  IdeogramTrack(genome=genome(object)[input$chr],
+                #  chromosome=input$chr,
+                #  showId=TRUE,
+                #  showBandId=TRUE)
                 #})
                 
                 #  Render the track plots.
                 #output$plotname <- renderPlot({
                 #  itr <- itr()
-                #  plotTracks(list(itr), from=input$window[1], to=input$window[2])
+                #  plotTracks(list(itr),
+                #  from=input$window[1],
+                #  to=input$window[2])
                 #})
                         
                 smaller <- reactive({
 
-                    if(length(input$chr)!=0 && length(input$bins)!=0 && length(input$window)!=0)
+                    if(length(input$chr)!=0 &&
+                       length(input$bins)!=0 &&
+                       length(input$window)!=0)
                     { 
-                      si <- which(as.character(seqnames(rowData(object)))==input$chr)
+                      si <- which(as.character(seqnames(rowData(object
+                            )))==input$chr)
                       subr <- rowData(object)[si]
                       
                       subr <- subr[start(subr) > input$window[1]]
@@ -133,7 +146,8 @@ setMethod("display",
                       orn <- subr$id[order(start(subr))]
                       rfh <- assays(object)[[1]][orn,]
                       ng <- dim(rfh)[1]
-                      gs <- split(1:ng,round(as.numeric(cut(1:ng,as.numeric(input$bins)))))
+                      gs <- split(1:ng,round(as.numeric(
+                            cut(1:ng,as.numeric(input$bins)))))
                       
                       smaller <- c()
                       for(i in 1:length(gs)){
@@ -162,7 +176,8 @@ setMethod("display",
                 
                 #  Choose number of bins
                 #output$binsui <- renderUI({   
-                #  textInput("bins", "Number of bins to reduce matrix resolution", 50)
+                #  textInput("bins",
+                #  "Number of bins to reduce matrix resolution", 50)
                 #})
                 
                 #  Close Button  
@@ -186,7 +201,8 @@ setMethod("display",
                     melted <- melt(smaller)
                     names(melted) <- c("Var1","Var2","value")
                     
-                    myPalette <- colorRampPalette(rev(brewer.pal(11, "Spectral")))
+                    myPalette <- colorRampPalette(rev(brewer.pal(11, 
+                    "Spectral")))
                     
                     gp <- ggplot(melted, aes(x = Var1, y = Var2, fill = value))
                     gp <- gp + geom_tile()
@@ -196,10 +212,19 @@ setMethod("display",
                     gp <- gp + scale_y_discrete(expand = c(0, 0))
                     gp <- gp + coord_equal()
                     gp <- gp + theme_bw()
-                    #gp <- gp + theme(axis.text.x=element_text(angle = -45, hjust = 0))
-                    gp <- gp + xlab(paste("Region:  ",input$window[1],"  -  ",input$window[2],sep=""))
+                    #  gp <- gp + theme(axis.text.x=element_text(angle = -45,
+                    #  hjust = 0))
+                    gp <- gp + xlab(paste(
+                      "Region:  ",
+                      input$window[1],
+                      "  -  ",
+                      input$window[2],
+                      sep=""))
                     gp <- gp + ylab("Samples")
-                    gp <- gp + ggtitle("Binned Mean Counts by Position") + theme(plot.title = element_text(lineheight=.8, face="bold", vjust = 2))
+                    gp <- gp + 
+                          ggtitle("Binned Mean Counts by Position") + 
+                          theme(plot.title = element_text(lineheight=.8,
+                          face="bold", vjust = 2))
                     gp <- gp + theme(axis.text.x = element_blank(),
                                      axis.ticks = element_blank(),
                                      axis.title.y = element_text(vjust = -1),

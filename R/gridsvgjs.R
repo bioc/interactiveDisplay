@@ -15,7 +15,8 @@ setMethod("gridsvgjs",
                   mainPanel(
                     
                     shiny::tags$head(
-                      shiny::tags$style(type='text/css', ".span8 { width: 100%; align: right; }")
+                      shiny::tags$style(type='text/css', 
+                        ".span8 { width: 100%; align: right; }")
                     ),
                                         
                     uiOutput("svgplot")
@@ -40,9 +41,14 @@ setMethod("gridsvgjs",
                   print(object)
                   mysvg <- grid.export()
                   mysvg2 <- saveXML(mysvg$svg[["g"]])
-                  mysvg3 <- sub("<g transform=","<g id='viewport' transform=",mysvg2)                 
+                  mysvg3 <- sub("<g transform=",
+                                "<g id='viewport' transform=",
+                                mysvg2)                 
                   mysvg4 <- sub(">NA<","><",mysvg3)
-                  htmlxml <- HTML(paste("<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' width='100%' height='100%'>",jscode,mysvg4,"</svg>",sep=""))
+                  htmlxml <- HTML(paste("<svg xmlns='http://www.w3.org/2000/svg'
+                               xmlns:xlink='http://www.w3.org/1999/xlink' 
+                               version='1.1' width='100%' height='100%'>",
+                               jscode,mysvg4,"</svg>",sep=""))
                   htmlxml
                   
                 })

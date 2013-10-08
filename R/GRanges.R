@@ -1,6 +1,6 @@
-#####################################################################################################
+################################################################################
 ###   GRanges
-#####################################################################################################
+################################################################################
 
 ## helper for setting up sidebar
 .setSidebarPanel <- function(){
@@ -50,15 +50,18 @@ setMethod("display",
         
         #  This GRanges object is subsetted by user input in the shiny widget.
         s_object <- reactive({
-          subgr2(object,input$chr,input$strand,input$width,input$window,mcolnames,input)
+          subgr2(object,input$chr,input$strand,input$width,input$window,
+            mcolnames,input)
         })
         
-        #  The full submitted GRanges object converted to a data frame for the perpose of rendering a table in shiny. 
+        #  The full submitted GRanges object converted to a data frame for the
+        #  purpose of rendering a table in shiny. 
         output$fulltable <- renderTable({
           as.data.frame(object)
         })
         
-        #  The subsetted GRanges object converted to a data frame for the perpose of rendering a table in shiny.
+        #  The subsetted GRanges object converted to a data frame for the
+        #  purpose of rendering a table in shiny.
         output$rtable <- renderTable({
           s_object <- s_object()
           as.data.frame(s_object)
@@ -68,21 +71,26 @@ setMethod("display",
         atr <- reactive({
           s_object <- s_object()
           if(!is.null(input$chr)){
-            AnnotationTrack(s_object, chromosome=input$chr, name="Genomic Ranges Annotation Track", fill="black", background.panel = "#f5f5f5", background.title = "#2aa5e5", cex.title = 1.1)
+            AnnotationTrack(s_object, chromosome=input$chr,
+            name="Genomic Ranges Annotation Track", fill="black",
+            background.panel = "#f5f5f5", background.title = "#2aa5e5",
+            cex.title = 1.1)
           }      
         })
         
         #  Genome Axis Track
         gtr <- reactive({
           if(!is.null(input$chr)){
-            GenomeAxisTrack(chromosome=input$chr,add53 = TRUE, add35 = TRUE, littleTicks = FALSE, showId=TRUE)
+            GenomeAxisTrack(chromosome=input$chr,add53 = TRUE, add35 = TRUE, 
+              littleTicks = FALSE, showId=TRUE)
           }
         })
         
         #  Ideogram Track
         itr <- reactive({
           if(!is.null(input$chr)){
-            IdeogramTrack(genome=input$ucscgen, chromosome=input$chr, showId=TRUE, showBandId=TRUE)
+            IdeogramTrack(genome=input$ucscgen, chromosome=input$chr,
+              showId=TRUE, showBandId=TRUE)
           }
         })
         
@@ -95,12 +103,14 @@ setMethod("display",
             itr <- itr()
             gtr <- gtr()
             atr <- atr()
-            pt <- plotTracks(list(itr, gtr, atr), from=input$window[1], to=input$window[2])
+            pt <- plotTracks(list(itr, gtr, atr), from=input$window[1],
+              to=input$window[2])
             return(pt)
           }
         })
         
-        #  Sets max position for the view window slider for the current chromosome.
+        #  Sets max position for the view window slider for the current
+        #  chromosome.
         max_end <- reactive({
           if(length(input$chr)!=1){
             return(NULL)
@@ -110,7 +120,8 @@ setMethod("display",
           }
         })
         
-        #  Sets min position for the view window slider for the current chromosome.
+        #  Sets min position for the view window slider for the current
+        #  chromosome.
         min_start <- reactive({
           if(length(input$chr)!=1){
             return(NULL)
@@ -126,7 +137,8 @@ setMethod("display",
             return(NULL)
           }
           else{
-            return(as.numeric(max(ranges(object[seqnames(object)==input$chr])@width)))
+            return(as.numeric(max(ranges(object[seqnames(
+              object)==input$chr])@width)))
           }
         })
         
@@ -136,7 +148,8 @@ setMethod("display",
             return(NULL)
           }
           else{
-            return(as.numeric(min(ranges(object[seqnames(object)==input$chr])@width)))
+            return(as.numeric(min(ranges(object[seqnames(
+              object)==input$chr])@width)))
           }
         })
         
@@ -150,7 +163,8 @@ setMethod("display",
             min_start <- min_start()
             sliderInput(inputId = "window",
                         label = "Plot Window:",
-                        min = min_start, max = max_end, value = c(min_start,max_end), step = 1
+                        min = min_start, max = max_end,
+                        value = c(min_start,max_end), step = 1
             )
           }
         })
@@ -167,7 +181,8 @@ setMethod("display",
           else{
             sliderInput(inputId = "width",
                         label = "Range Length Filter:",
-                        min = min_width, max = max_width, value = c(min_width,max_width), step = 1
+                        min = min_width, max = max_width,
+                        value = c(min_width,max_width), step = 1
             )
           }
         })
@@ -188,7 +203,8 @@ setMethod("display",
           ucsc_df <- ucscGenomes()
           ucsc_vec <- as.character(ucsc_df$db)
           i <- which(ucsc_vec==input$ucscgen)
-          ucsc_text <- paste(as.character(ucscGenomes()[i,2:4]),collapse="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+          ucsc_text <- paste(as.character(ucscGenomes()[i,2:4]),
+            collapse="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
           if(nchar(ucsc_text)==0){
             return()
           }
@@ -201,7 +217,8 @@ setMethod("display",
           for(i in mcolnames){
             tx <- as.data.frame(object)
             tx <- sort(unique(tx[,i]))
-            args[[i]] <- tabPanel(i, checkboxGroupInput(i, paste("Select ", i,sep=""),tx,selected=tx))
+            args[[i]] <- tabPanel(i, checkboxGroupInput(i, 
+              paste("Select ", i,sep=""),tx,selected=tx))
           }
           args
         })
@@ -232,10 +249,12 @@ setMethod("display",
           if (input$bankbutton == 0)
             return()
           isolate({
-            bank[[input$chr]] <<- c(input$strand,input$window[1],input$window[2],input$width[1],input$width[2])
+            bank[[input$chr]] <<- c(input$strand,input$window[1],
+              input$window[2],input$width[1],input$width[2])
             output$btable <- renderTable({
               df <- t(as.data.frame(bank))
-              colnames(df) <- c("Strand","Min Position","Max Position","Min Width","Max Width")
+              colnames(df) <- c("Strand","Min Position","Max Position",
+                "Min Width","Max Width")
               df
             })
           })
