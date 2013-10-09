@@ -6,9 +6,8 @@ Version: 0.99.14
 Date: 2013-10-09
 Author: Shawn Balcome, Marc Carlson
 Maintainer: Shawn Balcome <balc0022@umn.edu>
-Imports: shiny, Biobase, GenomicRanges, Gviz, RColorBrewer, ggbio,
-        ggplot2, reshape2, rtracklayer, AnnotationDbi, AnnotationHub,
-        httr, grid, GO.db, ggdendro, plyr, gridSVG, XML
+Imports: shiny, GenomicRanges, Gviz, RColorBrewer, ggplot2, reshape2,
+        rtracklayer, grid, GO.db, plyr, gridSVG, XML
 Depends: R (>= 2.10), methods, BiocGenerics
 Suggests: RUnit, hgu95av2.db, knitr
 Description: The interactiveDisplay package contains the methods needed to
