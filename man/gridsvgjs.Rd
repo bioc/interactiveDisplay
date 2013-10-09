@@ -9,10 +9,10 @@
   based on the submitted plot.
 }
 \usage{
-gridsvgjs(gridplot)
+gridsvgjs(object)
 }
 \arguments{
-  \item{gridplot}{a grid based plot to display in browser}
+  \item{object}{a grid based plot to display in browser}
 }
 \value{
   Any grid based plot.  For example: a plot produced with lattice, ggplot2 or biobase libraries.
