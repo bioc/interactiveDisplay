@@ -10,16 +10,23 @@
 \alias{display,AnnotationHub-method}
 
 \title{display: open shiny application for object}
+\description{
+  This opens a shiny visualation application in the browser
+  based on the submitted object.
+}
+\usage{
+display(object, ...)
+}
 \arguments{
   \item{object}{data object to display}
+  \item{...}{additional arguments passed to methods; currently unused.}
 }
 \value{
   Usually some variation of the initial input object, but it may be
   altered by the display widget (subset for example).
 }
-\description{
-  This opens a shiny visualation application in the browser
-  based on the submitted object.
+\seealso{
+  \url{http://bioconductor.org/packages/2.11/bioc/html/interactiveDisplay.html}
 }
 \examples{
 
@@ -44,8 +51,6 @@ display(expr)
 }
 
 }
-\seealso{
-  \url{http://bioconductor.org/packages/2.11/bioc/html/interactiveDisplay.html}
-}
+
 \keyword{methods}
 

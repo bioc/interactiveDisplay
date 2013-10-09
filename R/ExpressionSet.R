@@ -215,7 +215,8 @@ setMethod("display",
                 return(res2)
               }
               else{
-                return(as.data.frame("Object does not have a ChipDb annotation"))
+                return(as.data.frame(
+                  "Object does not have a ChipDb annotation"))
               }
             }
           }
@@ -371,8 +372,10 @@ setMethod("display",
               if(is.leaf(n)) {
                 a <- attributes(n)
                 i <<- i+1
-                attr(n, "nodePar") <- c(a$nodePar, list(lab.col = mycols[cut[i]]))
-                attr(n, "edgePar") <- c(a$nodePar, list(col = mycols[cut[i]]))
+                attr(n, "nodePar") <- c(a$nodePar,
+                                        list(lab.col = mycols[cut[i]]))
+                attr(n, "edgePar") <- c(a$nodePar,
+                                        list(col = mycols[cut[i]]))
               }
               n
             }

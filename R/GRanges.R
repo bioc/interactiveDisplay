@@ -41,7 +41,7 @@ setMethod("display",
       
       server = function(input, output){
         
-        #  This stores parameters for subsetted GRanges per chromosome as a list.
+        # This stores parameters for subsetted GRanges per chromosome as a list.
         bank <- list()
         
         t_object <- reactive({
@@ -235,7 +235,8 @@ setMethod("display",
             temp <- list()
             for(i in names(bank)){
               p <- unlist(bank[[i]])
-              sgr <- subgr(object,i,p[1],p[2],p[3],p[4],p[5],mcolnames,input)
+              sgr <- subgr(object, i, p[1], p[2], p[3], p[4], p[5],
+                           mcolnames, input)
               temp[[i]] <- sgr
             }
             subgrl <- GRangesList(temp)

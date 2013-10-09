@@ -28,19 +28,23 @@ function(object){
 .jstags <- function(){
   list(
   HTML("<script type='text/javascript'>"),
-  includeHTML(system.file("www", "jquery.min.js", package="interactiveDisplay")),
+  includeHTML(system.file("www", "jquery.min.js",
+                          package="interactiveDisplay")),
   HTML("</script>"),
   
   HTML("<script type='text/javascript'>"),
-  includeHTML(system.file("www", "d3.v2.js", package="interactiveDisplay")),
+  includeHTML(system.file("www", "d3.v2.js",
+                          package="interactiveDisplay")),
   HTML("</script>"),
   
   HTML("<script type='text/javascript'>"),
-  includeHTML(system.file("www", "jquery-svgpan.js", package="interactiveDisplay")),
+  includeHTML(system.file("www", "jquery-svgpan.js",
+                          package="interactiveDisplay")),
   HTML("</script>"),
   
   HTML("<script type='text/javascript'>"),
-  includeHTML(system.file("www", "jscolor.js", package="interactiveDisplay")),
+  includeHTML(system.file("www", "jscolor.js",
+                          package="interactiveDisplay")),
   HTML("</script>"))
 }
 
@@ -73,9 +77,9 @@ function(object){
 ## The loading gif/panel
 .loading_gif <- function(){
   list(
-  conditionalPanel(condition="$('html').hasClass('shiny-busy')", 
-    list(HTML("<img src="),HTML(system.file("www", "ajax-loader.gif",
-    package="interactiveDisplay"))),HTML("></img>")),
+  conditionalPanel(condition="$('html').hasClass('shiny-busy')",
+  img(src = 
+        "http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif")),
   conditionalPanel(condition="!($('html').hasClass('shiny-busy'))", br())
   )
 }
@@ -136,10 +140,13 @@ ggheat <- function(my_mat,tweak,colorx,colory,hc,hc2,c1,c2,c3,rainbow){
   gp <- gp + coord_equal()
   gp <- gp + theme_bw()
   gp <- gp + theme(axis.ticks = element_blank(),
-                 axis.text.x = element_text(size=tweak*150/sqrt(length(my_mat)),
-                 angle = -45, hjust = 0, colour=colorx),
-                 axis.text.y = element_text(size=tweak*150/sqrt(length(my_mat)),
-                 colour=colory))
+                   axis.text.x = element_text(size = 
+                                                tweak*150/sqrt(length(my_mat)),
+                                              angle = -45,
+                                              hjust = 0,
+                                              colour=colorx),
+              axis.text.y = element_text(size = tweak*150/sqrt(length(my_mat)),
+                                              colour = colory))
   gp <- gp + xlab("Samples")
   gp <- gp + ylab("Probes")
   #gp <- gp + ggtitle("Heatmap") + 
