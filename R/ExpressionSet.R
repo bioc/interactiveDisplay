@@ -145,8 +145,8 @@ setMethod("display",
 
             }
             
-            p <- p[1:input$pmeancutoff]
-            s <- s[1:input$smeancutoff]
+            p <- p[seq_len(input$pmeancutoff)]
+            s <- s[seq_len(input$smeancutoff)]
             
             #p <- rev(order(apply(tmpdata,1,mean)))[1:input$pmeancutoff]
             #s <- rev(order(apply(tmpdata,2,mean)))[1:input$smeancutoff]
@@ -182,7 +182,7 @@ setMethod("display",
             }
             else{
               pkg <- get(pkgName)
-              if(class(pkg)=="ChipDb"){
+              if(is(pkg,"ChipDb")){
                 res <- select(pkg, input$probe,
                   c("ENTREZID","GENENAME"),
                   "PROBEID")
