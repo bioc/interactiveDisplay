@@ -356,7 +356,7 @@ setMethod("display",
         })
         
         hc2 <- reactive({
-          hclust(dist(data(),method = input$dist_method), input$hc_method)
+          hclust(dist(t(data()),method = input$dist_method), input$hc_method)
         })
         
         output$dendro <- renderPlot({
