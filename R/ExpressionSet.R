@@ -367,20 +367,20 @@ setMethod("display",
           cut <- cutree(hc,nc)[hc$labels[hc$order]]
           
           ## toy example to set colored leaf labels :
-          local({
-            colLab <<- function(n) {
-              if(is.leaf(n)) {
-                a <- attributes(n)
-                i <<- i+1
-                attr(n, "nodePar") <- c(a$nodePar,
-                                        list(lab.col = mycols[cut[i]]))
-                attr(n, "edgePar") <- c(a$nodePar,
-                                        list(col = mycols[cut[i]]))
+          colLab <- local({
+              mycols <- grDevices::rainbow(nc)
+              i <- 0
+              function(n) {
+                  if(is.leaf(n)) {
+                      a <- attributes(n)
+                      i <<- i+1
+                      attr(n, "nodePar") <- c(a$nodePar,
+                                              list(lab.col = mycols[cut[i]]))
+                      attr(n, "edgePar") <- c(a$nodePar,
+                                              list(col = mycols[cut[i]]))
+                  }
+                  n
               }
-              n
-            }
-            mycols <- grDevices::rainbow(nc)
-            i <- 0
           })
           dL <- dendrapply(dhc, colLab)
           plot(dL) ## --> colored labels!
