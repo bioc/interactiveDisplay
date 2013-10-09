@@ -165,7 +165,7 @@ grid2jssvg <- function(gp){
               });
               </script>
             "
-  png(file = "myplot.png", bg = "transparent",height=1000,width=1000)
+  png(filename = "myplot.png", bg = "transparent",height=1000,width=1000)
   print(gp)
   
   mysvg <- gridSVG::grid.export()
