@@ -18,7 +18,7 @@ gridsvgjs(object)
   Any grid based plot.  For example: a plot produced with lattice, ggplot2 or biobase libraries.
 }
 \seealso{
-  \url{http://bioconductor.org/packages/2.11/bioc/html/interactiveDisplay.html}
+  \url{http://bioconductor.org/packages/2.13/bioc/html/interactiveDisplay.html}
 }
 \examples{
 

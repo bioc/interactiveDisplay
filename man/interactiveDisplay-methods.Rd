@@ -9,7 +9,7 @@
 \alias{display,SummarizedExperiment-method}
 \alias{display,AnnotationHub-method}
 
-\title{display: open shiny application for object}
+\title{display: Open a Shiny application for a Bioconductor object}
 \description{
   This opens a shiny visualation application in the browser
   based on the submitted object.
@@ -26,7 +26,7 @@ display(object, ...)
   altered by the display widget (subset for example).
 }
 \seealso{
-  \url{http://bioconductor.org/packages/2.11/bioc/html/interactiveDisplay.html}
+  \url{http://bioconductor.org/packages/2.13/bioc/html/interactiveDisplay.html}
 }
 \examples{
 
