@@ -28,7 +28,7 @@ suppressWarnings(suppressPackageStartupMessages(library(interactiveDisplay)))
 
 # interactiveDisplay
 
-[interactiveDisplay](http://bioconductor.org/)
+[interactiveDisplay](http://bioconductor.org/packages/2.13/bioc/html/interactiveDisplay.html)
 
 `interactiveDisplay` uses the function `display()` to host a browser based application 
 on the fly using the Shiny package.  Currently 4 bioconductor objects: Granges, GrangesList, ExpressionSet 
