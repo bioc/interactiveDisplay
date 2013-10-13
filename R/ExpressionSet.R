@@ -302,12 +302,15 @@ setMethod("display",
           #net[["groups"]] <- as.numeric(cutree(hclust(as.dist(1-val)) , k=1))
           net[["groups"]] <- as.numeric(cutree(hc, k=input$con_knum))
           net[["titles"]] <- colnames(val)
-          if(input$either=="sample"){
-            net[["colors"]] <- colorx()
-          }
-          if(input$either=="probe"){
-            net[["colors"]] <- colory()
-          }
+          net[["colors"]] <- 
+            rainbow(input$con_knum,
+                    alpha=NULL)[cutree(hc,input$con_knum)[hc$labels[hc$order]]]
+          #if(input$either=="sample"){
+          #  net[["colors"]] <- colorx()
+          #}
+          #if(input$either=="probe"){
+          #  net[["colors"]] <- colory()
+          #}
           
           net
         })
@@ -356,7 +359,7 @@ setMethod("display",
         })
         
         hc2 <- reactive({
-          hclust(dist(t(data()),method = input$dist_method), input$hc_method)
+          hclust(dist(data(),method = input$dist_method), input$hc_method)
         })
         
         output$dendro <- renderPlot({
