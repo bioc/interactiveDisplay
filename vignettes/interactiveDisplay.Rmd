@@ -83,5 +83,32 @@ gridsvgjs(qp)
 ```
 
 
+## Acknowledgments
 
+Shiny <br/>
+Joe Cheng and Winston Chang <br/>
+http://www.rstudio.com/shiny/ <br/>
+
+
+Force Layout <br/>
+Jeff Allen <br/>
+https://github.com/trestletech/shiny-sandbox/tree/master/grn <br/>
+
+gridSVG <br/>
+Simon Potter <br/>
+http://sjp.co.nz/projects/gridsvg/ <br/>
+
+Zoom/Pan JavaScript libraries <br/>
+John Krauss <br/>
+https://github.com/talos/jquery-svgpan <br/>
+Andrea Leofreddi <br/>
+https://code.google.com/p/svgpan/ <br/>
+  
+JavaScript Color Chooser <br/>
+Jan Odvárko <br/>
+http://jscolor.com/ <br/>
+
+Data-Driven Documents <br/>
+Michael Bostock <br/>
+http://d3js.org/ <br/>
 
