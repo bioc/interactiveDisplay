@@ -164,9 +164,15 @@ setMethod("display",
         
         #  Probe Selection dropdown for GO summary
         output$choose_probe <- renderUI({
-          prChoices <- sort(rownames(tmpdata()))
-          names(prChoices) <- prChoices
-          selectInput("probe", "Chosen Probe for GO Summary", prChoices)
+          tmpdata <- tmpdata()
+          if(length(tmpdata)!=0){
+            prChoices <- sort(rownames(tmpdata))
+            names(prChoices) <- prChoices
+            selectInput("probe", "Chosen Probe for GO Summary", prChoices)
+          }
+          else{
+            return(NULL)
+          }
         })
      
         #  GO summary
@@ -225,12 +231,17 @@ setMethod("display",
         #  Data for network view, sample or probe
         data <- reactive({
           data <- tmpdata()
-          if(input$either=="sample"){
-            data <- data
-          }else{
-            data <- t(data)
+          if(length(data)!=0){
+            if(input$either=="sample"){
+              data <- data
+            }else{
+              data <- t(data)
+            }
+            return(data)
           }
-          data
+          else{
+            return()
+          }
         })
         
         #  Subset probes by average expression
@@ -250,85 +261,111 @@ setMethod("display",
         #  number of edges
         cutoff <- reactive({
           data <- data()
-          val <- cor(data())
-          diag(val) <- 0
-          val[lower.tri(val)] <- 0
-          cutoff <- sort(val[val>0],decreasing=TRUE)[input$edgenum]
-          cutoff
+          if(length(data)!=0){
+            val <- cor(data())
+            diag(val) <- 0
+            val[lower.tri(val)] <- 0
+            cutoff <- sort(val[val>0],decreasing=TRUE)[input$edgenum]
+            return(cutoff)
+          }
+          else{
+            return()
+          }
         })
         
         #  This determines the distance threshold needed for the desired 
         #  number of edges
         cutoff_max <- reactive({
           data <- data()
-          val <- cor(data())
-          diag(val) <- 0
-          val[lower.tri(val)] <- 0
-          cutoff <- 1
-          edgenum <- 1
-          while(!is.na(cutoff)){
-            cutoff <- sort(val[val>0],decreasing=TRUE)[edgenum]
-            edgenum <- edgenum + 1
+          if(length(data)!=0){
+            val <- cor(data())
+            diag(val) <- 0
+            val[lower.tri(val)] <- 0
+            cutoff <- 1
+            edgenum <- 1
+            while(!is.na(cutoff)){
+              cutoff <- sort(val[val>0],decreasing=TRUE)[edgenum]
+              edgenum <- edgenum + 1
+            }
+            return(edgenum - 2)
           }
-          return(edgenum - 2)
+          else{
+            return()
+          }
         })
         
         #  Build the network
         output$net <- reactive({
           data <- data()
           hc <- hc()
-          val <- cor(data())
-          if (is.null(val)){
-            return(list(names=character(), links=list(source=-1, target=-1)))
+          if(length(data)!=0){
+            val <- cor(data())
+            if (is.null(val)){
+              return(list(names=character(), links=list(source=-1, target=-1)))
+            }
+            diag(val) <- 0
+            val[lower.tri(val)] <- 0
+            cutoff <- sort(val[val>0],decreasing=TRUE)[input$edgenum]
+            if(sum(cutoff)==0){
+              val[] <- 0
+            }else{
+              val[val < cutoff] <- 0
+            }
+            conns <- cbind(source=row(val)[val>0]-1, target=col(val)[val>0]-1,
+                             weight=val[val>0])
+            if (nrow(conns) == 0){
+              conns <- list(source=-1, target=-1, weight=0)
+            }
+            net <- list()
+            net[["names"]] <- colnames(val)
+            net[["links"]] <- conns
+            #net[["groups"]] <- as.numeric(cutree(hclust(as.dist(1-val)) ,
+            #  k=input$con_knum))
+            #net[["groups"]] <- as.numeric(cutree(hclust(as.dist(1-val)) , k=1))
+            net[["groups"]] <- as.numeric(cutree(hc, k=input$con_knum))
+            net[["titles"]] <- colnames(val)
+            net[["colors"]] <- 
+              rainbow(input$con_knum,
+                      alpha=NULL)[cutree(hc,input$con_knum)[hc$labels[hc$order]]]
+            #if(input$either=="sample"){
+            #  net[["colors"]] <- colorx()
+            #}
+            #if(input$either=="probe"){
+            #  net[["colors"]] <- colory()
+            #}
+            
+            return(net)
           }
-          diag(val) <- 0
-          val[lower.tri(val)] <- 0
-          cutoff <- sort(val[val>0],decreasing=TRUE)[input$edgenum]
-          if(sum(cutoff)==0){
-            val[] <- 0
-          }else{
-            val[val < cutoff] <- 0
+          else{
+            return()
           }
-          conns <- cbind(source=row(val)[val>0]-1, target=col(val)[val>0]-1,
-                           weight=val[val>0])
-          if (nrow(conns) == 0){
-            conns <- list(source=-1, target=-1, weight=0)
-          }
-          net <- list()
-          net[["names"]] <- colnames(val)
-          net[["links"]] <- conns
-          #net[["groups"]] <- as.numeric(cutree(hclust(as.dist(1-val)) ,
-          #  k=input$con_knum))
-          #net[["groups"]] <- as.numeric(cutree(hclust(as.dist(1-val)) , k=1))
-          net[["groups"]] <- as.numeric(cutree(hc, k=input$con_knum))
-          net[["titles"]] <- colnames(val)
-          net[["colors"]] <- 
-            rainbow(input$con_knum,
-                    alpha=NULL)[cutree(hc,input$con_knum)[hc$labels[hc$order]]]
-          #if(input$either=="sample"){
-          #  net[["colors"]] <- colorx()
-          #}
-          #if(input$either=="probe"){
-          #  net[["colors"]] <- colory()
-          #}
-          
-          net
         })
         
         #  Edge number slider with animation and threshold shown underneith.
         output$edge <- renderUI({
           data <- data()
-          sliderInput(inputId = "edgenum",
-                      label = "Edge Number:",
-                      #min = 0, 
-                      #max = (((length(data[1,]))^2)/2 - length(data[1,])/2),
-                      #value = 1, step = 1,
-                      min = 0, max = cutoff_max(), value = 1, step = 1,
-                      animate=animationOptions(interval=2000, loop=FALSE))
+          cutoff_max <- cutoff_max()
+          if(length(data)!=0 && length(cutoff_max)!=0 ){
+            sliderInput(inputId = "edgenum",
+                        label = "Edge Number:",
+                        #min = 0, 
+                        #max = (((length(data[1,]))^2)/2 - length(data[1,])/2),
+                        #value = 1, step = 1,
+                        min = 0, max = cutoff_max, value = 1, step = 1,
+                        animate=animationOptions(interval=2000, loop=FALSE))
+          }
+          else{
+            return(NULL)
+          }
         })
         output$gen_text <- renderText({
           cutoff <- cutoff()
-          paste("Distance Threshold:  ",round(cutoff,4),sep="")
+          if(length(cutoff)!=0){
+            paste("Distance Threshold:  ",round(cutoff,4),sep="")
+          }
+          else{
+            return()
+          }
         })
         
         #  The network SVG
@@ -351,9 +388,9 @@ setMethod("display",
             svgjs <- grid2jssvg(gp)
             return(svgjs)
           }
-          
         })
         
+        #Clustering
         hc <- reactive({
           hclust(dist(t(data()),method = input$dist_method), input$hc_method)
         })
@@ -362,14 +399,14 @@ setMethod("display",
           hclust(dist(data(),method = input$dist_method), input$hc_method)
         })
         
+        #Color Dendrogram
         output$dendro <- renderPlot({
           nc <- input$con_knum
-          hc <- hc() 
-          ## a smallish simple dendrogram
+          hc <- hc()
+          
           dhc <- as.dendrogram(hc)
           cut <- cutree(hc,nc)[hc$labels[hc$order]]
           
-          ## toy example to set colored leaf labels :
           colLab <- local({
               mycols <- grDevices::rainbow(nc)
               i <- 0
@@ -386,10 +423,10 @@ setMethod("display",
               }
           })
           dL <- dendrapply(dhc, colLab)
-          plot(dL) ## --> colored labels!
-          #par(op)
+          plot(dL)
         })
         
+        #More cluster group coloring for x/y axis and network nodes
         colorx <- reactive({
           hc <- hc2()
           nc <- input$con_knum
@@ -412,10 +449,6 @@ setMethod("display",
           hc <- hc()
           nc <- input$con_knum
           rainbow(nc,alpha=NULL)[cutree(hc,nc)]
-        })
-        
-        output$color1_text <- renderText({
-          input$color1
         })
         
         #  Close Button  
