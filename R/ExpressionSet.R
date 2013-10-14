@@ -297,7 +297,7 @@ setMethod("display",
         #  Build the network
         output$net <- reactive({
           data <- data()
-          hc <- hc()
+          hc <- hc(data)
           if(length(data)!=0){
             val <- cor(data())
             if (is.null(val)){
@@ -317,13 +317,13 @@ setMethod("display",
               conns <- list(source=-1, target=-1, weight=0)
             }
             net <- list()
-            net[["names"]] <- colnames(val)
+            net[["names"]] <- hc$labels[hc$order]
             net[["links"]] <- conns
             #net[["groups"]] <- as.numeric(cutree(hclust(as.dist(1-val)) ,
             #  k=input$con_knum))
             #net[["groups"]] <- as.numeric(cutree(hclust(as.dist(1-val)) , k=1))
             net[["groups"]] <- as.numeric(cutree(hc, k=input$con_knum))
-            net[["titles"]] <- colnames(val)
+            net[["titles"]] <- hc$labels[hc$order]
             net[["colors"]] <- 
               rainbow(input$con_knum,
                       alpha=NULL)[cutree(hc,input$con_knum)[hc$labels[hc$order]]]
@@ -383,7 +383,7 @@ setMethod("display",
             return()
           }
           else{
-            gp <- ggheat(my_mat,exp(input$tweak),colorx(),colory(),hc(),hc2(),
+            gp <- ggheat(my_mat,exp(input$tweak),color_samples(),color_probes(),hc(t(tmpdata())),hc(tmpdata()),
                          input$color1,input$color2,input$color3,input$rainbow)
             svgjs <- grid2jssvg(gp)
             return(svgjs)
@@ -391,18 +391,14 @@ setMethod("display",
         })
         
         #Clustering
-        hc <- reactive({
-          hclust(dist(t(data()),method = input$dist_method), input$hc_method)
-        })
-        
-        hc2 <- reactive({
-          hclust(dist(data(),method = input$dist_method), input$hc_method)
-        })
-        
+        hc <- function(d){
+          hclust(dist(t(d),method = input$dist_method), input$hc_method)
+        }
+                       
         #Color Dendrogram
         output$dendro <- renderPlot({
           nc <- input$con_knum
-          hc <- hc()
+          hc <- hc(data())
           
           dhc <- as.dendrogram(hc)
           cut <- cutree(hc,nc)[hc$labels[hc$order]]
@@ -427,30 +423,20 @@ setMethod("display",
         })
         
         #More cluster group coloring for x/y axis and network nodes
-        colorx <- reactive({
-          hc <- hc2()
+        color_samples <- reactive({
+          d <- tmpdata()
+          hc <- hc(d)
           nc <- input$con_knum
           rainbow(nc, alpha=NULL)[cutree(hc,nc)[hc$labels[hc$order]]]
         })
         
-        colory <- reactive({
-          hc <- hc()
+        color_probes <- reactive({
+          d <- tmpdata()
+          hc <- hc(t(d))
           nc <- input$con_knum
           rainbow(nc, alpha=NULL)[cutree(hc,nc)[hc$labels[hc$order]]]
         })
-        
-        colorxa <- reactive({
-          hc <- hc2()
-          nc <- input$con_knum
-          rainbow(nc,alpha=NULL)[cutree(hc,nc)]
-        })
-        
-        colorya <- reactive({
-          hc <- hc()
-          nc <- input$con_knum
-          rainbow(nc,alpha=NULL)[cutree(hc,nc)]
-        })
-        
+                
         #  Close Button  
         observe({
           if (input$closebutton == 0)
