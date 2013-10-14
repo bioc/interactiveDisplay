@@ -40,7 +40,7 @@ heatcolor3 <- function(inputId3) {
     uiOutput("smeancutoff"),
     sliderInput(inputId = "tweak",
                 label = "Tweak Axis Label Font Size",
-                min = .1, max = 2, value = 1, step = .1),
+                min = -1, max = 1, value = 0, step = .1),
     HTML("<hr />"),
     #sliderInput(inputId = "con_knum",
     #            label = "Number of Clusters",
@@ -383,7 +383,7 @@ setMethod("display",
             return()
           }
           else{
-            gp <- ggheat(my_mat,input$tweak,colorx(),colory(),hc(),hc2(),
+            gp <- ggheat(my_mat,exp(input$tweak),colorx(),colory(),hc(),hc2(),
                          input$color1,input$color2,input$color3,input$rainbow)
             svgjs <- grid2jssvg(gp)
             return(svgjs)
