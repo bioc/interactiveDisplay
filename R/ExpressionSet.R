@@ -54,7 +54,7 @@ heatcolor3 <- function(inputId3) {
                   "mcquitty", "median", "centroid")),
     selectInput("dist_method", "Distance/Similarity Method",
     choices = c("euclidean", "maximum", "manhattan", 
-                "canberra", "binary", "minkowski")),
+                "canberra", "minkowski")),
     HTML("<hr />"),
     radioButtons('rainbow', 'Heatmap Color Scale',
                  c('Rainbow'='default',
@@ -262,10 +262,11 @@ setMethod("display",
         cutoff <- reactive({
           data <- data()
           if(length(data)!=0){
-            val <- cor(data())
-            diag(val) <- 0
-            val[lower.tri(val)] <- 0
-            cutoff <- sort(val[val>0],decreasing=TRUE)[input$edgenum]
+            #val <- cor(data())
+            val <- dm(data())
+            diag(val) <- NA
+            val[lower.tri(val)] <- NA
+            cutoff <- sort(val[!is.na(val)],decreasing=FALSE)[input$edgenum]
             return(cutoff)
           }
           else{
@@ -278,13 +279,14 @@ setMethod("display",
         cutoff_max <- reactive({
           data <- data()
           if(length(data)!=0){
-            val <- cor(data())
-            diag(val) <- 0
-            val[lower.tri(val)] <- 0
+            #val <- cor(data())
+            val <- dm(data())
+            diag(val) <- NA
+            val[lower.tri(val)] <- NA
             cutoff <- 1
             edgenum <- 1
             while(!is.na(cutoff)){
-              cutoff <- sort(val[val>0],decreasing=TRUE)[edgenum]
+              cutoff <- sort(val[!is.na(val)],decreasing=FALSE)[edgenum]
               edgenum <- edgenum + 1
             }
             return(edgenum - 2)
@@ -298,26 +300,30 @@ setMethod("display",
         output$net <- reactive({
           data <- data()
           hc <- hc(data)
+          data <- data[,hc$order]
+          cutoff <- cutoff()
           if(length(data)!=0){
-            val <- cor(data())
+            #val <- cor(data())
+            val <- dm(data())
             if (is.null(val)){
               return(list(names=character(), links=list(source=-1, target=-1)))
             }
-            diag(val) <- 0
-            val[lower.tri(val)] <- 0
-            cutoff <- sort(val[val>0],decreasing=TRUE)[input$edgenum]
+            diag(val) <- NA
+            val[lower.tri(val)] <- NA
+            #cutoff <- sort(val[!is.na(val)],decreasing=TRUE)[input$edgenum]
             if(sum(cutoff)==0){
-              val[] <- 0
+              val[] <- NA
             }else{
-              val[val < cutoff] <- 0
+              val[val > cutoff] <- NA
             }
-            conns <- cbind(source=row(val)[val>0]-1, target=col(val)[val>0]-1,
-                             weight=val[val>0])
+            conns <- cbind(source=row(val)[!is.na(val)]-1,
+                           target=col(val)[!is.na(val)]-1,
+                           weight=val[!is.na(val)])
             if (nrow(conns) == 0){
               conns <- list(source=-1, target=-1, weight=0)
             }
             net <- list()
-            net[["names"]] <- hc$labels[hc$order]
+            net[["names"]] <- colnames(val)#hc$labels[hc$order]
             net[["links"]] <- conns
             #net[["groups"]] <- as.numeric(cutree(hclust(as.dist(1-val)) ,
             #  k=input$con_knum))
@@ -326,7 +332,7 @@ setMethod("display",
             net[["titles"]] <- hc$labels[hc$order]
             net[["colors"]] <- 
               rainbow(input$con_knum,
-                      alpha=NULL)[cutree(hc,input$con_knum)[hc$labels[hc$order]]]
+                      alpha=NULL)[cutree(hc,input$con_knum)[colnames(val)]]
             #if(input$either=="sample"){
             #  net[["colors"]] <- colorx()
             #}
@@ -383,7 +389,8 @@ setMethod("display",
             return()
           }
           else{
-            gp <- ggheat(my_mat,exp(input$tweak),color_samples(),color_probes(),hc(t(tmpdata())),hc(tmpdata()),
+            gp <- ggheat(my_mat,exp(input$tweak),color_samples(),color_probes(),
+                         hc(t(tmpdata())),hc(tmpdata()),
                          input$color1,input$color2,input$color3,input$rainbow)
             svgjs <- grid2jssvg(gp)
             return(svgjs)
@@ -393,6 +400,12 @@ setMethod("display",
         #Clustering
         hc <- function(d){
           hclust(dist(t(d),method = input$dist_method), input$hc_method)
+        }
+        
+        #Distance Matrix
+        
+        dm <- function(d){
+          as.matrix(dist(t(d), diag=TRUE, upper=TRUE, method=input$dist_method))
         }
                        
         #Color Dendrogram
