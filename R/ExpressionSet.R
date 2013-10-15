@@ -38,6 +38,7 @@ heatcolor3 <- function(inputId3) {
     selectInput("measure", "Based On:", choices = c("variance","average")),
     uiOutput("pmeancutoff"),
     uiOutput("smeancutoff"),
+    HTML("<hr />"),
     sliderInput(inputId = "tweak",
                 label = "Tweak Axis Label Font Size",
                 min = -1, max = 1, value = 0, step = .1),
@@ -91,12 +92,20 @@ heatcolor3 <- function(inputId3) {
     ")
     ),
     tabsetPanel(
-      tabPanel("Heat Plot",uiOutput("heat")),
+      tabPanel("Heat Plot",
+               HTML("Use the mouse to drag and pan the heatmap.  Use the 
+                     mousewheel to zoom in/out."),
+               HTML("<hr />"),
+               uiOutput("heat")),
       tabPanel("Network View",uiOutput("svg")),
       tabPanel("Dendrogram",plotOutput("dendro"))
     ),
     tabsetPanel(
       tabPanel("GO Summary",
+        HTML("Use the sidebar drop-down or simply click on probe nodes in the 
+              force layout plot in the Network View tab to view a gene ontology 
+              summary if available."),
+        HTML("<hr />"),
         tableOutput("gotest1"),
         tableOutput("gotest2")
       )
