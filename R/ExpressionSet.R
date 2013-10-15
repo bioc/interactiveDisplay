@@ -198,9 +198,9 @@ setMethod("display",
             else{
               pkg <- get(pkgName)
               if(is(pkg,"ChipDb")){
-                res <- select(pkg, input$probe,
+                res <- suppressWarnings(select(pkg, input$probe,
                   c("ENTREZID","GENENAME"),
-                  "PROBEID")
+                  "PROBEID"))
                 return(res)
               }
               else{
@@ -224,9 +224,9 @@ setMethod("display",
             else{
               pkg <- get(pkgName)
               if(class(pkg)=="ChipDb"){
-                res <- select(pkg, input$probe,
-                  c("ENTREZID","GENENAME","GO"), "PROBEID")
-                res2 <- head(select(GO.db, res$GO, "TERM", "GOID"))
+                res <- suppressWarnings(select(pkg, input$probe,
+                  c("ENTREZID","GENENAME","GO"), "PROBEID"))
+                res2 <- head(suppressWarnings(select(GO.db, res$GO, "TERM", "GOID")))
                 return(res2)
               }
               else{
