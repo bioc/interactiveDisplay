@@ -22,6 +22,9 @@ setMethod("display",
                   HTML("<hr />"),
                   uiOutput("window"),
                   HTML("<hr />"),
+                  HTML("Use the mouse to drag and pan the plot. Use the 
+                        mousewheel to zoom in/out."),
+                  HTML("<hr />"),
                   actionButton("closebutton", "Stop Application")
                   #HTML("<hr />"),
                   #plotOutput("plotname")

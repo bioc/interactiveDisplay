@@ -4,28 +4,22 @@
 
 heatcolor1 <- function(inputId1) {
   tagList(
-    shiny::tags$input(id = inputId1,
-      class = "color",
-      value = "EDF8B1",
-      onchange = "window.Shiny.onInputChange('color1', this.color.toString())")
+    shiny::tags$input(id = inputId1, class = "color", value = "EDF8B1",
+    onchange = "window.Shiny.onInputChange('color1', this.color.toString())")
   )
 }
 
 heatcolor2 <- function(inputId2) {
   tagList(
-    shiny::tags$input(id = inputId2,
-      class = "color",
-      value = "7FCDBB",
-      onchange = "window.Shiny.onInputChange('color2', this.color.toString())")
+    shiny::tags$input(id = inputId2, class = "color", value = "7FCDBB",
+    onchange = "window.Shiny.onInputChange('color2', this.color.toString())")
   )
 }
 
 heatcolor3 <- function(inputId3) {
   tagList(
-    shiny::tags$input(id = inputId3,
-      class = "color",
-      value = "2C7FB8",
-      onchange = "window.Shiny.onInputChange('color3', this.color.toString())")
+    shiny::tags$input(id = inputId3, class = "color", value = "2C7FB8",
+    onchange = "window.Shiny.onInputChange('color3', this.color.toString())")
   )
 }
 
@@ -35,15 +29,16 @@ heatcolor3 <- function(inputId3) {
     tableOutput("expinfo"),
     HTML("<hr />"),
     selectInput("either", "Network/Dendrogram View:  Sample or Probe:",
-                choices = c("probe","sample")),
+      choices = c("probe","sample")),
     HTML("<hr />"),
     uiOutput("choose_probe"),
     HTML("<hr />"),
     selectInput("order", "Show Top or Bottom Ranked,",
-                choices = c("top","bottom")),
+      choices = c("top","bottom")),
     selectInput("measure", "Based On:", choices = c("variance","average")),
     uiOutput("pmeancutoff"),
     uiOutput("smeancutoff"),
+    HTML("<hr />"),
     sliderInput(inputId = "tweak",
                 label = "Tweak Axis Label Font Size",
                 min = -1, max = 1, value = 0, step = .1),
@@ -56,16 +51,16 @@ heatcolor3 <- function(inputId3) {
     HTML("<hr />"),
     numericInput("con_knum", "Number of Clusters:", 5),
     selectInput("hc_method", "Hierarchical Clustering Method",
-                choices = c("ward", "single", "complete", "average", 
-                            "mcquitty", "median", "centroid")),
+      choices = c("ward", "single", "complete", "average", 
+                  "mcquitty", "median", "centroid")),
     selectInput("dist_method", "Distance/Similarity Method",
-                choices = c("euclidean", "maximum", "manhattan", 
-                            "canberra", "minkowski")),
+    choices = c("euclidean", "maximum", "manhattan", 
+                "canberra", "minkowski")),
     HTML("<hr />"),
     radioButtons('rainbow', 'Heatmap Color Scale',
                  c('Rainbow'='default',
                    'Three Color'='tri'),
-                   'Rainbow'),
+                 'Rainbow'),
     heatcolor1('exampleTextarea1'),
     heatcolor2('exampleTextarea2'),
     heatcolor3('exampleTextarea3'),
@@ -81,30 +76,38 @@ heatcolor3 <- function(inputId3) {
     .csstags(),
     shiny::tags$head(
       shiny::tags$style(type='text/css', "
-                        
-                        heat {
-                        height: 800px;
-                        }
-                        
-                        net {
-                        height: 800px;
-                        }
-                        
-                        svg {
-                        height: 800px;
-                        }
-                        
-                        ")
+
+    heat {
+      height: 800px;
+    }
+
+    net {
+      height: 800px;
+    }
+
+    svg {
+      height: 800px;
+    }
+
+    ")
     ),
     tabsetPanel(
-      tabPanel("Heat Plot",uiOutput("heat")),
+      tabPanel("Heat Plot",
+               HTML("Use the mouse to drag and pan the heatmap.  Use the 
+                     mousewheel to zoom in/out."),
+               HTML("<hr />"),
+               uiOutput("heat")),
       tabPanel("Network View",uiOutput("svg")),
       tabPanel("Dendrogram",plotOutput("dendro"))
     ),
     tabsetPanel(
       tabPanel("GO Summary",
-               tableOutput("gotest1"),
-               tableOutput("gotest2")
+        HTML("Use the sidebar drop-down or simply click on probe nodes in the 
+              force layout plot in the Network View tab to view a gene ontology 
+              summary if available."),
+        HTML("<hr />"),
+        tableOutput("gotest1"),
+        tableOutput("gotest2")
       )
     )
   )
@@ -113,7 +116,7 @@ heatcolor3 <- function(inputId3) {
 setMethod("display",  
   signature(object = c("ExpressionSet")), 
   function(object, ...){
-    
+        
     app <- list(
       ui =
         bootstrapPage(
@@ -148,7 +151,7 @@ setMethod("display",
               s <- rev(s)
             }
             if(input$order=="bottom"){
-              
+
             }
             
             p <- p[seq_len(input$pmeancutoff)]
@@ -180,7 +183,7 @@ setMethod("display",
             return(NULL)
           }
         })
-        
+     
         #  GO summary
         output$gotest1 <- renderTable({
           if(length(input$probe)!=1){
@@ -196,8 +199,8 @@ setMethod("display",
               pkg <- get(pkgName)
               if(is(pkg,"ChipDb")){
                 res <- select(pkg, input$probe,
-                              c("ENTREZID","GENENAME"),
-                              "PROBEID")
+                  c("ENTREZID","GENENAME"),
+                  "PROBEID")
                 return(res)
               }
               else{
@@ -222,7 +225,7 @@ setMethod("display",
               pkg <- get(pkgName)
               if(class(pkg)=="ChipDb"){
                 res <- select(pkg, input$probe,
-                              c("ENTREZID","GENENAME","GO"), "PROBEID")
+                  c("ENTREZID","GENENAME","GO"), "PROBEID")
                 res2 <- head(select(GO.db, res$GO, "TERM", "GOID"))
                 return(res2)
               }
@@ -260,7 +263,7 @@ setMethod("display",
         #  Subset samples by average expression
         output$smeancutoff <- renderUI({   
           textInput("smeancutoff", "Number of Samples to Display",
-                    dim(exprs(object))[2])
+            dim(exprs(object))[2])
         })
         
         #  This determines the distance threshold needed for the desired
@@ -413,7 +416,7 @@ setMethod("display",
         dm <- function(d){
           as.matrix(dist(t(d), diag=TRUE, upper=TRUE, method=input$dist_method))
         }
-        
+                       
         #Color Dendrogram
         output$dendro <- renderPlot({
           nc <- input$con_knum
@@ -423,19 +426,19 @@ setMethod("display",
           cut <- cutree(hc,nc)[hc$labels[hc$order]]
           
           colLab <- local({
-            mycols <- grDevices::rainbow(nc)
-            i <- 0
-            function(n) {
-              if(is.leaf(n)) {
-                a <- attributes(n)
-                i <<- i+1
-                attr(n, "nodePar") <- c(a$nodePar,
-                                        list(lab.col = mycols[cut[i]]))
-                attr(n, "edgePar") <- c(a$nodePar,
-                                        list(col = mycols[cut[i]]))
+              mycols <- grDevices::rainbow(nc)
+              i <- 0
+              function(n) {
+                  if(is.leaf(n)) {
+                      a <- attributes(n)
+                      i <<- i+1
+                      attr(n, "nodePar") <- c(a$nodePar,
+                                              list(lab.col = mycols[cut[i]]))
+                      attr(n, "edgePar") <- c(a$nodePar,
+                                              list(col = mycols[cut[i]]))
+                  }
+                  n
               }
-              n
-            }
           })
           dL <- dendrapply(dhc, colLab)
           plot(dL)
@@ -455,7 +458,7 @@ setMethod("display",
           nc <- input$con_knum
           rainbow(nc, alpha=NULL)[cutree(hc,nc)[hc$labels[hc$order]]]
         })
-        
+                
         #  Close Button  
         observe({
           if (input$closebutton == 0)
@@ -466,9 +469,10 @@ setMethod("display",
         })
         
       })
-    
+
     #myRunApp(app, ...)
     runApp(app)
   })
+  
 
 

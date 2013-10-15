@@ -104,7 +104,7 @@ function(object){
 ################################################################################
 
 
-ggheat <- function(my_mat,tweak,colorx,colory,hc,hc2,c1,c2,c3,rainbow){
+ggheat <- function(my_mat,tweak,color_samples,color_probes,hc,hc2,c1,c2,c3,rainbow){
   melted <- melt(my_mat)
   names(melted) <- c("Var1","Var2","value")
   
@@ -144,9 +144,9 @@ ggheat <- function(my_mat,tweak,colorx,colory,hc,hc2,c1,c2,c3,rainbow){
                                                 tweak*150/sqrt(length(my_mat)),
                                               angle = -45,
                                               hjust = 0,
-                                              colour=colorx),
+                                              colour=color_samples),
               axis.text.y = element_text(size = tweak*150/sqrt(length(my_mat)),
-                                              colour = colory))
+                                              colour = color_probes))
   gp <- gp + xlab("Samples")
   gp <- gp + ylab("Probes")
   #gp <- gp + ggtitle("Heatmap") + 
