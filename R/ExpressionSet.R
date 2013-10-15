@@ -4,22 +4,28 @@
 
 heatcolor1 <- function(inputId1) {
   tagList(
-    shiny::tags$input(id = inputId1, class = "color", value = "EDF8B1",
-    onchange = "window.Shiny.onInputChange('color1', this.color.toString())")
+    shiny::tags$input(id = inputId1,
+      class = "color",
+      value = "EDF8B1",
+      onchange = "window.Shiny.onInputChange('color1', this.color.toString())")
   )
 }
 
 heatcolor2 <- function(inputId2) {
   tagList(
-    shiny::tags$input(id = inputId2, class = "color", value = "7FCDBB",
-    onchange = "window.Shiny.onInputChange('color2', this.color.toString())")
+    shiny::tags$input(id = inputId2,
+      class = "color",
+      value = "7FCDBB",
+      onchange = "window.Shiny.onInputChange('color2', this.color.toString())")
   )
 }
 
 heatcolor3 <- function(inputId3) {
   tagList(
-    shiny::tags$input(id = inputId3, class = "color", value = "2C7FB8",
-    onchange = "window.Shiny.onInputChange('color3', this.color.toString())")
+    shiny::tags$input(id = inputId3,
+      class = "color",
+      value = "2C7FB8",
+      onchange = "window.Shiny.onInputChange('color3', this.color.toString())")
   )
 }
 
@@ -29,12 +35,12 @@ heatcolor3 <- function(inputId3) {
     tableOutput("expinfo"),
     HTML("<hr />"),
     selectInput("either", "Network/Dendrogram View:  Sample or Probe:",
-      choices = c("probe","sample")),
+                choices = c("probe","sample")),
     HTML("<hr />"),
     uiOutput("choose_probe"),
     HTML("<hr />"),
     selectInput("order", "Show Top or Bottom Ranked,",
-      choices = c("top","bottom")),
+                choices = c("top","bottom")),
     selectInput("measure", "Based On:", choices = c("variance","average")),
     uiOutput("pmeancutoff"),
     uiOutput("smeancutoff"),
@@ -50,16 +56,16 @@ heatcolor3 <- function(inputId3) {
     HTML("<hr />"),
     numericInput("con_knum", "Number of Clusters:", 5),
     selectInput("hc_method", "Hierarchical Clustering Method",
-      choices = c("ward", "single", "complete", "average", 
-                  "mcquitty", "median", "centroid")),
+                choices = c("ward", "single", "complete", "average", 
+                            "mcquitty", "median", "centroid")),
     selectInput("dist_method", "Distance/Similarity Method",
-    choices = c("euclidean", "maximum", "manhattan", 
-                "canberra", "binary", "minkowski")),
+                choices = c("euclidean", "maximum", "manhattan", 
+                            "canberra", "minkowski")),
     HTML("<hr />"),
     radioButtons('rainbow', 'Heatmap Color Scale',
                  c('Rainbow'='default',
                    'Three Color'='tri'),
-                 'Rainbow'),
+                   'Rainbow'),
     heatcolor1('exampleTextarea1'),
     heatcolor2('exampleTextarea2'),
     heatcolor3('exampleTextarea3'),
@@ -75,20 +81,20 @@ heatcolor3 <- function(inputId3) {
     .csstags(),
     shiny::tags$head(
       shiny::tags$style(type='text/css', "
-
-    heat {
-      height: 800px;
-    }
-
-    net {
-      height: 800px;
-    }
-
-    svg {
-      height: 800px;
-    }
-
-    ")
+                        
+                        heat {
+                        height: 800px;
+                        }
+                        
+                        net {
+                        height: 800px;
+                        }
+                        
+                        svg {
+                        height: 800px;
+                        }
+                        
+                        ")
     ),
     tabsetPanel(
       tabPanel("Heat Plot",uiOutput("heat")),
@@ -97,8 +103,8 @@ heatcolor3 <- function(inputId3) {
     ),
     tabsetPanel(
       tabPanel("GO Summary",
-        tableOutput("gotest1"),
-        tableOutput("gotest2")
+               tableOutput("gotest1"),
+               tableOutput("gotest2")
       )
     )
   )
@@ -107,7 +113,7 @@ heatcolor3 <- function(inputId3) {
 setMethod("display",  
   signature(object = c("ExpressionSet")), 
   function(object, ...){
-        
+    
     app <- list(
       ui =
         bootstrapPage(
@@ -142,7 +148,7 @@ setMethod("display",
               s <- rev(s)
             }
             if(input$order=="bottom"){
-
+              
             }
             
             p <- p[seq_len(input$pmeancutoff)]
@@ -174,7 +180,7 @@ setMethod("display",
             return(NULL)
           }
         })
-     
+        
         #  GO summary
         output$gotest1 <- renderTable({
           if(length(input$probe)!=1){
@@ -190,8 +196,8 @@ setMethod("display",
               pkg <- get(pkgName)
               if(is(pkg,"ChipDb")){
                 res <- select(pkg, input$probe,
-                  c("ENTREZID","GENENAME"),
-                  "PROBEID")
+                              c("ENTREZID","GENENAME"),
+                              "PROBEID")
                 return(res)
               }
               else{
@@ -216,7 +222,7 @@ setMethod("display",
               pkg <- get(pkgName)
               if(class(pkg)=="ChipDb"){
                 res <- select(pkg, input$probe,
-                  c("ENTREZID","GENENAME","GO"), "PROBEID")
+                              c("ENTREZID","GENENAME","GO"), "PROBEID")
                 res2 <- head(select(GO.db, res$GO, "TERM", "GOID"))
                 return(res2)
               }
@@ -254,7 +260,7 @@ setMethod("display",
         #  Subset samples by average expression
         output$smeancutoff <- renderUI({   
           textInput("smeancutoff", "Number of Samples to Display",
-            dim(exprs(object))[2])
+                    dim(exprs(object))[2])
         })
         
         #  This determines the distance threshold needed for the desired
@@ -262,10 +268,11 @@ setMethod("display",
         cutoff <- reactive({
           data <- data()
           if(length(data)!=0){
-            val <- cor(data())
-            diag(val) <- 0
-            val[lower.tri(val)] <- 0
-            cutoff <- sort(val[val>0],decreasing=TRUE)[input$edgenum]
+            #val <- cor(data())
+            val <- dm(data())
+            diag(val) <- NA
+            val[lower.tri(val)] <- NA
+            cutoff <- sort(val[!is.na(val)],decreasing=FALSE)[input$edgenum]
             return(cutoff)
           }
           else{
@@ -278,13 +285,14 @@ setMethod("display",
         cutoff_max <- reactive({
           data <- data()
           if(length(data)!=0){
-            val <- cor(data())
-            diag(val) <- 0
-            val[lower.tri(val)] <- 0
+            #val <- cor(data())
+            val <- dm(data())
+            diag(val) <- NA
+            val[lower.tri(val)] <- NA
             cutoff <- 1
             edgenum <- 1
             while(!is.na(cutoff)){
-              cutoff <- sort(val[val>0],decreasing=TRUE)[edgenum]
+              cutoff <- sort(val[!is.na(val)],decreasing=FALSE)[edgenum]
               edgenum <- edgenum + 1
             }
             return(edgenum - 2)
@@ -297,36 +305,40 @@ setMethod("display",
         #  Build the network
         output$net <- reactive({
           data <- data()
-          hc <- hc()
+          hc <- hc(data)
+          data <- data[,hc$order]
+          cutoff <- cutoff()
           if(length(data)!=0){
-            val <- cor(data())
+            #val <- cor(data())
+            val <- dm(data())
             if (is.null(val)){
               return(list(names=character(), links=list(source=-1, target=-1)))
             }
-            diag(val) <- 0
-            val[lower.tri(val)] <- 0
-            cutoff <- sort(val[val>0],decreasing=TRUE)[input$edgenum]
+            diag(val) <- NA
+            val[lower.tri(val)] <- NA
+            #cutoff <- sort(val[!is.na(val)],decreasing=TRUE)[input$edgenum]
             if(sum(cutoff)==0){
-              val[] <- 0
+              val[] <- NA
             }else{
-              val[val < cutoff] <- 0
+              val[val > cutoff] <- NA
             }
-            conns <- cbind(source=row(val)[val>0]-1, target=col(val)[val>0]-1,
-                             weight=val[val>0])
+            conns <- cbind(source=row(val)[!is.na(val)]-1,
+                           target=col(val)[!is.na(val)]-1,
+                           weight=val[!is.na(val)])
             if (nrow(conns) == 0){
               conns <- list(source=-1, target=-1, weight=0)
             }
             net <- list()
-            net[["names"]] <- colnames(val)
+            net[["names"]] <- colnames(val)#hc$labels[hc$order]
             net[["links"]] <- conns
             #net[["groups"]] <- as.numeric(cutree(hclust(as.dist(1-val)) ,
             #  k=input$con_knum))
             #net[["groups"]] <- as.numeric(cutree(hclust(as.dist(1-val)) , k=1))
             net[["groups"]] <- as.numeric(cutree(hc, k=input$con_knum))
-            net[["titles"]] <- colnames(val)
+            net[["titles"]] <- hc$labels[hc$order]
             net[["colors"]] <- 
               rainbow(input$con_knum,
-                      alpha=NULL)[cutree(hc,input$con_knum)[hc$labels[hc$order]]]
+                      alpha=NULL)[cutree(hc,input$con_knum)[colnames(val)]]
             #if(input$either=="sample"){
             #  net[["colors"]] <- colorx()
             #}
@@ -383,7 +395,8 @@ setMethod("display",
             return()
           }
           else{
-            gp <- ggheat(my_mat,exp(input$tweak),colorx(),colory(),hc(),hc2(),
+            gp <- ggheat(my_mat,exp(input$tweak),color_samples(),color_probes(),
+                         hc(t(tmpdata())),hc(tmpdata()),
                          input$color1,input$color2,input$color3,input$rainbow)
             svgjs <- grid2jssvg(gp)
             return(svgjs)
@@ -391,64 +404,56 @@ setMethod("display",
         })
         
         #Clustering
-        hc <- reactive({
-          hclust(dist(t(data()),method = input$dist_method), input$hc_method)
-        })
+        hc <- function(d){
+          hclust(dist(t(d),method = input$dist_method), input$hc_method)
+        }
         
-        hc2 <- reactive({
-          hclust(dist(data(),method = input$dist_method), input$hc_method)
-        })
+        #Distance Matrix
+        
+        dm <- function(d){
+          as.matrix(dist(t(d), diag=TRUE, upper=TRUE, method=input$dist_method))
+        }
         
         #Color Dendrogram
         output$dendro <- renderPlot({
           nc <- input$con_knum
-          hc <- hc()
+          hc <- hc(data())
           
           dhc <- as.dendrogram(hc)
           cut <- cutree(hc,nc)[hc$labels[hc$order]]
           
           colLab <- local({
-              mycols <- grDevices::rainbow(nc)
-              i <- 0
-              function(n) {
-                  if(is.leaf(n)) {
-                      a <- attributes(n)
-                      i <<- i+1
-                      attr(n, "nodePar") <- c(a$nodePar,
-                                              list(lab.col = mycols[cut[i]]))
-                      attr(n, "edgePar") <- c(a$nodePar,
-                                              list(col = mycols[cut[i]]))
-                  }
-                  n
+            mycols <- grDevices::rainbow(nc)
+            i <- 0
+            function(n) {
+              if(is.leaf(n)) {
+                a <- attributes(n)
+                i <<- i+1
+                attr(n, "nodePar") <- c(a$nodePar,
+                                        list(lab.col = mycols[cut[i]]))
+                attr(n, "edgePar") <- c(a$nodePar,
+                                        list(col = mycols[cut[i]]))
               }
+              n
+            }
           })
           dL <- dendrapply(dhc, colLab)
           plot(dL)
         })
         
         #More cluster group coloring for x/y axis and network nodes
-        colorx <- reactive({
-          hc <- hc2()
+        color_samples <- reactive({
+          d <- tmpdata()
+          hc <- hc(d)
           nc <- input$con_knum
           rainbow(nc, alpha=NULL)[cutree(hc,nc)[hc$labels[hc$order]]]
         })
         
-        colory <- reactive({
-          hc <- hc()
+        color_probes <- reactive({
+          d <- tmpdata()
+          hc <- hc(t(d))
           nc <- input$con_knum
           rainbow(nc, alpha=NULL)[cutree(hc,nc)[hc$labels[hc$order]]]
-        })
-        
-        colorxa <- reactive({
-          hc <- hc2()
-          nc <- input$con_knum
-          rainbow(nc,alpha=NULL)[cutree(hc,nc)]
-        })
-        
-        colorya <- reactive({
-          hc <- hc()
-          nc <- input$con_knum
-          rainbow(nc,alpha=NULL)[cutree(hc,nc)]
         })
         
         #  Close Button  
@@ -461,10 +466,9 @@ setMethod("display",
         })
         
       })
-
+    
     #myRunApp(app, ...)
     runApp(app)
   })
-  
 
 
