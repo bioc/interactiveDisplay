@@ -2,10 +2,10 @@
 \name{gridsvgjs}
 \alias{gridsvgjs}
 \alias{gridsvgjs,ANY-method}
-\title{gridsvgjs: open shiny application for grid plot}
+\title{gridsvgjs: Open a Shiny Application for a Grid Plot}
 
 \description{
-  This opens a shiny visualation application in the browser
+  This opens a shiny visualization application in the browser
   based on the submitted plot.
 }
 \usage{
@@ -15,7 +15,8 @@ gridsvgjs(object)
   \item{object}{a grid based plot to display in browser}
 }
 \value{
-  Any grid based plot.  For example: a plot produced with lattice, ggplot2 or biobase libraries.
+  Any grid based plot.  For example: a plot produced with lattice, ggplot2 or 
+  biobase libraries.
 }
 \seealso{
   \url{http://bioconductor.org/packages/2.13/bioc/html/interactiveDisplay.html}
@@ -24,7 +25,7 @@ gridsvgjs(object)
 
 if(interactive()) {
 
-## Send grid based plot to browser as a Javascript interactive SVG
+## Send a grid based plot to a browser as a Javascript interactive SVG
 
 library(ggplot2)
 data(mtcars)

@@ -11,7 +11,7 @@
 
 \title{display: Open a Shiny application for a Bioconductor object}
 \description{
-  This opens a shiny visualation application in the browser
+  This opens a shiny visualization application in the browser
   based on the submitted object.
 }
 \usage{
@@ -32,7 +32,7 @@ display(object, ...)
 
 if(interactive()) {
 
-## draw an SummarizedExperiment object
+## draw a SummarizedExperiment object
 data(se)
 display(se)
 

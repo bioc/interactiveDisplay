@@ -30,13 +30,15 @@ suppressWarnings(suppressPackageStartupMessages(library(interactiveDisplay)))
 
 [interactiveDisplay](http://bioconductor.org/packages/2.13/bioc/html/interactiveDisplay.html)
 
-`interactiveDisplay` uses the function `display()` to host a browser based application 
-on the fly using the Shiny package.  Currently 4 bioconductor objects: Granges, GrangesList, ExpressionSet 
-and SummarizedExperiment are supported with tailored methods.  In some cases, grid based plots
-are converted to SVG with the gridSVG package and additional Javascript is appended for simple
-mousewheel zoom and panning.  Shiny UI elements are available based on the object passed to
-`display()`.  These allow the user to modify how the plot is displayed, and for some objects, 
-modify or subset the data and send it back to the console.
+`interactiveDisplay` uses the function `display()` to host a browser based 
+application on the fly using the Shiny package.  Currently 4 Bioconductor 
+objects: Granges, GrangesList, ExpressionSet and SummarizedExperiment are 
+supported with tailored methods.  In some cases, grid based plots are converted 
+to SVG with the gridSVG package and additional JavaScript is appended for simple
+mousewheel zoom and panning.  Shiny UI elements are available based on the 
+object passed to `display()`.  These allow the user to modify how the plot is 
+displayed, and for some objects, modify or subset the data and send it back to 
+the console.
 
 ## Methods
 
@@ -73,7 +75,8 @@ display(expr)
 
 ## Additional Functionality
 
-In addition to the main `display()` function, the user can send any grid based plot to the browser as a JS interactive SVG.
+In addition to the main `display()` function, the user can send any grid based 
+plot to the browser as a JS interactive SVG.
 
 ```{r gridsvgjs_demo, eval=FALSE}
 library(ggplot2)
@@ -88,7 +91,6 @@ gridsvgjs(qp)
 Shiny <br/>
 Joe Cheng and Winston Chang <br/>
 http://www.rstudio.com/shiny/ <br/>
-
 
 Force Layout <br/>
 Jeff Allen <br/>
