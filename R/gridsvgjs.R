@@ -54,5 +54,5 @@ setMethod("gridsvgjs",
                 })
               }
             )
-            runApp(app)
+            runApp(app, ...)
           })

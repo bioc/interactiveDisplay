@@ -116,7 +116,7 @@ heatcolor3 <- function(inputId3) {
 setMethod("display",  
   signature(object = c("ExpressionSet")), 
   function(object, ...){
-        
+       
     app <- list(
       ui =
         bootstrapPage(
@@ -471,7 +471,7 @@ setMethod("display",
       })
 
     #myRunApp(app, ...)
-    runApp(app)
+    runApp(app, ...)
   })
   
 
