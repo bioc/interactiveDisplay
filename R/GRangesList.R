@@ -259,5 +259,5 @@ setMethod("display",
       }
     )
     #myRunApp(app, ...)
-    runApp(app)
+    runApp(app, ...)
   })
