@@ -43,7 +43,7 @@ function(object){
   HTML("</script>"),
   
   HTML("<script type='text/javascript'>"),
-  includeHTML(system.file("www", "jscolor.js",
+  includeHTML(system.file("www/jscolor", "jscolor.js",
                           package="interactiveDisplay")),
   HTML("</script>"))
 }
