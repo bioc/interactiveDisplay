@@ -1,10 +1,10 @@
-setGeneric("gridsvgjs", function(object)
+setGeneric("gridsvgjs", function(object, ...)
   standardGeneric("gridsvgjs")
 )
 
 setMethod("gridsvgjs", 
           signature(object = c("ANY")),
-          function(object){
+          function(object, ...){
             
             app <- list(
               ui =
