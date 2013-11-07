@@ -16,6 +16,8 @@ importFrom(gridSVG, grid.export)
 importFrom(reshape2,melt)
 import(shiny)
 
+import(ggbio)
+
 importFrom(plyr,ldply)
 importFrom(grid, convertUnit)
 importFrom(RColorBrewer,brewer.pal)

@@ -33,6 +33,15 @@ setMethod("display",
       ui = bootstrapPage(        
         .jstags(),  
         .csstags(),
+        shiny::tags$head(
+          shiny::tags$style(type='text/css', "
+
+            cplot {
+              height: 800px;
+            }
+        
+            ")
+        ),
         h3("Genomic Ranges"),
         .loading_gif(),
         .setSidebarPanel(),
@@ -107,6 +116,20 @@ setMethod("display",
               to=input$window[2])
             return(pt)
           }
+        })
+        
+        # The circle plot
+        
+        #  The heatmap SVG
+        output$cplot <- renderUI({
+
+          p <- ggplot() + layout_circle(object, geom = "ideo", fill = "gray70", radius = 30, trackWidth = 4)
+          p <- p + layout_circle(object, geom = "scale", size = 2, radius = 35, trackWidth = 2)
+          #p <- p + layout_circle(object, geom = "text", aes(label = seqnames), vjust = 0, radius = 38, trackWidth = 7)
+          p <- p + layout_circle(object, geom = "rect", color = "steelblue", radius = 23 ,trackWidth = 6)
+          
+            svgjs <- grid2jssvg(p)
+            return(svgjs)
         })
         
         #  Sets max position for the view window slider for the current

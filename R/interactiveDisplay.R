@@ -87,9 +87,11 @@ function(object){
 
 ## helper for setting up main panel
 .GR_GRL_setMainPanel <- function(){
-  mainPanel(  
+  mainPanel(
+    
     tabsetPanel(
       tabPanel("Plot", plotOutput("plotname")),
+      tabPanel("Circle Plot", uiOutput("cplot")),
       tabPanel("All Ranges in Object", uiOutput("fulltable")),
       tabPanel("Selected Ranges in Current View", uiOutput("rtable")),
       tabPanel("Deposited Selections", uiOutput("btable"))
