@@ -16,6 +16,12 @@
     HTML("<hr />"),
     selectInput("strand", "Choose a Strand:", choices = c("both","+","-")),
     HTML("<hr />"),
+    sliderInput(inputId = "linkn",
+                label = "Generate Fake Links:",
+                min = 1, max = 1000,
+                value = 10, step = 1
+    ),
+    HTML("<hr />"),
     actionButton("bankbutton", "Deposit Ranges in View"),
     HTML("<hr />"),
     actionButton("clearbutton", "Clear Deposit"),
@@ -33,6 +39,15 @@ setMethod("display",
       ui = bootstrapPage(        
         .jstags(),  
         .csstags(),
+        shiny::tags$head(
+          shiny::tags$style(type='text/css', "
+
+        cplot {
+          height: 800px;
+        }
+
+        ")
+        ),
         h3("Genomic Ranges"),
         .loading_gif(),
         .setSidebarPanel(),
@@ -133,11 +148,54 @@ setMethod("display",
                                  color = "steelblue", 
                                  radius = 23 , 
                                  trackWidth = 6)
+
+          gr <- object
+          gr <- sample(gr,input$linkn)
+          values(gr)$to.gr <- sample(gr,input$linkn)
+
+
+          values(gr)$rearrangements <- ifelse(as.character(seqnames(gr)) == as.character(seqnames((values(gr)$to.gr))), "intrachromosomal", "interchromosomal")
+
+
+          p <- p + layout_circle(gr, 
+                                        geom = "link", 
+                                        linked.to = "to.gr", 
+                                        aes(color = rearrangements), 
+                                        radius = 22, 
+                                        trackWidth = 1)
           p
         })
         
-        output$cplot <- svgcheckrender(cplot(),sflag, session)
-        
+        if(sflag==TRUE){
+          output$cplot <- renderUI({
+            progress <- Progress$new(session, min=1, max=10)
+            on.exit(progress$close())
+
+            progress$set(message = 'Calculation in progress',
+                         detail = 'This may take a while...')
+
+            for (i in 1:10) {
+              progress$set(value = i)
+              Sys.sleep(0.1)
+            }
+            grid2jssvg(cplot())
+          })
+        }
+        else{
+          output$cplot <- renderPlot({
+            progress <- Progress$new(session, min=1, max=10)
+            on.exit(progress$close())
+
+            progress$set(message = 'Calculation in progress',
+                         detail = 'This may take a while...')
+
+            for (i in 1:10) {
+              progress$set(value = i)
+              Sys.sleep(0.1)
+            }
+            cplot()
+          })        
+        }
         
         #  Sets max position for the view window slider for the current
         #  chromosome.

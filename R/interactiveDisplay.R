@@ -186,41 +186,6 @@ grid2jssvg <- function(gp){
 #  give the user a choice between rendering a plot as svg or to use the default
 #  Shiny plot function.
 
-svgcheckrender <- function(contents,sflag,session){
-  if(sflag==TRUE){
-    renderUI({
-      
-      progress <- Progress$new(session, min=1, max=10)
-      on.exit(progress$close())
-      
-      progress$set(message = 'Calculation in progress',
-                   detail = 'This may take a while...')
-      
-      for (i in 1:10) {
-        progress$set(value = i)
-        Sys.sleep(0.1)
-      }
-      
-      grid2jssvg(contents)})
-  }
-  else{
-    renderPlot({
-      
-      progress <- Progress$new(session, min=1, max=10)
-      on.exit(progress$close())
-      
-      progress$set(message = 'Calculation in progress',
-                   detail = 'This may take a while...')
-      
-      for (i in 1:10) {
-        progress$set(value = i)
-        Sys.sleep(0.1)
-      }
-      
-      contents})
-  }
-}
-
 svgcheckout <- function(contents,sflag){
   if(sflag==TRUE){
     uiOutput(contents)
