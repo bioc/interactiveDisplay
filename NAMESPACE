@@ -17,6 +17,7 @@ importFrom(reshape2,melt)
 import(shiny)
 
 import(ggbio)
+import(shinyIncubator)
 
 importFrom(plyr,ldply)
 importFrom(grid, convertUnit)
