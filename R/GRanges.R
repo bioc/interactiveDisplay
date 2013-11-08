@@ -25,7 +25,7 @@
 
 setMethod("display", 
   signature(object = "GRanges"), 
-  function(object, ...){
+  function(object, sflag = TRUE, ...){
     
     mcolnames <- as.character(names(mcols(object)))
     
@@ -33,22 +33,13 @@ setMethod("display",
       ui = bootstrapPage(        
         .jstags(),  
         .csstags(),
-        shiny::tags$head(
-          shiny::tags$style(type='text/css', "
-
-            cplot {
-              height: 800px;
-            }
-        
-            ")
-        ),
         h3("Genomic Ranges"),
         .loading_gif(),
         .setSidebarPanel(),
-        .GR_GRL_setMainPanel()
+        .GR_GRL_setMainPanel(sflag)
       ),
       
-      server = function(input, output){
+      server = function(input, output, session){
         
         # This stores parameters for subsetted GRanges per chromosome as a list.
         bank <- list()
@@ -119,18 +110,34 @@ setMethod("display",
         })
         
         # The circle plot
-        
-        #  The heatmap SVG
-        output$cplot <- renderUI({
 
-          p <- ggplot() + layout_circle(object, geom = "ideo", fill = "gray70", radius = 30, trackWidth = 4)
-          p <- p + layout_circle(object, geom = "scale", size = 2, radius = 35, trackWidth = 2)
-          #p <- p + layout_circle(object, geom = "text", aes(label = seqnames), vjust = 0, radius = 38, trackWidth = 7)
-          p <- p + layout_circle(object, geom = "rect", color = "steelblue", radius = 23 ,trackWidth = 6)
-          
-            svgjs <- grid2jssvg(p)
-            return(svgjs)
+        cplot <- reactive({
+
+          p <- ggplot() + layout_circle(object,
+                                        geom = "ideo",
+                                        fill = "gray70",
+                                        radius = 30,
+                                        trackWidth = 4)
+          p <- p + layout_circle(object,
+                                 geom = "scale",
+                                 size = 2, radius = 35,
+                                 trackWidth = 2)
+          #p <- p + layout_circle(object,
+          #                       geom = "text", 
+          #                       aes(label = seqnames), 
+          #                       vjust = 0, 
+          #                       radius = 38, 
+          #                       trackWidth = 7)
+          p <- p + layout_circle(object, 
+                                 geom = "rect", 
+                                 color = "steelblue", 
+                                 radius = 23 , 
+                                 trackWidth = 6)
+          p
         })
+        
+        output$cplot <- svgcheckrender(cplot(),sflag, session)
+        
         
         #  Sets max position for the view window slider for the current
         #  chromosome.

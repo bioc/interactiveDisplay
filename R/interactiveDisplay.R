@@ -86,12 +86,12 @@ function(object){
 
 
 ## helper for setting up main panel
-.GR_GRL_setMainPanel <- function(){
+.GR_GRL_setMainPanel <- function(sflag){
   mainPanel(
-    
+    progressInit(),
     tabsetPanel(
       tabPanel("Plot", plotOutput("plotname")),
-      tabPanel("Circle Plot", uiOutput("cplot")),
+      tabPanel("Circle Plot", svgcheckout("cplot",sflag)),
       tabPanel("All Ranges in Object", uiOutput("fulltable")),
       tabPanel("Selected Ranges in Current View", uiOutput("rtable")),
       tabPanel("Deposited Selections", uiOutput("btable"))
@@ -179,6 +179,55 @@ grid2jssvg <- function(gp){
   xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' width='100%' 
   height='100%'>",jscode,mysvg4,"</svg>",sep=""))
   htmlxml
+}
+
+
+#  This pair of functions can be used in cases where it is desirable to
+#  give the user a choice between rendering a plot as svg or to use the default
+#  Shiny plot function.
+
+svgcheckrender <- function(contents,sflag,session){
+  if(sflag==TRUE){
+    renderUI({
+      
+      progress <- Progress$new(session, min=1, max=10)
+      on.exit(progress$close())
+      
+      progress$set(message = 'Calculation in progress',
+                   detail = 'This may take a while...')
+      
+      for (i in 1:10) {
+        progress$set(value = i)
+        Sys.sleep(0.1)
+      }
+      
+      grid2jssvg(contents)})
+  }
+  else{
+    renderPlot({
+      
+      progress <- Progress$new(session, min=1, max=10)
+      on.exit(progress$close())
+      
+      progress$set(message = 'Calculation in progress',
+                   detail = 'This may take a while...')
+      
+      for (i in 1:10) {
+        progress$set(value = i)
+        Sys.sleep(0.1)
+      }
+      
+      contents})
+  }
+}
+
+svgcheckout <- function(contents,sflag){
+  if(sflag==TRUE){
+    uiOutput(contents)
+  }
+  else{
+    plotOutput(contents)
+  }
 }
 
 ################################################################################
