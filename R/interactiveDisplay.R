@@ -88,10 +88,23 @@ function(object){
 ## helper for setting up main panel
 .GR_GRL_setMainPanel <- function(sflag){
   mainPanel(
+    shiny::tags$head(
+      shiny::tags$style(type='text/css', "
+
+    cplot {
+      height: 800px;
+    }
+
+    svg {
+      height: 800px;
+    }
+
+    ")
+    ),
     #progressInit(),
     tabsetPanel(
       tabPanel("Plot", plotOutput("plotname")),
-      #tabPanel("Circle Plot", svgcheckout("cplot",sflag)),
+      tabPanel("Circle Plot", svgcheckout("cplot",sflag)),
       tabPanel("All Ranges in Object", dataTableOutput("fulltable")),
       tabPanel("Selected Ranges in Current View", dataTableOutput("rtable")),
       tabPanel("Deposited Selections", dataTableOutput("btable"))
