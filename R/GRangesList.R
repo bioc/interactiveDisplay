@@ -26,7 +26,7 @@
 
 setMethod("display", 
   signature(object = "GRangesList"), 
-  function(object, ...){
+  function(object,  sflag = TRUE, ...){
         
     app <- list(
       ui = bootstrapPage(        
@@ -35,10 +35,10 @@ setMethod("display",
         h3("Genomic Ranges List"),
         .loading_gif(),
         .GL_setSidebarPanel(),
-        .GR_GRL_setMainPanel()
+        .GR_GRL_setMainPanel(sflag)
       ),
       
-      server = function(input, output){
+      server = function(input, output, session){
         
         # This stores parameters for subsetted GRanges per chromosome as a list.
         bank <- list()
@@ -61,14 +61,14 @@ setMethod("display",
         
         #  The full submitted GRanges object converted to a data frame for the 
         #  perpose of rendering a table in shiny. 
-        output$fulltable <- renderTable({
+        output$fulltable <- renderDataTable({
           t_object <- t_object()
           as.data.frame(t_object)
         })
         
         #  The subsetted GRanges object converted to a data frame for the 
         #  perpose of rendering a table in shiny.
-        output$rtable <- renderTable({
+        output$rtable <- renderDataTable({
           s_object <- s_object()
           as.data.frame(s_object)
         })
@@ -114,6 +114,82 @@ setMethod("display",
             return(pt)
           }
         })
+        
+        
+        # The circle plot
+        
+        cplot <- reactive({
+          
+          p <- ggplot() + layout_circle(object,
+                                        geom = "ideo",
+                                        fill = "gray70",
+                                        radius = 30,
+                                        trackWidth = 4)
+          p <- p + layout_circle(object,
+                                 geom = "scale",
+                                 size = 2, radius = 35,
+                                 trackWidth = 2)
+          #p <- p + layout_circle(object,
+          #                       geom = "text", 
+          #                       aes(label = seqnames), 
+          #                       vjust = 0, 
+          #                       radius = 38, 
+          #                       trackWidth = 7)
+          p <- p + layout_circle(object, 
+                                 geom = "rect", 
+                                 color = "steelblue", 
+                                 radius = 23 , 
+                                 trackWidth = 6)
+          
+          gr <- object
+          gr <- sample(gr,input$linkn)
+          values(gr)$to.gr <- sample(gr,input$linkn)
+          
+          
+          values(gr)$rearrangements <- ifelse(as.character(seqnames(gr)) == as.character(seqnames((values(gr)$to.gr))), "intrachromosomal", "interchromosomal")
+          
+          
+          p <- p + layout_circle(gr, 
+                                 geom = "link", 
+                                 linked.to = "to.gr", 
+                                 aes(color = rearrangements), 
+                                 radius = 22, 
+                                 trackWidth = 1)
+          p
+        })
+        
+        if(sflag==TRUE){
+          output$cplot <- renderUI({
+            #progress <- Progress$new(session, min=1, max=10)
+            #on.exit(progress$close())
+            
+            #progress$set(message = 'Calculation in progress',
+            #             detail = 'This may take a while...')
+            
+            #for (i in 1:10) {
+            #  progress$set(value = i)
+            #  Sys.sleep(0.1)
+            #}
+            grid2jssvg(cplot())
+          })
+        }
+        else{
+          output$cplot <- renderPlot({
+            #progress <- Progress$new(session, min=1, max=10)
+            #on.exit(progress$close())
+            
+            #progress$set(message = 'Calculation in progress',
+            #             detail = 'This may take a while...')
+            
+            #for (i in 1:10) {
+            #  progress$set(value = i)
+            #  Sys.sleep(0.1)
+            #}
+            cplot()
+          })        
+        }
+        
+        
         
         #  Sets max position for the view window slider for the current
         #  chromosome.
@@ -235,7 +311,7 @@ setMethod("display",
           isolate({
             bank[[input$gr]][[input$chr]] <<- c(input$gr,input$chr,input$strand,
               input$window[1],input$window[2],input$width[1],input$width[2])
-            output$btable <- renderTable({
+            output$btable <- renderDataTable({
               df <- ldply(lapply(bank, ldply))[,-1]
               colnames(df) <- c("GRange","Chromosome","Strand","Min Position",
                 "Max Position","Min Width","Max Width")
@@ -250,7 +326,7 @@ setMethod("display",
             return()
           isolate({
             bank <<- list()
-            output$btable <- renderTable({
+            output$btable <- renderDataTable({
               return()
             })
           })

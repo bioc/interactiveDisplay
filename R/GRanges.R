@@ -71,13 +71,13 @@ setMethod("display",
         
         #  The full submitted GRanges object converted to a data frame for the
         #  purpose of rendering a table in shiny. 
-        output$fulltable <- renderTable({
+        output$fulltable <- renderDataTable({
           as.data.frame(object)
         })
         
         #  The subsetted GRanges object converted to a data frame for the
         #  purpose of rendering a table in shiny.
-        output$rtable <- renderTable({
+        output$rtable <- renderDataTable({
           s_object <- s_object()
           as.data.frame(s_object)
         })
@@ -168,31 +168,31 @@ setMethod("display",
         
         if(sflag==TRUE){
           output$cplot <- renderUI({
-            progress <- Progress$new(session, min=1, max=10)
-            on.exit(progress$close())
+            #progress <- Progress$new(session, min=1, max=10)
+            #on.exit(progress$close())
 
-            progress$set(message = 'Calculation in progress',
-                         detail = 'This may take a while...')
+            #progress$set(message = 'Calculation in progress',
+            #             detail = 'This may take a while...')
 
-            for (i in 1:10) {
-              progress$set(value = i)
-              Sys.sleep(0.1)
-            }
+            #for (i in 1:10) {
+            #  progress$set(value = i)
+            #  Sys.sleep(0.1)
+            #}
             grid2jssvg(cplot())
           })
         }
         else{
           output$cplot <- renderPlot({
-            progress <- Progress$new(session, min=1, max=10)
-            on.exit(progress$close())
+            #progress <- Progress$new(session, min=1, max=10)
+            #on.exit(progress$close())
 
-            progress$set(message = 'Calculation in progress',
-                         detail = 'This may take a while...')
+            #progress$set(message = 'Calculation in progress',
+            #             detail = 'This may take a while...')
 
-            for (i in 1:10) {
-              progress$set(value = i)
-              Sys.sleep(0.1)
-            }
+            #for (i in 1:10) {
+            #  progress$set(value = i)
+            #  Sys.sleep(0.1)
+            #}
             cplot()
           })        
         }
@@ -340,7 +340,7 @@ setMethod("display",
           isolate({
             bank[[input$chr]] <<- c(input$strand,input$window[1],
               input$window[2],input$width[1],input$width[2])
-            output$btable <- renderTable({
+            output$btable <- renderDataTable({
               df <- t(as.data.frame(bank))
               colnames(df) <- c("Strand","Min Position","Max Position",
                 "Min Width","Max Width")
@@ -355,7 +355,7 @@ setMethod("display",
             return()
           isolate({
             bank <<- list()
-            output$btable <- renderTable({
+            output$btable <- renderDataTable({
               return()
             })
           })

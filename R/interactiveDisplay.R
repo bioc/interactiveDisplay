@@ -91,10 +91,10 @@ function(object){
     progressInit(),
     tabsetPanel(
       tabPanel("Plot", plotOutput("plotname")),
-      tabPanel("Circle Plot", svgcheckout("cplot",sflag)),
-      tabPanel("All Ranges in Object", uiOutput("fulltable")),
-      tabPanel("Selected Ranges in Current View", uiOutput("rtable")),
-      tabPanel("Deposited Selections", uiOutput("btable"))
+      #tabPanel("Circle Plot", svgcheckout("cplot",sflag)),
+      tabPanel("All Ranges in Object", dataTableOutput("fulltable")),
+      tabPanel("Selected Ranges in Current View", dataTableOutput("rtable")),
+      tabPanel("Deposited Selections", dataTableOutput("btable"))
     ),
     uiOutput("mcoltabset")
   )
