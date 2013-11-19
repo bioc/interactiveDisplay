@@ -88,7 +88,7 @@ function(object){
 ## helper for setting up main panel
 .GR_GRL_setMainPanel <- function(sflag){
   mainPanel(
-    progressInit(),
+    #progressInit(),
     tabsetPanel(
       tabPanel("Plot", plotOutput("plotname")),
       #tabPanel("Circle Plot", svgcheckout("cplot",sflag)),
