@@ -49,6 +49,13 @@ heatcolor3 <- function(inputId3) {
     uiOutput("edge"),
     uiOutput("gen_text"),
     HTML("<hr />"),
+    sliderInput(inputId = "charge",
+                label = "Force Layout Charge",
+                min = -2000, max = -10, value = -800, step = 1),
+    sliderInput(inputId = "linkDistance",
+                label = "Force Layout Link Distance",
+                min = 10, max = 200, value = 80, step = 1),
+    HTML("<hr />"),
     numericInput("con_knum", "Number of Clusters:", 5),
     selectInput("hc_method", "Hierarchical Clustering Method",
       choices = c("ward", "single", "complete", "average", 
@@ -343,6 +350,8 @@ setMethod("display",
             net[["colors"]] <- 
               rainbow(input$con_knum,
                       alpha=NULL)[cutree(hc,input$con_knum)[colnames(val)]]
+            net[["charge"]] <- input$charge 
+            net[["linkDistance"]] <- input$linkDistance
             #if(input$either=="sample"){
             #  net[["colors"]] <- colorx()
             #}

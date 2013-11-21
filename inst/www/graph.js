@@ -28,16 +28,16 @@
       }
 
 
-      var width = 800;
-      var height = 800;
+      var width = $("#svg").width();
+      var height = $("#svg").height();
     
 	  //var color = d3.scale.category20();
       var lin = data.links
       var force = d3.layout.force()
         .nodes(nodes)
         .links(lin)
-        .charge(-120)
-        .linkDistance(50)        
+        .charge(data.charge)
+        .linkDistance(data.linkDistance)        
         .size([width, height])
         .start();
       
