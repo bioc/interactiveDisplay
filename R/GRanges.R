@@ -344,6 +344,7 @@ setMethod("display",
               df <- t(as.data.frame(bank))
               colnames(df) <- c("Strand","Min Position","Max Position",
                 "Min Width","Max Width")
+              df <- cbind(rownames(df),df)
               df
             })
           })

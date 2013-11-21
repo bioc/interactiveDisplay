@@ -315,6 +315,7 @@ setMethod("display",
               df <- ldply(lapply(bank, ldply))[,-1]
               colnames(df) <- c("GRange","Chromosome","Strand","Min Position",
                 "Max Position","Min Width","Max Width")
+              df <- as.data.frame(df)
               df
             })
           })
