@@ -107,7 +107,8 @@ heatcolor3 <- function(inputId3) {
               summary if available."),
         HTML("<hr />"),
         tableOutput("gotest1"),
-        tableOutput("gotest2")
+        HTML("<hr />"),
+        dataTableOutput("gotest2")
       )
     )
   )
@@ -208,10 +209,10 @@ setMethod("display",
               }
             }
           }
-        })
+        },include.rownames=FALSE)
         
         #  GO summary
-        output$gotest2 <- renderTable({
+        output$gotest2 <- renderDataTable({
           if(length(input$probe)!=1){
             return()
           }
@@ -226,7 +227,7 @@ setMethod("display",
               if(class(pkg)=="ChipDb"){
                 res <- suppressWarnings(select(pkg, input$probe,
                   c("ENTREZID","GENENAME","GO"), "PROBEID"))
-                res2 <- head(suppressWarnings(select(GO.db, res$GO, "TERM", "GOID")))
+                res2 <- (suppressWarnings(select(GO.db, res$GO, "TERM", "GOID")))
                 return(res2)
               }
               else{
