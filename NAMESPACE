@@ -17,6 +17,8 @@ importFrom(reshape2,melt)
 import(shiny)
 
 import(ggbio)
+import(Category)
+import(GOstats)
 #import(shinyIncubator)
 
 importFrom(plyr,ldply)

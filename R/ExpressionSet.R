@@ -30,6 +30,7 @@ heatcolor3 <- function(inputId3) {
     HTML("<hr />"),
     selectInput("either", "Network/Dendrogram View:  Sample or Probe:",
       choices = c("probe","sample")),
+    selectInput("gogroup", "Cluster Wide GO Summary",choices = c("1","2","3","4","5")),
     HTML("<hr />"),
     uiOutput("choose_probe"),
     HTML("<hr />"),
@@ -108,7 +109,7 @@ heatcolor3 <- function(inputId3) {
       tabPanel("Dendrogram",plotOutput("dendro"))
     ),
     tabsetPanel(
-      tabPanel("GO Summary",
+      tabPanel("Individual Probe GO Summary",
         HTML("Use the sidebar drop-down or simply click on probe nodes in the 
               force layout plot in the Network View tab to view a gene ontology 
               summary if available."),
@@ -116,6 +117,9 @@ heatcolor3 <- function(inputId3) {
         tableOutput("gotest1"),
         HTML("<hr />"),
         dataTableOutput("gotest2")
+      ),
+      tabPanel("Probe Cluster GO Summary",
+        dataTableOutput("gotest3")
       )
     )
   )
@@ -245,6 +249,58 @@ setMethod("display",
           }
         })
         
+        #  GO summary
+        output$gotest3 <- renderDataTable({
+          if(length(input$probe)!=1){
+            return()
+          }
+          else{
+            pkgName <- paste(annotation(object),".db",sep="")
+            try(require(pkgName,character.only=TRUE),silent=TRUE)
+            if(exists(pkgName)==FALSE){
+              return(as.data.frame("No annotation package available"))
+            }
+            else{
+              pkg <- get(pkgName)
+              if(class(pkg)=="ChipDb"){
+                
+                d <- tmpdata()
+                hc <- hc(d)
+                nc <- input$con_knum
+                
+                res <- suppressWarnings(select(pkg, keys(hgu95av2.db),
+                                               c("ENTREZID","GENENAME","GO"), "PROBEID"))
+                resa <- cbind(res$PROBEID,res$GO)
+                resb <- resa[!duplicated(resa),]
+                resc <- resb[!is.na(resb[,2]),]
+
+                
+                map <- (suppressWarnings(select(GO.db, resc[,2], "TERM")))
+                map <- cbind(resc[,1],map)
+                names(map) <- c("PROBEID","GOID","TERM")
+                
+                #sets <- Filter(function(x) length(x) >= 10, split(map$PROBEID, map$PFAM))
+                sets <- Filter(function(x) length(x) >= 100, split(map$PROBEID, map$TERM))
+                
+                universe <- unlist(sets, use.names=FALSE)
+                
+                siggenes <- hc$labels[cutree(hc,nc)==input$gogroup]
+                sigsets <- Map(function(x, y) x[x %in% y], sets, MoreArgs=list(y=siggenes))
+                result <- as.data.frame(hyperg(sets, sigsets, universe))
+                result <- result[rev(order(as.numeric(result[,6]))),]
+                result <- cbind(rownames(result),result)
+                
+                return(as.data.frame(result))
+                
+              }
+              else{
+                return(as.data.frame(
+                  "Object does not have a ChipDb annotation"))
+              }
+            }
+          }
+        })
+                
         #  Data for network view, sample or probe
         data <- reactive({
           data <- tmpdata()
@@ -468,7 +524,7 @@ setMethod("display",
           nc <- input$con_knum
           rainbow(nc, alpha=NULL)[cutree(hc,nc)[hc$labels[hc$order]]]
         })
-                
+                     
         #  Close Button  
         observe({
           if (input$closebutton == 0)

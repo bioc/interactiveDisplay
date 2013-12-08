@@ -2,6 +2,29 @@
 ###   GRanges
 ################################################################################
 
+selDataTableOutput <- function (outputId){
+  tagList(singleton(tags$head(tags$link(rel = "stylesheet", 
+    type = "text/css", href = "shared/datatables/css/DT_bootstrap.css"),
+    tags$style(type="text/css", ".rowsSelected td{background-color: rgba(112,164,255,0.2) !important}"),
+    tags$style(type="text/css", ".selectable div table tbody tr{cursor: hand; cursor: pointer;}"),
+    tags$style(type="text/css",".selectable div table tbody tr td{
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;}"),                          
+    tags$script(src = "shared/datatables/js/jquery.dataTables.min.js"), 
+    tags$script(src = "shared/datatables/js/DT_bootstrap.js"),
+    #tags$script(src = "inst/www/js/DTbinding.js"))),
+    HTML("<script type='text/javascript'>"),
+      includeHTML(system.file("www", "DTbinding.js",
+                                        package="interactiveDisplay")),
+    HTML("</script>"))),
+  div(id = outputId, class = "shiny-datatable-output selectable"))
+}
+
+
 ## helper for setting up sidebar
 .setSidebarPanel <- function(){
   sidebarPanel(
@@ -25,7 +48,9 @@
     actionButton("bankbutton", "Deposit Ranges in View"),
     HTML("<hr />"),
     actionButton("clearbutton", "Clear Deposit"),
-    actionButton("savebutton", "Save to Console")
+    actionButton("savebutton", "Save Deposited to Console"),
+    actionButton("btnSend", "Save Highlighted Ranges to Console")
+    
   )
 }
 
@@ -331,6 +356,18 @@ setMethod("display",
             subgr <- do.call(c, unname(as.list(subgrl)))
             stopApp(returnValue=subgr)
           })
+        })
+        
+        #  Manual Save Button  
+        observe({
+          if (input$btnSend > 0){
+            isolate({
+              len <- length(names(as.data.frame(object)))
+              df <- as.data.frame(matrix(input$fulltable,ncol=len,byrow=TRUE))
+              names(df) <- names(as.data.frame(object))
+              stopApp(return = df)
+            })
+          }
         })
         
         #  Deposit Button

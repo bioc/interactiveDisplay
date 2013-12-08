@@ -105,7 +105,8 @@ function(object){
     tabsetPanel(
       tabPanel("Plot", plotOutput("plotname")),
       tabPanel("Circle Plot", svgcheckout("cplot",sflag)),
-      tabPanel("All Ranges in Object", dataTableOutput("fulltable")),
+      #tabPanel("All Ranges in Object", dataTableOutput("fulltable")),
+      tabPanel("All Ranges in Object", selDataTableOutput("fulltable")),
       tabPanel("Selected Ranges in Current View", dataTableOutput("rtable")),
       tabPanel("Deposited Selections", dataTableOutput("btable"))
     ),
