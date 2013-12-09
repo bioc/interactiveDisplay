@@ -73,6 +73,20 @@ data(expr)
 display(expr)
 ```
 
+## subsetting
+
+Many of the display method will have a button that allows you return
+subset values back to the R session.  To use these, couple the intial
+call with an assignment operator like this:
+
+```{r dataframe_demo, eval=FALSE}
+mtcars2 <- display(mtcars)
+```
+
+Once you leave the diplay web gui, the results of the above
+interaction will be captured inside of mtcars2.
+
+
 ## Additional Functionality
 
 In addition to the main `display()` function, the user can send any grid based 
