@@ -31,14 +31,6 @@ $.extend(selectRowBinding, {
     $rows = $(tbl).children().children('.rowsSelected');
     if($rows.length == 0) return -1;
 
-//    uncomment to return row numbers instead 
-//    (would be wrong if table is sorted or filtered)
-
-//    $rows.each(function(row, v){
-//      out[row] = $(v).index() + 1;
-//    });
-//  return out;    
-
     $rows.each(function(row,v) {
       $(this).find("td").each(function(cell,v) {
         if (typeof out[row] === 'undefined') out[row] = [];
@@ -59,3 +51,4 @@ $.extend(selectRowBinding, {
 	}
 });
 Shiny.inputBindings.register(selectRowBinding);
+

@@ -1,12 +1,3 @@
-#needHack <- TRUE # change to false if problem referenced here is solved:
-# https://groups.google.com/forum/#!topic/shiny-discuss/Lhdi7A_csR4
-
-# Note that if needHack is true, you'll have to (I think) restart the shiny app
-# in order for changes to the js file to take effect. 
-
-#source("global.R")
-
-
 .selDataTableOutput <- function (outputId) 
 {
     ## Temp. fragment of HTML
@@ -56,15 +47,8 @@ pageWithSidebar(
 ),
 
 server=
-function(input, output) {
-  
-  output$myTable <- renderDataTable({df}, options = list(bSortClasses = TRUE))
-  
-  # observe({
-  #   print("Click Event")
-  #   print(input$myTable)
-  #   })
-
+function(input, output) {  
+  output$myTable <- renderDataTable({df}, options = list(bSortClasses = TRUE))  
  observe({
     if (input$btnSend > 0)
       isolate({
@@ -76,9 +60,7 @@ function(input, output) {
       })
     })
 })
-
-
-## here is how we run it  (wrap in method for data.frame when done)
+## then run it...
 runApp(app, ...)
 }
 
@@ -95,3 +77,4 @@ setMethod("display",
 
 ## TODO: add support for trapping last usage (for cases where user
 ## accidently calls it without assignment like this : display(df)
+
