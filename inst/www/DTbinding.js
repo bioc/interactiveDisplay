@@ -1,11 +1,25 @@
+$(function() {
+    $("#select_all_rows").click(function(){
+        $(".selectable div table tbody tr").addClass("rowsSelected");
+        $(".selectable div table").trigger("change");
+    });
+
+    $("#deselect_all_rows").click(function(){
+        $(".selectable div table tbody tr").removeClass("rowsSelected");
+        $(".selectable div table").trigger("change");
+    });
+});
+
 $(document).on('click', '.selectable div table tbody tr', function(e){
 	var el = $(this);
-	if (!e.ctrlKey){
+	if (!e.shiftKey){
 		$(this).siblings().removeClass("rowsSelected");
 	}
 	$(this).addClass("rowsSelected", this.clicked);
 	el.trigger("change");
 });	
+
+
 var selectRowBinding = new Shiny.InputBinding();
 $.extend(selectRowBinding, {
 	find: function(scope) {
@@ -24,8 +38,6 @@ $.extend(selectRowBinding, {
 //      out[row] = $(v).index() + 1;
 //    });
 //  return out;    
-
-//return $(tbl).children().children('.rowsSelected').index() + 1;
 
     $rows.each(function(row,v) {
       $(this).find("td").each(function(cell,v) {

@@ -18,5 +18,5 @@ biocViews: GO GeneExpression Microarray Sequencing Classification
         Networks QualityControl Visualization NetworkVisualization
         Genetics DataRepresentation GUI AnnotationData
 Collate: 'interactiveDisplay.R' 'ExpressionSet.R' 'GRanges.R' 'GRangesList.R'
-        'SummarizedExperiment.R' 'gridsvgjs.R'
+        'SummarizedExperiment.R' 'gridsvgjs.R' 'dataframe.R'
 VignetteBuilder: knitr
