@@ -7,6 +7,7 @@
 \alias{display,GRanges-method}
 \alias{display,GRangesList-method}
 \alias{display,SummarizedExperiment-method}
+\alias{display,data.frame-method}
 \alias{display,AnnotationHub-method}
 
 \title{display: Open a Shiny application for a Bioconductor object}

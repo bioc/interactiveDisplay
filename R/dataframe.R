@@ -92,3 +92,6 @@ setMethod("display",
 ## library(interactiveDisplay); df <- mtcars;
 ## foo <- interactiveDisplay:::.dataFrame(df)
 ## foo <- display(df)
+
+## TODO: add support for trapping last usage (for cases where user
+## accidently calls it without assignment like this : display(df)
