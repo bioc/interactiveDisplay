@@ -29,8 +29,7 @@ display(object, ...)
 \seealso{
   \url{http://bioconductor.org/packages/2.13/bioc/html/interactiveDisplay.html}
 }
-\author{Shawn Balcome, Marc Carlson and Dan Tenenbaum with valuable
-  contributions from Kirill Savin}
+\author{Shawn Balcome and Marc Carlson}
 \examples{
 
 if(interactive()) {

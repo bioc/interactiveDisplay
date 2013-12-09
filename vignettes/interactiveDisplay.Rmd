@@ -113,3 +113,9 @@ http://jscolor.com/ <br/>
 Data-Driven Documents <br/>
 Michael Bostock <br/>
 http://d3js.org/ <br/>
+
+Javascript for returning values from data.frames <br/>
+Kirill Savin <br/> 
+
+Help with the display method for data.frames <br/>
+Dan Tenenbaum <br/>
