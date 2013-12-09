@@ -1,13 +1,5 @@
 .selDataTableOutput <- function (outputId) 
 {
-    ## Temp. fragment of HTML
-    FRAG = tagList(
-      HTML("<script type='text/javascript'>"),
-      includeHTML(system.file("www", "DTbinding.js",
-                              package="interactiveDisplay")),
-      HTML("</script>")
-      )
-    
   tagList(singleton(tags$head(tags$link(rel = "stylesheet", 
     type = "text/css", href = "shared/datatables/css/DT_bootstrap.css"),
     tags$style(type="text/css", ".rowsSelected td{
@@ -23,7 +15,7 @@
                user-select: none;}"),                          
     tags$script(src = "shared/datatables/js/jquery.dataTables.min.js"), 
     tags$script(src = "shared/datatables/js/DT_bootstrap.js"),
-    FRAG)),
+    tags$script(src = "js/DTbinding.js"))),
     div(id = outputId, class = "shiny-datatable-output selectable"))
 }
 

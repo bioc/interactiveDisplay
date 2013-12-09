@@ -27,25 +27,10 @@ function(object){
 
 .jstags <- function(){
   list(
-  HTML("<script type='text/javascript'>"),
-  includeHTML(system.file("www", "jquery.min.js",
-                          package="interactiveDisplay")),
-  HTML("</script>"),
-  
-  HTML("<script type='text/javascript'>"),
-  includeHTML(system.file("www", "d3.v2.js",
-                          package="interactiveDisplay")),
-  HTML("</script>"),
-  
-  HTML("<script type='text/javascript'>"),
-  includeHTML(system.file("www", "jquery-svgpan.js",
-                          package="interactiveDisplay")),
-  HTML("</script>"),
-  
-  HTML("<script type='text/javascript'>"),
-  includeHTML(system.file("www/jscolor", "jscolor.js",
-                          package="interactiveDisplay")),
-  HTML("</script>"))
+  tags$script(src="/js/jquery.min.js"),
+  tags$script(src="/js/d3.v2.js"),
+  tags$script(src="/js/jquery-svgpan.js"),
+  tags$script(src="/js/jscolor/jscolor.js"))
 }
 
 #.shiny-output-error { visibility: hidden; }

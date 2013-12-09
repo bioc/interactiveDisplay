@@ -82,7 +82,10 @@ heatcolor3 <- function(inputId3) {
 
 .ES_setMainPanel <- function(){
   mainPanel(
-    includeHTML(system.file("www", "graph.js", package="interactiveDisplay")),
+    tags$link(rel="stylesheet", type="text/css",
+        href="/css/interactiveDisplay.css"),
+    tags$script(src="http://d3js.org/d3.v2.js"),
+    tags$script(src="/js/graph.js"),
     .jstags(),
     .csstags(),
     shiny::tags$head(

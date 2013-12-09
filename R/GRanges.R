@@ -16,11 +16,7 @@ selDataTableOutput <- function (outputId){
       user-select: none;}"),                          
     tags$script(src = "shared/datatables/js/jquery.dataTables.min.js"), 
     tags$script(src = "shared/datatables/js/DT_bootstrap.js"),
-    #tags$script(src = "inst/www/js/DTbinding.js"))),
-    HTML("<script type='text/javascript'>"),
-      includeHTML(system.file("www", "DTbinding.js",
-                                        package="interactiveDisplay")),
-    HTML("</script>"))),
+    tags$script(src = "/js/DTbinding.js"))),
   div(id = outputId, class = "shiny-datatable-output selectable"))
 }
 

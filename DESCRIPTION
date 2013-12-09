@@ -2,7 +2,7 @@ Package: interactiveDisplay
 Type: Package
 Title: Package for enabling powerful shiny web displays of Bioconductor
         objects
-Version: 1.0.20
+Version: 1.0.21
 Date: 2013-12-09
 Author: Shawn Balcome, Marc Carlson
 Maintainer: Shawn Balcome <balc0022@umn.edu>
@@ -18,5 +18,5 @@ biocViews: GO GeneExpression Microarray Sequencing Classification
         Networks QualityControl Visualization NetworkVisualization
         Genetics DataRepresentation GUI AnnotationData
 Collate: 'interactiveDisplay.R' 'ExpressionSet.R' 'GRanges.R' 'GRangesList.R'
-        'SummarizedExperiment.R' 'gridsvgjs.R' 'dataframe.R'
+        'SummarizedExperiment.R' 'gridsvgjs.R' 'dataframe.R' 'zzz.R'
 VignetteBuilder: knitr
