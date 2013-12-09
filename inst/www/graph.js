@@ -24,7 +24,7 @@
       var nodes = new Array();
 
       for (var i = 0; i < data.names.length; i++){
-        nodes.push({"name":data.names[i],"group":data.groups[i],"title":data.titles[i],"color":data.colors[i]})
+        nodes.push({"name":data.names[i],"group":data.groups[i],"title":"Group " + data.groups[i],"color":data.colors[i]})
       }
 
 

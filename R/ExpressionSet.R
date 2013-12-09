@@ -30,7 +30,10 @@ heatcolor3 <- function(inputId3) {
     HTML("<hr />"),
     selectInput("either", "Network/Dendrogram View:  Sample or Probe:",
       choices = c("probe","sample")),
-    selectInput("gogroup", "Cluster Wide GO Summary",choices = c("1","2","3","4","5")),
+    uiOutput("gogroupui"),
+    sliderInput(inputId="setsize",
+                label= "Group Wide Summary: Min probe pop for GO term",
+                min=1,max=1000,value=100,step=1),
     HTML("<hr />"),
     uiOutput("choose_probe"),
     HTML("<hr />"),
@@ -265,32 +268,38 @@ setMethod("display",
               if(class(pkg)=="ChipDb"){
                 
                 d <- tmpdata()
-                hc <- hc(d)
+                hc <- hc(t(d))
                 nc <- input$con_knum
                 
-                res <- suppressWarnings(select(pkg, keys(hgu95av2.db),
-                                               c("ENTREZID","GENENAME","GO"), "PROBEID"))
-                resa <- cbind(res$PROBEID,res$GO)
-                resb <- resa[!duplicated(resa),]
-                resc <- resb[!is.na(resb[,2]),]
-
-                
-                map <- (suppressWarnings(select(GO.db, resc[,2], "TERM")))
-                map <- cbind(resc[,1],map)
-                names(map) <- c("PROBEID","GOID","TERM")
-                
-                #sets <- Filter(function(x) length(x) >= 10, split(map$PROBEID, map$PFAM))
-                sets <- Filter(function(x) length(x) >= 100, split(map$PROBEID, map$TERM))
-                
-                universe <- unlist(sets, use.names=FALSE)
-                
                 siggenes <- hc$labels[cutree(hc,nc)==input$gogroup]
-                sigsets <- Map(function(x, y) x[x %in% y], sets, MoreArgs=list(y=siggenes))
-                result <- as.data.frame(hyperg(sets, sigsets, universe))
-                result <- result[rev(order(as.numeric(result[,6]))),]
-                result <- cbind(rownames(result),result)
                 
-                return(as.data.frame(result))
+                if(length(siggenes) > 1){
+                  res <- suppressWarnings(select(pkg, keys(hgu95av2.db),
+                                                 c("ENTREZID","GENENAME","GO"), "PROBEID"))
+                  resa <- cbind(res$PROBEID,res$GO)
+                  resb <- resa[!duplicated(resa),]
+                  resc <- resb[!is.na(resb[,2]),]
+  
+                  
+                  map <- (suppressWarnings(select(GO.db, resc[,2], "TERM")))
+                  map <- cbind(resc[,1],map)
+                  names(map) <- c("PROBEID","GOID","TERM")
+                  
+                  #sets <- Filter(function(x) length(x) >= 10, split(map$PROBEID, map$PFAM))
+                  sets <- Filter(function(x) length(x) >= input$setsize, split(map$PROBEID, map$TERM))
+                  
+                  universe <- unlist(sets, use.names=FALSE)
+                  
+                  sigsets <- Map(function(x, y) x[x %in% y], sets, MoreArgs=list(y=siggenes))
+                  result <- as.data.frame(hyperg(sets, sigsets, universe))
+                  result <- result[rev(order(as.numeric(result[,6]))),]
+                  result <- cbind(rownames(result),result)
+                  
+                  return(as.data.frame(result))
+                }
+                else{
+                  return(as.data.frame("Singleton Group"))
+                }
                 
               }
               else{
@@ -299,6 +308,10 @@ setMethod("display",
               }
             }
           }
+        })
+        
+        output$gogroupui <- renderUI({
+          numericInput("gogroup", "Group Wide GO Summary", 1, min = 1, max = input$con_knum, step = 1)
         })
                 
         #  Data for network view, sample or probe
