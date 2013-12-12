@@ -29,5 +29,6 @@ importFrom(Gviz,ranges,IdeogramTrack,GenomeAxisTrack,AnnotationTrack,plotTracks)
 importFrom(rtracklayer, ucscGenomes)
 importFrom(XML,saveXML)
 
+export(display)
 exportMethods(display)
 exportMethods(gridsvgjs)
