@@ -361,7 +361,7 @@ setMethod("display",
               len <- length(names(as.data.frame(object)))
               df <- as.data.frame(matrix(input$fulltable,ncol=len,byrow=TRUE))
               names(df) <- names(as.data.frame(object))
-              stopApp(return = df)
+              stopApp(returnValue = df)
             })
           }
         })
