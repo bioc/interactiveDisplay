@@ -2,6 +2,10 @@
 ###   ExpressionSet
 ################################################################################
 
+require(ggbio)
+require(GOstats)
+require(GO.db)
+
 heatcolor1 <- function(inputId1) {
   tagList(
     shiny::tags$input(id = inputId1, class = "color", value = "EDF8B1",

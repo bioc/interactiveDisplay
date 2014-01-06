@@ -11,22 +11,22 @@ importFrom(ggplot2,ggplot,aes,geom_tile,coord_fixed,scale_fill_gradientn,
            scale_x_discrete,scale_y_discrete,coord_equal,theme_bw,theme,
            element_blank,element_text,xlab,ylab,ggtitle)
 
-import(GenomicRanges)
+#import(GenomicRanges)
 importFrom(gridSVG, grid.export)
 importFrom(reshape2,melt)
 import(shiny)
 
-import(ggbio)
+#import(ggbio)
 import(Category)
-import(GOstats)
+#import(GOstats)
 #import(shinyIncubator)
 
 importFrom(plyr,ldply)
 importFrom(grid, convertUnit)
 importFrom(RColorBrewer,brewer.pal)
-import(GO.db)
-importFrom(Gviz,ranges,IdeogramTrack,GenomeAxisTrack,AnnotationTrack,plotTracks)
-importFrom(rtracklayer, ucscGenomes)
+#import(GO.db)
+#importFrom(Gviz,ranges,IdeogramTrack,GenomeAxisTrack,AnnotationTrack,plotTracks)
+#importFrom(rtracklayer, ucscGenomes)
 importFrom(XML,saveXML)
 
 export(display)

@@ -2,6 +2,10 @@
 ###   GRanges
 ################################################################################
 
+require(GenomicRanges)
+require(Gviz)
+require(rtracklayer)
+
 selDataTableOutput <- function (outputId){
   tagList(singleton(tags$head(tags$link(rel = "stylesheet", 
     type = "text/css", href = "shared/datatables/css/DT_bootstrap.css"),
