@@ -12,7 +12,7 @@ $(function() {
 
 $(document).on('click', '.selectable div table tbody tr', function(e){
 	var el = $(this);
-	if (!e.ctrlKey){
+	if (!e.shiftKey){
 		$(this).siblings().removeClass("rowsSelected");
 	}
 	$(this).addClass("rowsSelected", this.clicked);
