@@ -61,6 +61,7 @@
 	    options = list(
                 "sDom" = '<"top"i>rt<"top"f>lt<"clear">',
                 bSortClasses = TRUE,
+                bRetrieve= TRUE,
                 #for fixing width of columns  
                 bAutoWidth =  FALSE,
                 aoColumnDefs=aoColumnDefs,
