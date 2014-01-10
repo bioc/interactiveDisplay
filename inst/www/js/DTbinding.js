@@ -11,11 +11,6 @@ $(function() {
 });
 
 $(document).on('click', '.selectable div table tbody tr', function(e){
-    //var oTable = $("#DataTables_Table_0").dataTable();
-    //var aPos = oTable.fnGetPosition( this );
-    //var data = oTable.fnGetData(this);
-    //console.log("You clicked on row " + aPos);
-    //console.log("data is: " + data);
 	var el = $(this);
 	if (!e.ctrlKey){
 		$(this).siblings().removeClass("rowsSelected");
@@ -24,6 +19,11 @@ $(document).on('click', '.selectable div table tbody tr', function(e){
 	el.trigger("change");
 });	
 
+
+var isArray = function(someVar)
+{
+    return(Object.prototype.toString.call( someVar ) === '[object Array]');
+}
 
 var selectRowBinding = new Shiny.InputBinding();
 $.extend(selectRowBinding, {
@@ -40,16 +40,13 @@ $.extend(selectRowBinding, {
     $rows.each(function(row,v) {
         var aPos = oTable.fnGetPosition( this );
         var data = oTable.fnGetData(this);
+        out[row] = [];
         for (var i = 0; i < data.length; i++) {
-            if (typeof out[row] === 'undefined') out[row] = [];
-            out[row][i] = data[i];
+            var di = data[i];
+            if (isArray(di)) di = di.join(",");
+            out[row][i] = di;
+            console.log("i is " + i + " and di is " + di);
         }
-        /*
-      $(this).find("td").each(function(cell,v) {
-        if (typeof out[row] === 'undefined') out[row] = [];
-        out[row][cell] = $(this).text();
-      });
-*/
     });
     return out;
 	},
