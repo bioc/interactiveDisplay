@@ -1,102 +1,128 @@
 .selDataTableOutput <- 
-    function(outputId) 
-{
-    tagList(singleton(tags$head(tags$link(rel = "stylesheet", 
-    type = "text/css", href = "shared/datatables/css/DT_bootstrap.css"),
-    tags$style(type="text/css", ".rowsSelected td{
-        background-color: rgba(112,164,255,0.2) !important}"),
-    tags$style(type="text/css", ".selectable div table tbody tr{
-        cursor: hand; cursor: pointer;}"),
-    tags$style(type="text/css",".selectable div table tbody tr td{
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;}"),
-    tags$style(type="text/css", '#myTable tfoot {display:table-header-group;}'), 
-    tags$script(src = "shared/datatables/js/jquery.dataTables.min.js"), 
-    tags$script(src = "shared/datatables/js/DT_bootstrap.js"),
-    tags$script(src = "js/DTbinding.js"))),
-    div(id = outputId, class = "shiny-datatable-output selectable"))
+     function(outputId, ...,style="" ) 
+{   
+     origStyle<- c( 
+         '<script src="shared/datatables/js/jquery.dataTables.min.js"></script>',
+         '<script class="shiny-html-output" 
+                  src= "/js/DTbinding.js"></script>',
+         '<link rel = "stylesheet", 
+                type = "text/css", 
+                href = "shared/datatables/css/DT_bootstrap.css"></link>',
+         '<style type="text/css">
+                .rowsSelected td{
+                background-color: rgba(112,164,255,0.2) 
+                !important})  </style>',
+         '<style type="text/css"> .selectable div table tbody tr{
+                cursor: hand; cursor: pointer;}</style>',
+         '<style type="text/css"> .selectable div table tbody tr td{
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;} </style>',
+         '<style type="text/css">
+                #myTable tfoot {display:table-header-group;}</style>')     
+                  
+    if(missing(style)){
+        #mtcars
+        tagList(
+            singleton(
+                tags$head(HTML(origStyle)
+                )
+            ),
+            div(id = outputId, class = "shiny-datatable-output selectable")
+        )        
+    }else
+    {
+        #AnnotationHub
+        tagList(
+            singleton(
+                tags$head(
+                    HTML(origStyle),
+                    HTML(style)
+                )
+            ),
+            div(id = outputId, class = "shiny-datatable-output selectable")
+        )        
+    }
 }
 
-
 .dataFrame <- 
-    function(df, ...)
-{
+function(df, ..., summaryMessage = "", serverOptions = list(bSortClasses=TRUE,bRetrieve=TRUE),style="")
+{  
     colNames <- colnames(df)
-    colwidths <- c("10%", "20%", "30%", "2%", "10%","30%")
-    aoColumnDefs <- list(NULL)
-    for(i in 1:ncol(df)){
-        column <- list(sWidth=colwidths[i],  aTargets=list(i-1))
-        aoColumnDefs[[i]] <- column
-    }
     app <- list(ui=pageWithSidebar(
         headerPanel("Data Tables binding"),
         sidebarPanel(
             tags$head(
-                tags$style(type="text/css", "select { max-width: 200px; }"),
-                tags$style(type="text/css", "textarea { max-width: 185px; }"),
-                tags$style(type="text/css", ".jslider { max-width: 200px; }"),
-                tags$style(type='text/css', ".well { max-width: 310px; }"),
-                tags$style(type='text/css', ".span4 { max-width: 310px; }")
+                tags$style(type='text/css', ".span4 { max-width: 330px; }")
             ), 
-            helpText("Aim to display summary statistic here! "),
+            conditionalPanel(
+                condition= "output.summary",
+                strong(uiOutput('summary'))
+            ),
+            br(),
             actionButton("btnSend", "Send Rows"),
-            p("Ctrl-Click to select multiple rows."),
+            em(p("Shift-Click to select multiple rows.")),
             br(),
             tags$button("Select All Rows", class="btn", id="select_all_rows"),
-            br(),br(),
-            tags$button("Deselect All Rows", class="btn", id="deselect_all_rows")
+            em(p("Click to select all rows on page")),
+            br(),
+            tags$button("Deselect All Rows", class="btn", id="deselect_all_rows"),
+            em(p("Click to deselect all rows on page"))
         ),
         mainPanel(
-            .selDataTableOutput("myTable")
+                if(length(style)!=1)
+                    .selDataTableOutput(outputId="myTable", style=style)
+                else{
+                    .selDataTableOutput(outputId="myTable",...)}
         )
-    ),
-    server=
-        function(input, output) 
-    {  
-        output$myTable <- renderDataTable({df}, 
-	    options = list(
-                "sDom" = '<"top"i>rt<"top"f>lt<"clear">',
-                bSortClasses = TRUE,
-                bRetrieve= TRUE,
-                #for fixing width of columns  
-                bAutoWidth =  FALSE,
-                aoColumnDefs=aoColumnDefs,
-                aoColumns=NULL,                               
-                #for pagination
-                aLengthMenu = c(1000, 5000, "All"),
-                iDisplayLength = 1000,
-                #for searching   
-                oSearch = list(
-                    sSearch= "",
-                    bSmart = TRUE,
-                    bRegex = FALSE,
-                    bCaseInsensitive=TRUE
-                )  
+    ), server=function(input, output) {  
+        output$myTable <- 
+            renderDataTable({df}, 
+                options = serverOptions                   
             )
-        )  
+        if (length(summaryMessage)!=1){
+        output$summary <- renderUI({
+            HTML(paste0(
+                '<span class="shiny-html-output" >',summaryMessage[1],'</span> ',
+                '<br>',
+                '<span class="shiny-html-output" >',summaryMessage[2],'</span> ',
+                '<br>',
+                '<span class="shiny-html-output" >',summaryMessage[3],'</span> ',
+                '<br>',
+                '<span class="shiny-html-output" >',summaryMessage[4],'</span> ' ,
+                '<br>',
+                '<span class="shiny-html-output" >',summaryMessage[5],'</span> ' ,
+                '<br>',
+                '<span class="shiny-html-output" >',summaryMessage[6],'</span> ' ,
+                '<br>'
+                ))    
+            })
+        }
         observe({
             if(input$btnSend > 0)
                 isolate({
-                   #print(input$myTable)
-                   dfVec <- input$myTable
-                   df <- as.data.frame(matrix(data=dfVec, ncol=dim(df)[2],
-                       byrow=TRUE))
-                   names(df) <- colNames
-                   stopApp(returnValue = df)
+                    #print(input$myTable)
+                    dfVec <- input$myTable
+                    df <- as.data.frame(matrix(data=dfVec, ncol=dim(df)[2],
+                                               byrow=TRUE))
+                    names(df) <- colNames
+                    stopApp(returnValue = df)
                 })
-            })
+        })
     })
-## then run it...
     runApp(app, ...)
 }
 
-setMethod("display",
-          signature(object = c("data.frame")),
-          function(object, ...){.dataFrame(df=object, ...)})
+
+
+setMethod("display", signature(object = c("data.frame")),
+    function(object, ...)
+{
+    .dataFrame(df=object, ...)
+})
 
 
 #################################################
