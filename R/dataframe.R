@@ -1,5 +1,5 @@
 .selDataTableOutput <- 
-     function(outputId, ...,style="" ) 
+     function(outputId, ... ) 
 {   
      origStyle<- c( 
          '<script src="shared/datatables/js/jquery.dataTables.min.js"></script>',
@@ -23,33 +23,18 @@
                 user-select: none;} </style>',
          '<style type="text/css">
                 #myTable tfoot {display:table-header-group;}</style>')     
-                  
-    if(missing(style)){
-        #mtcars
-        tagList(
-            singleton(
-                tags$head(HTML(origStyle)
-                )
-            ),
-            div(id = outputId, class = "shiny-datatable-output selectable")
-        )        
-    }else
-    {
-        #AnnotationHub
-        tagList(
-            singleton(
-                tags$head(
-                    HTML(origStyle),
-                    HTML(style)
-                )
-            ),
-            div(id = outputId, class = "shiny-datatable-output selectable")
-        )        
-    }
+     
+     tagList(
+         singleton(
+             tags$head(HTML(origStyle)
+             )
+         ),
+         div(id = outputId, class = "shiny-datatable-output selectable")
+     )
 }
 
 .dataFrame <- 
-function(df, ..., summaryMessage = "", serverOptions = list(bSortClasses=TRUE,bRetrieve=TRUE),style="")
+function(df, ..., summaryMessage = "", serverOptions = list(bSortClasses=TRUE))
 {  
     colNames <- colnames(df)
     app <- list(ui=pageWithSidebar(
@@ -73,10 +58,7 @@ function(df, ..., summaryMessage = "", serverOptions = list(bSortClasses=TRUE,bR
             em(p("Click to deselect all rows on page"))
         ),
         mainPanel(
-                if(length(style)!=1)
-                    .selDataTableOutput(outputId="myTable", style=style)
-                else{
-                    .selDataTableOutput(outputId="myTable",...)}
+            .selDataTableOutput(outputId="myTable",...)
         )
     ), server=function(input, output) {  
         output$myTable <- 
