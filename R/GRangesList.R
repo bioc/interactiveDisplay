@@ -2,10 +2,6 @@
 ###   GRangesList
 ################################################################################
 
-require(GenomicRanges)
-require(Gviz)
-require(rtracklayer)
-
 ## helper for setting up sidebar
 .GL_setSidebarPanel <- function(){
   sidebarPanel(
@@ -31,6 +27,10 @@ require(rtracklayer)
 setMethod("display", 
   signature(object = "GRangesList"), 
   function(object,  sflag = TRUE, ...){
+    
+    .usePackage('GenomicRanges')
+    .usePackage('Gviz')
+    .usePackage('rtracklayer')
         
     app <- list(
       ui = bootstrapPage(        

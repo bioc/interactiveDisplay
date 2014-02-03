@@ -1,11 +1,3 @@
-require(shiny)
-require(GOstats)
-require(biclust)
-require(hgu95av2.db)
-require(GO.db)
-require(gplots)
-require(mixOmics)
-
 
 ## The loading gif/panel
 .loading_gif <- function(){
@@ -24,6 +16,14 @@ setGeneric("bicgo", function(object, ...)
 setMethod("bicgo", 
           signature(object = c("ANY")),
           function(object, ...){
+            
+            .usePackage('shiny')
+            .usePackage('GOstats')
+            .usePackage('biclust')
+            .usePackage('hgu95av2.db')
+            .usePackage('GO.db')
+            .usePackage('gplots')
+            .usePackage('mixOmics')
             
             app <- list(
               ui =

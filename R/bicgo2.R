@@ -1,11 +1,3 @@
-require(shiny)
-require(GOstats)
-require(biclust)
-require(hgu95av2.db)
-require(GO.db)
-require(gplots)
-require(mixOmics)
-
 
 ## The loading gif/panel
 .loading_gif <- function(){
@@ -24,12 +16,22 @@ setMethod("bicgo2",
           signature(object = c("ANY")),
           function(object, ...){
             
+            .usePackage('shiny')
+            .usePackage('GOstats')
+            .usePackage('biclust')
+            .usePackage('hgu95av2.db')
+            .usePackage('GO.db')
+            .usePackage('gplots')
+            .usePackage('mixOmics')
+            
             app <- list(
               ui =
                 bootstrapPage(
                   
                   sidebarPanel(
-                    HTML("Hit UpdateView to draw heatmaps and table."),
+                    HTML("Hit \"View/Update GO Summary\" after making selections."),
+                    HTML("<hr />"),
+                    HTML("Probes/Samples in overview with a red sidebar are selected for the GO summary"),
                     HTML("<hr />"),
                     uiOutput("clusterncol"),
                     uiOutput("clusternrow"),
@@ -42,18 +44,23 @@ setMethod("bicgo2",
                                  label= "Min probe pop for GO term",
                                  min=1,max=1000,value=10,step=1),
                     HTML("<hr />"),
-                    submitButton("Update View"),
+                    #submitButton("Update View"),
+                    actionButton("gobutton", "View/Update GO Summary"),
                     HTML("<hr />"),
-                    actionButton("savebutton", "Save to Console"),
+                    actionButton("stopbutton", "Stop App"),
                     HTML("<hr />"),
+                    HTML("List of Selected Probes/Samples"),
                     tableOutput("probeT"),
                     tableOutput("sampleT")
                     
                   ),
                   mainPanel(
                     .loading_gif(),
+                    HTML("Overview"),
                     plotOutput("heat"),
+                    HTML("Selected Probes/Samples"),
                     plotOutput("zoomed"),
+                    HTML("GO summary of Selected Probes"),
                     dataTableOutput("GOtable")
                   )
                 ),
@@ -152,26 +159,6 @@ setMethod("bicgo2",
                                      selected=tx)
                 })
                 
-                # Results to be displayed and saved back to console
-                results <- reactive({
-                  hprobes <- hprobes()
-                  if(length(hprobes)==0){
-                    return(NULL)
-                  }
-                  else{
-                    sets <- Filter(function(x) length(x) >= input$setsize,
-                                   split(map$PROBEID, map$TERM))
-                    universe <- unlist(sets, use.names=FALSE)
-                    siggenes <- hprobes
-                    sigsets <- Map(function(x, y) x[x %in% y], sets,
-                                   MoreArgs=list(y=siggenes))
-                    result <- as.data.frame(hyperg(sets, sigsets, universe))
-                    result <- result[rev(order(as.numeric(result[,6]))),]
-                    result <- cbind(rownames(result),result)
-                    return(result)
-                  }
-                })
-                
                 hprobes <- reactive({
                   ex <- ex()
                   if(length(ex)==0){
@@ -220,11 +207,30 @@ setMethod("bicgo2",
                   }
                 })
                 
-                # GO data
+                #  GO Button
                 output$GOtable <- renderDataTable({
-                  results <- results()
-                  results <- as.data.frame(results)
-                  return(results) 
+                  if (input$gobutton == 0)
+                    return()
+                  isolate({
+                  # GO data
+                    hprobes <- hprobes()
+                    if(length(hprobes)==0){
+                      return(NULL)
+                    }
+                    else{
+                      sets <- Filter(function(x) length(x) >= input$setsize,
+                                     split(map$PROBEID, map$TERM))
+                      universe <- unlist(sets, use.names=FALSE)
+                      siggenes <- hprobes
+                      sigsets <- Map(function(x, y) x[x %in% y], sets,
+                                     MoreArgs=list(y=siggenes))
+                      result <- as.data.frame(hyperg(sets, sigsets, universe))
+                      result <- result[rev(order(as.numeric(result[,6]))),]
+                      result <- cbind(rownames(result),result)
+                      result <- as.data.frame(result)
+                      return(result)
+                    }
+                  })
                 })
                 
                 #  Simple heatplot with highlighting
@@ -268,16 +274,16 @@ setMethod("bicgo2",
                   maxprobes <- dim(exprs(object))[1]
                   numericInput(inputId="cutoff",
                                label= "Number of top probes by variance",
-                               min=1,max=maxprobes,value=100,step=1)
+                               min=2,max=maxprobes,value=500,step=1)
                 })
                 
-                #  Save Button  
+                #  Stop Button  
                 observe({
-                  if (input$savebutton == 0)
+                  if (input$stopbutton == 0)
                     return()
                   isolate({
-                    results <- results()
-                    stopApp(returnValue=results)
+                    #results <- results()
+                    stopApp()
                   })
                 })
                 

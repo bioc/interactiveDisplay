@@ -23,6 +23,15 @@ function(object){
 ###   Helper Functions
 ################################################################################
 
+source("http://bioconductor.org/biocLite.R")
+.usePackage <- function(p) {
+  if (!is.element(p, installed.packages()[,1])){
+    biocLite(p)
+  }
+  require(p, character.only = TRUE)
+}
+
+
 ## helper for JS library tags
 
 .jstags <- function(){

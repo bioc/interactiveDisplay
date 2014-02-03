@@ -2,10 +2,6 @@
 ###   GRanges
 ################################################################################
 
-require(GenomicRanges)
-require(Gviz)
-require(rtracklayer)
-
 selDataTableOutput <- function (outputId){
   tagList(singleton(tags$head(tags$link(rel = "stylesheet", 
     type = "text/css", href = "shared/datatables/css/DT_bootstrap.css"),
@@ -57,6 +53,10 @@ selDataTableOutput <- function (outputId){
 setMethod("display", 
   signature(object = "GRanges"), 
   function(object, sflag = TRUE, ...){
+    
+    .usePackage('GenomicRanges')
+    .usePackage('Gviz')
+    .usePackage('rtracklayer')
     
     mcolnames <- as.character(names(mcols(object)))
     

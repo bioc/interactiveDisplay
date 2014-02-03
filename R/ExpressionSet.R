@@ -2,10 +2,6 @@
 ###   ExpressionSet
 ################################################################################
 
-require(ggbio)
-require(GOstats)
-require(GO.db)
-
 heatcolor1 <- function(inputId1) {
   tagList(
     shiny::tags$input(id = inputId1, class = "color", value = "EDF8B1",
@@ -138,6 +134,11 @@ heatcolor3 <- function(inputId3) {
 setMethod("display",  
   signature(object = c("ExpressionSet")), 
   function(object, ...){
+    
+    .usePackage('ggbio')
+    .usePackage('GOstats')
+    .usePackage('GO.db')
+    .usePackage('hgu95av2.db')
        
     app <- list(
       ui =
