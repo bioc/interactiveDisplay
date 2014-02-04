@@ -47,21 +47,35 @@ setMethod("bicgo2",
                     #submitButton("Update View"),
                     actionButton("gobutton", "View/Update GO Summary"),
                     HTML("<hr />"),
-                    actionButton("stopbutton", "Stop App"),
-                    HTML("<hr />"),
-                    HTML("List of Selected Probes/Samples"),
-                    tableOutput("probeT"),
-                    tableOutput("sampleT")
-                    
+                    actionButton("stopbutton", "Stop/Save")      
                   ),
                   mainPanel(
+                    
+                    tags$head(
+                      tags$style(type='text/css', 
+                                 "#geneT { background-color: #DCE8BE; } 
+                                  #GOtable { background-color: #CABEE8 }")),                    
                     .loading_gif(),
-                    HTML("Overview"),
-                    plotOutput("heat"),
-                    HTML("Selected Probes/Samples"),
-                    plotOutput("zoomed"),
-                    HTML("GO summary of Selected Probes"),
-                    dataTableOutput("GOtable")
+                    
+                    tabsetPanel(
+                      tabPanel("Plots",
+                               HTML("Overview"),
+                               plotOutput("heat"),
+                               HTML("Selected Probes/Samples"),
+                               plotOutput("zoomed")
+                      ),
+                      tabPanel("Selected Probes/Genes",
+                               dataTableOutput("geneT")
+                      ),
+                      tabPanel("Selected Samples",
+                               tableOutput("sampleT")
+                      )
+                    ),
+                    tabsetPanel(
+                      #HTML("<hr />"),
+                      #HTML("GO Summary of Selected Probes"),
+                      tabPanel("GO Summary of Selected Probes", dataTableOutput("GOtable"))
+                    )
                   )
                 ),
               
@@ -87,6 +101,9 @@ setMethod("bicgo2",
                 map <- cbind(resc[,1],map)
                 names(map) <- c("PROBEID","GOID","TERM")
                 
+                ################################################################################
+                record <- list()
+                rindex <- 1
                 ################################################################################
                 
                 # Subset expression data
@@ -170,6 +187,17 @@ setMethod("bicgo2",
                   }
                 })
                 
+                hgenes <- reactive({
+                  ex <- ex()
+                  if(length(ex)==0){
+                    return(NULL)
+                  }
+                  else{
+                    hprobes <- hprobes()
+                    return(as.data.frame(AnnotationDbi::select(hgu95av2.db, hprobes, c("ENTREZID","GENENAME"), "PROBEID")))
+                  }
+                })
+                
                 hsamples <- reactive({
                   ex <- ex()
                   if(length(ex)==0){
@@ -182,14 +210,26 @@ setMethod("bicgo2",
                 })
                 
                 # Current highlighted probes
-                output$probeT <- renderTable({
-                  hprobes <- hprobes()
+                #output$probeT <- renderTable({
+                #  hprobes <- hprobes()
+                #  if(length(hprobes)==0){
+                #    return(NULL)
+                #  }
+                #  else{
+                #    results <- as.data.frame(hprobes)
+                #    names(results) <- c("Probes")
+                #    return(results)
+                #  }
+                #})
+                
+                # Current highlighted genes
+                output$geneT <- renderDataTable({
+                  hgenes <- hgenes()
                   if(length(hprobes)==0){
                     return(NULL)
                   }
                   else{
-                    results <- as.data.frame(hprobes)
-                    names(results) <- c("Probes")
+                    results <- as.data.frame(hgenes)
                     return(results)
                   }
                 })
@@ -228,6 +268,18 @@ setMethod("bicgo2",
                       result <- result[rev(order(as.numeric(result[,6]))),]
                       result <- cbind(rownames(result),result)
                       result <- as.data.frame(result)
+                      
+                      hgenes <- hgenes()
+                      hsamples <- hsamples()
+                      
+                      
+                      record[[input$gobutton]] <<- list(hprobes,
+                                               hsamples,
+                                               hgenes,
+                                               result)
+                      
+                      #rindex <- rindex + 1
+                      
                       return(result)
                     }
                   })
@@ -283,7 +335,7 @@ setMethod("bicgo2",
                     return()
                   isolate({
                     #results <- results()
-                    stopApp()
+                    stopApp(returnValue=record)
                   })
                 })
                 

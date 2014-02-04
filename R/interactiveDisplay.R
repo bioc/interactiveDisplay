@@ -26,7 +26,8 @@ function(object){
 source("http://bioconductor.org/biocLite.R")
 .usePackage <- function(p) {
   if (!is.element(p, installed.packages()[,1])){
-    biocLite(p)
+    #biocLite(p)
+    stop(paste("The required package, '",p,"', is missing.  Please install it by typing biocLite('",p,"') in the console", sep=""))
   }
   require(p, character.only = TRUE)
 }
