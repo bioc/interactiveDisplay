@@ -37,6 +37,8 @@ setMethod("bicgo2",
                     uiOutput("clusternrow"),
                     uiOutput("selclustcol"),
                     uiOutput("selclustrow"),
+                    actionButton("nextbutton", "Next Pass"),
+                    actionButton("resetbutton", "Reset"),
                     HTML("<hr />"),
                     uiOutput("cutoff"),
                     HTML("<hr />"),
@@ -103,11 +105,30 @@ setMethod("bicgo2",
                 
                 ################################################################################
                 record <- list()
-                rindex <- 1
-                ################################################################################
+                lex <- c()
+                r <- 0
+                ################################################################################             
+
+                observe({
+                  if(input$resetbutton == 0){
+                    return()
+                  }
+                  else{
+                    r <<- 0
+                  }
+                })
+                
+                observe({
+                  if(input$nextbutton == 0){
+                    return()
+                  }
+                  else{
+                    r <<- 1
+                  }
+                })
                 
                 # Subset expression data
-                ex <- reactive({
+                tex <- reactive({
                   if(length(input$cutoff)!=1){
                     return(NULL)
                   }
@@ -116,23 +137,68 @@ setMethod("bicgo2",
                     tmpdata <- as.matrix(as.data.frame(ex))
                     p <- rev(order(apply(tmpdata,1,var)))
                     p <- p[seq_len(input$cutoff)]
-                    ex <- ex[p,]     
+                    ex <- ex[p,]
                     return(ex)
                   }
                 })
+                
+                ex <- reactive({
+                  input$resetbutton
+                  input$nextbutton
+                  if (r==0){
+                    lex <<- tex()
+                    return(tex())
+                  }
+                  else{
+                    isolate({
+                      if(length(ex)==0){
+                        return(NULL)
+                      }
+                      else{
+                        if(r==0){
+                          lex <<- tex()
+                          return(tex())
+                        }
+                        else{
+                          colcut <- cutree(hclust(dist(t(lex))),input$clusterncol)
+                          rowcut <- cutree(hclust(dist(lex)),input$clusternrow)
+                          
+                          temp <- lex[(rowcut %in% as.numeric(input$selclustrow)),(colcut %in% as.numeric(input$selclustcol))]
+                          if(sum(dim(lex))>3){
+                            lex <<- temp
+                          }
+                          return(lex)
+                        }
+                      }
+                    })
+                  }
+                })
+
          
                 output$clusterncol <- renderUI({
-                  maxsamples <- dim(exprs(object))[1]
+                  ex <- ex()
+                  maxsamples <- dim(ex)[2]
+                  if(length(maxsamples)!=1){
+                    return(NULL)
+                  }
+                  else{
                   numericInput(inputId="clusterncol",
                                label= "Number of sample clusters",
                                min=1,max=maxsamples,value=2,step=1)
+                  }
                 })
             
                 output$clusternrow <- renderUI({
-                  maxprobes <- dim(exprs(object))[1]
+                  ex <- ex()
+                  maxprobes <- dim(ex)[1]
+                  if(length(maxprobes)!=1){
+                    return(NULL)
+                  }
+                  else{
                   numericInput(inputId="clusternrow",
                                label= "Number of probe clusters",
                                min=1,max=maxprobes,value=2,step=1)
+                  }
                 })
                 
                 colcut <- reactive({
@@ -209,19 +275,6 @@ setMethod("bicgo2",
                   }
                 })
                 
-                # Current highlighted probes
-                #output$probeT <- renderTable({
-                #  hprobes <- hprobes()
-                #  if(length(hprobes)==0){
-                #    return(NULL)
-                #  }
-                #  else{
-                #    results <- as.data.frame(hprobes)
-                #    names(results) <- c("Probes")
-                #    return(results)
-                #  }
-                #})
-                
                 # Current highlighted genes
                 output$geneT <- renderDataTable({
                   hgenes <- hgenes()
@@ -277,9 +330,6 @@ setMethod("bicgo2",
                                                hsamples,
                                                hgenes,
                                                result)
-                      
-                      #rindex <- rindex + 1
-                      
                       return(result)
                     }
                   })
@@ -324,9 +374,14 @@ setMethod("bicgo2",
                 #  Subset probes by variance of expression
                 output$cutoff <- renderUI({
                   maxprobes <- dim(exprs(object))[1]
+                  if(length(maxprobes)!=1){
+                    return(NULL)
+                  }
+                  else{
                   numericInput(inputId="cutoff",
                                label= "Number of top probes by variance",
                                min=2,max=maxprobes,value=500,step=1)
+                  }
                 })
                 
                 #  Stop Button  
@@ -334,7 +389,6 @@ setMethod("bicgo2",
                   if (input$stopbutton == 0)
                     return()
                   isolate({
-                    #results <- results()
                     stopApp(returnValue=record)
                   })
                 })
