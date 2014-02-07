@@ -49,6 +49,8 @@ setMethod("bicgo2",
                     #submitButton("Update View"),
                     actionButton("gobutton", "View/Update GO Summary"),
                     HTML("<hr />"),
+                    HTML("Each GO Summary submission will be bundled and returned to the console"),
+                    HTML("<hr />"),
                     actionButton("stopbutton", "Stop/Save")      
                   ),
                   mainPanel(
@@ -155,7 +157,7 @@ setMethod("bicgo2",
                         return(NULL)
                       }
                       else{
-                        if(r==0){
+                        if(r==0 || length(input$clusterncol) == 0 || length(input$clusternrow) == 0){
                           lex <<- tex()
                           return(tex())
                         }
@@ -203,7 +205,7 @@ setMethod("bicgo2",
                 
                 colcut <- reactive({
                   ex <- ex()
-                  if(length(ex)==0){
+                  if(length(ex)==0 || length(input$clusterncol) == 0){
                     return(NULL)
                   }
                   else{
@@ -213,7 +215,7 @@ setMethod("bicgo2",
                 
                 rowcut <- reactive({
                   ex <- ex()
-                  if(length(ex)==0){
+                  if(length(ex)==0 || length(input$clusternrow) == 0){
                     return(NULL)
                   }
                   else{
@@ -341,7 +343,7 @@ setMethod("bicgo2",
                   hsamples <- hsamples()
                   ex <- ex()
                   hprobes <- hprobes()
-                  if(length(hprobes)==0 || length(hprobes)==0 || length(hprobes)==0){
+                  if(length(hprobes)==0 || length(input$clusterncol) == 0 || length(input$clusternrow) == 0){
                     return(NULL)
                   }
                   else{
@@ -361,7 +363,7 @@ setMethod("bicgo2",
                 
                 output$zoomed <- renderPlot({ 
                   ex <- ex()
-                  if(length(ex)==0){
+                  if(length(ex)==0 || length(input$clusterncol) == 0 || length(input$clusternrow) == 0){
                     return(NULL)
                   }
                   else{
