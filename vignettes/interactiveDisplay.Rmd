@@ -99,6 +99,14 @@ qp <- qplot(mpg, data=mtcars, geom="density", fill=factor(cyl), alpha=I(.4))
 gridsvgjs(qp)
 ```
 
+There is an simplified, alternative (work-in-progress) function for 
+ExpressionSet objects for the purpose of manually selecting a bicluster and 
+obtaining a GO summary. 
+
+```{r bicgo_demo, eval=FALSE}
+data(expr)
+bicgo(expr)
+```
 
 ## Acknowledgments
 

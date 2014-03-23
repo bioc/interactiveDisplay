@@ -1,4 +1,4 @@
-#import(AnnotationDbi)
+import(AnnotationDbi)
 #import(AnnotationHub)
 #import(gridSVG)
 #importFrom(httr, content, GET)
@@ -33,4 +33,4 @@ export(display)
 exportMethods(display)
 exportMethods(gridsvgjs)
 exportMethods(bicgo)
-exportMethods(bicgo2)
+
