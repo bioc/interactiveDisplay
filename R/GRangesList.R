@@ -2,6 +2,11 @@
 ###   GRangesList
 ################################################################################
 
+require(GenomicRanges)
+require(Gviz)
+require(rtracklayer)
+require(ggbio)
+
 ## helper for setting up sidebar
 .GL_setSidebarPanel <- function(){
   sidebarPanel(
