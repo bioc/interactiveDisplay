@@ -40,11 +40,11 @@ selDataTableOutput <- function (outputId){
     HTML("<hr />"),
     selectInput("strand", "Choose a Strand:", choices = c("both","+","-")),
     HTML("<hr />"),
-    sliderInput(inputId = "linkn",
-                label = "Generate Fake Links:",
-                min = 1, max = 1000,
-                value = 10, step = 1
-    ),
+    #sliderInput(inputId = "linkn",
+    #            label = "Generate Fake Links:",
+    #            min = 1, max = 1000,
+    #            value = 10, step = 1
+    #),
     HTML("<hr />"),
     actionButton("bankbutton", "Deposit Ranges in View"),
     HTML("<hr />"),
@@ -63,7 +63,15 @@ setMethod("display",
     .usePackage('Gviz')
     .usePackage('rtracklayer')
     
+    #quick fix for S4 metadata
     mcolnames <- as.character(names(mcols(object)))
+    temp_new <- c()
+    for(i in mcolnames){
+      if(dim(as.data.frame(mcols(object)[i]))[2] == 1){
+        temp_new <- c(temp_new,i)
+      }
+    }
+    mcolnames <- temp_new
     
     app <- list(
       ui = bootstrapPage(        
@@ -180,19 +188,19 @@ setMethod("display",
                                  trackWidth = 6)
 
           gr <- object
-          gr <- sample(gr,input$linkn)
-          values(gr)$to.gr <- sample(gr,input$linkn)
+          #gr <- sample(gr,input$linkn)
+          #values(gr)$to.gr <- sample(gr,input$linkn)
 
 
-          values(gr)$rearrangements <- ifelse(as.character(seqnames(gr)) == as.character(seqnames((values(gr)$to.gr))), "intrachromosomal", "interchromosomal")
+          #values(gr)$rearrangements <- ifelse(as.character(seqnames(gr)) == as.character(seqnames((values(gr)$to.gr))), "intrachromosomal", "interchromosomal")
 
 
-          p <- p + layout_circle(gr, 
-                                        geom = "link", 
-                                        linked.to = "to.gr", 
-                                        aes(color = rearrangements), 
-                                        radius = 22, 
-                                        trackWidth = 1)
+          #p <- p + layout_circle(gr, 
+          #                              geom = "link", 
+          #                              linked.to = "to.gr", 
+          #                              aes(color = rearrangements), 
+          #                              radius = 22, 
+          #                              trackWidth = 1)
           p
         })
         
@@ -334,9 +342,11 @@ setMethod("display",
           args <- list()
           for(i in mcolnames){
             tx <- as.data.frame(object)
-            tx <- sort(unique(tx[,i]))
-            args[[i]] <- tabPanel(i, checkboxGroupInput(i, 
-              paste("Select ", i,sep=""),tx,selected=tx))
+            #if(dim(as.data.frame(mcols(object)[i]))[2] == 1){
+              tx <- sort(unique(tx[,i]))
+              args[[i]] <- tabPanel(i, checkboxGroupInput(i, 
+                paste("Select ", i,sep=""),tx,selected=tx))
+            #}
           }
           args
         })
