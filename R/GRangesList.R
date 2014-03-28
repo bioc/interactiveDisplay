@@ -53,14 +53,26 @@ setMethod("display",
         bank <- list()
         
         t_object <- reactive({
-          object[[input$gr]] 
+          if(!is.null(input$gr)){
+            return(object[[input$gr]])
+          }
         })
         
         mcolnames <- reactive({
           t_object <- t_object()
-          as.character(names(mcols(t_object)))
+          if(!is.null(t_object)){
+            mcolnames <- as.character(names(mcols(t_object)))
+            #quick fix for S4 metadata
+            temp_new <- c()
+            for(i in mcolnames){
+              if(dim(as.data.frame(mcols(t_object)[i]))[2] == 1){
+                temp_new <- c(temp_new,i)
+              }
+            }
+            return(temp_new)
+          }
         })
-        
+               
         #  This GRanges object is subsetted by user input in the shiny widget.
         s_object <- reactive({
           t_object <- t_object()
@@ -128,73 +140,92 @@ setMethod("display",
         # The circle plot
         
         cplot <- reactive({
-          
-          p <- ggplot() + layout_circle(object,
-                                        geom = "ideo",
-                                        fill = "gray70",
-                                        radius = 30,
-                                        trackWidth = 4)
-          p <- p + layout_circle(object,
-                                 geom = "scale",
-                                 size = 2, radius = 35,
-                                 trackWidth = 2)
-          #p <- p + layout_circle(object,
-          #                       geom = "text", 
-          #                       aes(label = seqnames), 
-          #                       vjust = 0, 
-          #                       radius = 38, 
-          #                       trackWidth = 7)
-          p <- p + layout_circle(object, 
-                                 geom = "rect", 
-                                 color = "steelblue", 
-                                 radius = 23 , 
-                                 trackWidth = 6)
-          
-          gr <- object
-          gr <- sample(gr,input$linkn)
-          values(gr)$to.gr <- sample(gr,input$linkn)
-          
-          
-          values(gr)$rearrangements <- ifelse(as.character(seqnames(gr)) == as.character(seqnames((values(gr)$to.gr))), "intrachromosomal", "interchromosomal")
-          
-          
-          p <- p + layout_circle(gr, 
-                                 geom = "link", 
-                                 linked.to = "to.gr", 
-                                 aes(color = rearrangements), 
-                                 radius = 22, 
-                                 trackWidth = 1)
-          p
+          if(length(input$gr)==0 || length(t_object)==0){
+            return(NULL)
+          }
+          else{
+            t_object <- t_object()
+            p <- ggplot() + layout_circle(t_object,
+                                          geom = "ideo",
+                                          fill = "gray70",
+                                          radius = 30,
+                                          trackWidth = 4)
+            p <- p + layout_circle(t_object,
+                                   geom = "scale",
+                                   size = 2, radius = 35,
+                                   trackWidth = 2)
+            
+            #p <- p + layout_circle(t_object,
+            #                       geom = "text",
+            #                       aes(label = seqnames),
+            #                       vjust = 0,
+            #                       radius = 38,
+            #                       trackWidth = 7)
+            
+            p <- p + layout_circle(t_object, 
+                                   geom = "rect", 
+                                   color = "steelblue", 
+                                   radius = 23 , 
+                                   trackWidth = 6)
+            
+            
+            
+            #gr <- object
+            #gr <- sample(gr,input$linkn)
+            #values(gr)$to.gr <- sample(gr,input$linkn)
+            
+            
+            #values(gr)$rearrangements <- ifelse(as.character(seqnames(gr)) == as.character(seqnames((values(gr)$to.gr))), "intrachromosomal", "interchromosomal")
+            
+            
+            #p <- p + layout_circle(gr, 
+            #                       geom = "link", 
+            #                       linked.to = "to.gr", 
+            #                       aes(color = rearrangements), 
+            #                       radius = 22, 
+            #                       trackWidth = 1)
+            return(p)
+          }
         })
         
         if(sflag==TRUE){
           output$cplot <- renderUI({
-            #progress <- Progress$new(session, min=1, max=10)
-            #on.exit(progress$close())
-            
-            #progress$set(message = 'Calculation in progress',
-            #             detail = 'This may take a while...')
-            
-            #for (i in 1:10) {
-            #  progress$set(value = i)
-            #  Sys.sleep(0.1)
-            #}
-            grid2jssvg(cplot())
+            if(length(cplot())==0){
+              return(NULL)
+            }
+            else{
+              #progress <- Progress$new(session, min=1, max=10)
+              #on.exit(progress$close())
+              
+              #progress$set(message = 'Calculation in progress',
+              #             detail = 'This may take a while...')
+              
+              #for (i in 1:10) {
+              #  progress$set(value = i)
+              #  Sys.sleep(0.1)
+              #}
+              return(grid2jssvg(cplot()))
+            }
           })
         }
         else{
           output$cplot <- renderPlot({
-            #progress <- Progress$new(session, min=1, max=10)
-            #on.exit(progress$close())
-            
-            #progress$set(message = 'Calculation in progress',
-            #             detail = 'This may take a while...')
-            
-            #for (i in 1:10) {
-            #  progress$set(value = i)
-            #  Sys.sleep(0.1)
-            #}
-            cplot()
+            if(length(cplot())==0){
+              return(NULL)
+            }
+            else{
+              #progress <- Progress$new(session, min=1, max=10)
+              #on.exit(progress$close())
+              
+              #progress$set(message = 'Calculation in progress',
+              #             detail = 'This may take a while...')
+              
+              #for (i in 1:10) {
+              #  progress$set(value = i)
+              #  Sys.sleep(0.1)
+              #}
+              return(cplot())
+            }
           })        
         }
         
@@ -204,50 +235,81 @@ setMethod("display",
         #  chromosome.
         max_end <- reactive({
           t_object <- t_object()
-          max(end(t_object[seqnames(t_object)==input$chr]))
+          
+          if(length(input$chr)!=1){
+            return(NULL)
+          }
+          else{
+            return(max(end(t_object[seqnames(t_object)==input$chr])))
+          }
         })
         
         #  Sets min position for the view window slider for the current
         #  chromosome.
         min_start <- reactive({
           t_object <- t_object()
-          min(start(t_object[seqnames(t_object)==input$chr]))
+          if(length(input$chr)!=1){
+            return(NULL)
+          }
+          else{
+            return(min(start(t_object[seqnames(t_object)==input$chr])))
+          }
         })
         
         #  Maximum GRange width for filter slider.
         max_width <- reactive({
           t_object <- t_object()
-          as.numeric(max(ranges(t_object[seqnames(t_object)==input$chr])@width))
+          if(length(input$chr)!=1){
+            return(NULL)
+          }
+          else{
+            return(as.numeric(max(ranges(t_object[seqnames(t_object)==input$chr])@width)))
+          }
         })
         
         #  Minimum GRange width for filter slider.
         min_width <- reactive({
           t_object <- t_object()
-          as.numeric(min(ranges(t_object[seqnames(t_object)==input$chr])@width))
+          if(length(input$chr)!=1){
+            return(NULL)
+          }
+          else{
+            return(as.numeric(min(ranges(t_object[seqnames(t_object)==input$chr])@width)))
+          }
         })
         
         #  Render the plot range window slider.     
         output$window <- renderUI({
           max_end <- max_end()
           min_start <- min_start()
-          sliderInput(inputId = "window",
-                      label = "Plot Window:",
-                      min = min_start,
-                      max = max_end,
-                      value = c(min_start,max_end),
-                      step = 1)
+          if(is.null(max_end())){
+            return()
+          }
+          else{
+            return(sliderInput(inputId = "window",
+                        label = "Plot Window:",
+                        min = min_start,
+                        max = max_end,
+                        value = c(min_start,max_end),
+                        step = 1))
+          }
         })
         
         #  Render the width filter slider.
         output$width <- renderUI({
           max_width <- max_width()
           min_width <- min_width()
-          sliderInput(inputId = "width",
+          if(is.null(max_width())){
+            return()
+          }
+          else{
+          return(sliderInput(inputId = "width",
                       label = "Range Length Filter:",
                       min = min_width,
                       max = max_width,
                       value = c(min_width,max_width),
-                      step = 1)
+                      step = 1))
+          }
         })
         
         gl <- names(object)
@@ -261,10 +323,12 @@ setMethod("display",
         #cl <- levels(seqnames(object()))
         output$choose_chrom <- renderUI({
           t_object <- t_object()
-          cl <- unique(as.character(seqnames(t_object)))
-          chromChoices <- cl
-          names(chromChoices) <- cl
-          selectInput("chr", "Chromosome", chromChoices)
+          if(!is.null(t_object)){
+            cl <- unique(as.character(seqnames(t_object)))
+            chromChoices <- cl
+            names(chromChoices) <- cl
+            return(selectInput("chr", "Chromosome", chromChoices))
+          }
         })
         
 
