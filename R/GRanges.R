@@ -97,10 +97,6 @@ setMethod("display",
         # This stores parameters for subsetted GRanges per chromosome as a list.
         bank <- list()
         
-        t_object <- reactive({
-          object[[input$gr]] 
-        })
-        
         #  This GRanges object is subsetted by user input in the shiny widget.
         s_object <- reactive({
           subgr2(object,
@@ -179,55 +175,66 @@ setMethod("display",
         # The circle plot
 
         cplot <- reactive({
-
-          p <- ggplot() + layout_circle(object,
-                                        geom = "ideo",
-                                        radius = 30,
-                                        trackWidth = 4,
-                                        aes(fill=seqnames))
           
-          p <- p + layout_circle(object,
-                                 geom = "scale",
-                                 size = 2, radius = 35,
-                                 trackWidth = 2)
-
-          p <- p + layout_circle(object, 
-                                 geom = "rect", 
-                                 color = "steelblue4", 
-                                 radius = 23 , 
-                                 trackWidth = 6)
-          return(p)
+          #tempfix until we get an official progressbar
+          if(length(input$width)==0){
+            return(NULL)
+          }
+          else{
+            p <- ggplot() + layout_circle(object,
+                                          geom = "ideo",
+                                          radius = 30,
+                                          trackWidth = 4,
+                                          aes(fill=seqnames))
+            
+            p <- p + layout_circle(object,
+                                   geom = "scale",
+                                   size = 2, radius = 35,
+                                   trackWidth = 2)
+  
+            p <- p + layout_circle(object, 
+                                   geom = "rect", 
+                                   color = "steelblue4", 
+                                   radius = 23 , 
+                                   trackWidth = 6)
+            return(p)
+          }
         })
 
         output$cplot <- renderUI({
-            #progress <- Progress$new(session, min=1, max=10)
-            #on.exit(progress$close())
-
-            #progress$set(message = 'Calculation in progress',
-            #             detail = 'This may take a while...')
-
-            #for (i in 1:10) {
-            #  progress$set(value = i)
-            #  Sys.sleep(0.1)
-            #}
-          if(sflag==TRUE){
-            cplot <- cplot()
-            g <- grid2jssvg(cplot)
-            return(g)
+          if(length(cplot())==0){
+            return(NULL)
           }
           else{
-            #progress <- Progress$new(session, min=1, max=10)
-            #on.exit(progress$close())
-
-            #progress$set(message = 'Calculation in progress',
-            #             detail = 'This may take a while...')
-
-            #for (i in 1:10) {
-            #  progress$set(value = i)
-            #  Sys.sleep(0.1)
-            #}
-            cplot <- cplot()
-            return(cplot)
+              #progress <- Progress$new(session, min=1, max=10)
+              #on.exit(progress$close())
+  
+              #progress$set(message = 'Calculation in progress',
+              #             detail = 'This may take a while...')
+  
+              #for (i in 1:10) {
+              #  progress$set(value = i)
+              #  Sys.sleep(0.1)
+              #}
+            if(sflag==TRUE){
+              cplot <- cplot()
+              g <- grid2jssvg(cplot)
+              return(g)
+            }
+            else{
+              #progress <- Progress$new(session, min=1, max=10)
+              #on.exit(progress$close())
+  
+              #progress$set(message = 'Calculation in progress',
+              #             detail = 'This may take a while...')
+  
+              #for (i in 1:10) {
+              #  progress$set(value = i)
+              #  Sys.sleep(0.1)
+              #}
+              cplot <- cplot()
+              return(cplot)
+            }
           }
         })     
         

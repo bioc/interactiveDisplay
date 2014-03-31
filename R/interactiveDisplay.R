@@ -98,8 +98,13 @@ source("http://bioconductor.org/biocLite.R")
     ),
     #progressInit(),
     tabsetPanel(
-      tabPanel("Plot", plotOutput("plotname")),
-      tabPanel("Circle Plot", svgcheckout("cplot",sflag)),
+      tabPanel("Static Circle Plot",
+               HTML("Use the mouse to drag and pan the circle plot.  Use the 
+                     mousewheel to zoom in/out."),
+               HTML("<hr />"),
+               svgcheckout("cplot",sflag)),
+      tabPanel("Interactive Plot", plotOutput("plotname")),
+      #tabPanel("Circle Plot", svgcheckout("cplot",sflag)),
       #tabPanel("All Ranges in Object", dataTableOutput("fulltable")),
       tabPanel("All Ranges in Object", selDataTableOutput("fulltable")),
       tabPanel("Selected Ranges in Current View", dataTableOutput("rtable")),
