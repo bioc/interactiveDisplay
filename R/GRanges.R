@@ -40,12 +40,6 @@ selDataTableOutput <- function (outputId){
     HTML("<hr />"),
     selectInput("strand", "Choose a Strand:", choices = c("both","+","-")),
     HTML("<hr />"),
-    #sliderInput(inputId = "linkn",
-    #            label = "Generate Fake Links:",
-    #            min = 1, max = 1000,
-    #            value = 10, step = 1
-    #),
-    HTML("<hr />"),
     actionButton("bankbutton", "Deposit Ranges in View"),
     HTML("<hr />"),
     actionButton("clearbutton", "Clear Deposit"),
@@ -103,8 +97,13 @@ setMethod("display",
         
         #  This GRanges object is subsetted by user input in the shiny widget.
         s_object <- reactive({
-          subgr2(object,input$chr,input$strand,input$width,input$window,
-            mcolnames,input)
+          subgr2(object,
+                 input$chr,
+                 input$strand,
+                 input$width,
+                 input$window,
+                 mcolnames,
+                 input)
         })
         
         #  The full submitted GRanges object converted to a data frame for the
@@ -124,40 +123,49 @@ setMethod("display",
         atr <- reactive({
           s_object <- s_object()
           if(!is.null(input$chr)){
-            AnnotationTrack(s_object, chromosome=input$chr,
-            name="Genomic Ranges Annotation Track", fill="black",
-            background.panel = "#f5f5f5", background.title = "#2aa5e5",
-            cex.title = 1.1)
+            AnnotationTrack(s_object,
+                            chromosome=input$chr,
+                            name="Genomic Ranges Annotation Track",
+                            fill="black",
+                            background.panel = "#f5f5f5",
+                            background.title = "#2aa5e5",
+                            cex.title = 1.1)
           }      
         })
         
         #  Genome Axis Track
         gtr <- reactive({
           if(!is.null(input$chr)){
-            GenomeAxisTrack(chromosome=input$chr,add53 = TRUE, add35 = TRUE, 
-              littleTicks = FALSE, showId=TRUE)
+            GenomeAxisTrack(chromosome=input$chr,
+                            add53 = TRUE,
+                            add35 = TRUE, 
+                            littleTicks = FALSE,
+                            showId=TRUE)
           }
         })
         
         #  Ideogram Track
         itr <- reactive({
           if(!is.null(input$chr)){
-            IdeogramTrack(genome=input$ucscgen, chromosome=input$chr,
-              showId=TRUE, showBandId=TRUE)
+            IdeogramTrack(genome=input$ucscgen,
+                          chromosome=input$chr,
+                          showId=TRUE,
+                          showBandId=TRUE)
           }
         })
         
         #  Render the track plots.
         output$plotname <- renderPlot({
           if(length(input$window)==0){
-            return(NULL)
+            return()
           }
           else{
             itr <- itr()
             gtr <- gtr()
             atr <- atr()
-            pt <- plotTracks(list(itr, gtr, atr), from=input$window[1],
-              to=input$window[2])
+            pt <- plotTracks(list(itr, gtr, atr),
+                             from=input$window[1],
+                             to=input$window[2])
             return(pt)
           }
         })
@@ -168,44 +176,24 @@ setMethod("display",
 
           p <- ggplot() + layout_circle(object,
                                         geom = "ideo",
-                                        fill = "gray70",
                                         radius = 30,
-                                        trackWidth = 4)
+                                        trackWidth = 4,
+                                        aes(fill=seqnames))
+          
           p <- p + layout_circle(object,
                                  geom = "scale",
                                  size = 2, radius = 35,
                                  trackWidth = 2)
-          #p <- p + layout_circle(object,
-          #                       geom = "text", 
-          #                       aes(label = seqnames), 
-          #                       vjust = 0, 
-          #                       radius = 38, 
-          #                       trackWidth = 7)
+
           p <- p + layout_circle(object, 
                                  geom = "rect", 
-                                 color = "steelblue", 
+                                 color = "steelblue4", 
                                  radius = 23 , 
                                  trackWidth = 6)
-
-          gr <- object
-          #gr <- sample(gr,input$linkn)
-          #values(gr)$to.gr <- sample(gr,input$linkn)
-
-
-          #values(gr)$rearrangements <- ifelse(as.character(seqnames(gr)) == as.character(seqnames((values(gr)$to.gr))), "intrachromosomal", "interchromosomal")
-
-
-          #p <- p + layout_circle(gr, 
-          #                              geom = "link", 
-          #                              linked.to = "to.gr", 
-          #                              aes(color = rearrangements), 
-          #                              radius = 22, 
-          #                              trackWidth = 1)
-          p
+          return(p)
         })
-        
-        if(sflag==TRUE){
-          output$cplot <- renderUI({
+
+        output$cplot <- renderUI({
             #progress <- Progress$new(session, min=1, max=10)
             #on.exit(progress$close())
 
@@ -216,11 +204,12 @@ setMethod("display",
             #  progress$set(value = i)
             #  Sys.sleep(0.1)
             #}
-            grid2jssvg(cplot())
-          })
-        }
-        else{
-          output$cplot <- renderPlot({
+          if(sflag==TRUE){
+            cplot <- cplot()
+            g <- grid2jssvg(cplot)
+            return(g)
+          }
+          else{
             #progress <- Progress$new(session, min=1, max=10)
             #on.exit(progress$close())
 
@@ -231,15 +220,16 @@ setMethod("display",
             #  progress$set(value = i)
             #  Sys.sleep(0.1)
             #}
-            cplot()
-          })        
-        }
+            cplot <- cplot()
+            return(cplot)
+          }
+        })     
         
         #  Sets max position for the view window slider for the current
         #  chromosome.
         max_end <- reactive({
           if(length(input$chr)!=1){
-            return(NULL)
+            return()
           }
           else{
             return(max(end(object[seqnames(object)==input$chr])))
@@ -250,7 +240,7 @@ setMethod("display",
         #  chromosome.
         min_start <- reactive({
           if(length(input$chr)!=1){
-            return(NULL)
+            return()
           }
           else{
             return(min(start(object[seqnames(object)==input$chr])))
@@ -260,7 +250,7 @@ setMethod("display",
         #  Maximum GRange width for filter slider.
         max_width <- reactive({
           if(length(input$chr)!=1){
-            return(NULL)
+            return()
           }
           else{
             return(as.numeric(max(ranges(object[seqnames(
@@ -271,7 +261,7 @@ setMethod("display",
         #  Minimum GRange width for filter slider.
         min_width <- reactive({
           if(length(input$chr)!=1){
-            return(NULL)
+            return()
           }
           else{
             return(as.numeric(min(ranges(object[seqnames(
@@ -287,11 +277,12 @@ setMethod("display",
           else{
             max_end <- max_end()
             min_start <- min_start()
-            sliderInput(inputId = "window",
+            return(sliderInput(inputId = "window",
                         label = "Plot Window:",
-                        min = min_start, max = max_end,
-                        value = c(min_start,max_end), step = 1
-            )
+                        min = min_start,
+                        max = max_end,
+                        value = c(min_start,max_end),
+                        step = 1))
           }
         })
         
@@ -301,15 +292,15 @@ setMethod("display",
           min_width <- min_width()
           
           if(length(max_width)==0 || length(min_width)==0){
-            return(NULL)
+            return()
           }
           
           else{
-            sliderInput(inputId = "width",
+            return(sliderInput(inputId = "width",
                         label = "Range Length Filter:",
                         min = min_width, max = max_width,
-                        value = c(min_width,max_width), step = 1
-            )
+                        value = c(min_width,max_width),
+                        step = 1))
           }
         })
 
@@ -394,8 +385,11 @@ setMethod("display",
               input$window[2],input$width[1],input$width[2])
             output$btable <- renderDataTable({
               df <- t(as.data.frame(bank))
-              colnames(df) <- c("Strand","Min Position","Max Position",
-                "Min Width","Max Width")
+              colnames(df) <- c("Strand",
+                                "Min Position",
+                                "Max Position",
+                                "Min Width",
+                                "Max Width")
               df <- cbind(rownames(df),df)
               df
             })
@@ -413,10 +407,8 @@ setMethod("display",
             })
           })
         })
-        
       }
     )
-    #myRunApp(app, ...)
     runApp(app, ...)
   })
 

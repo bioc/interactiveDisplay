@@ -147,43 +147,20 @@ setMethod("display",
             t_object <- t_object()
             p <- ggplot() + layout_circle(t_object,
                                           geom = "ideo",
-                                          fill = "gray70",
                                           radius = 30,
-                                          trackWidth = 4)
+                                          trackWidth = 4,
+                                          aes(fill=seqnames))
             p <- p + layout_circle(t_object,
                                    geom = "scale",
                                    size = 2, radius = 35,
                                    trackWidth = 2)
-            
-            #p <- p + layout_circle(t_object,
-            #                       geom = "text",
-            #                       aes(label = seqnames),
-            #                       vjust = 0,
-            #                       radius = 38,
-            #                       trackWidth = 7)
-            
+                        
             p <- p + layout_circle(t_object, 
                                    geom = "rect", 
-                                   color = "steelblue", 
+                                   color = "steelblue4", 
                                    radius = 23 , 
                                    trackWidth = 6)
             
-            
-            
-            #gr <- object
-            #gr <- sample(gr,input$linkn)
-            #values(gr)$to.gr <- sample(gr,input$linkn)
-            
-            
-            #values(gr)$rearrangements <- ifelse(as.character(seqnames(gr)) == as.character(seqnames((values(gr)$to.gr))), "intrachromosomal", "interchromosomal")
-            
-            
-            #p <- p + layout_circle(gr, 
-            #                       geom = "link", 
-            #                       linked.to = "to.gr", 
-            #                       aes(color = rearrangements), 
-            #                       radius = 22, 
-            #                       trackWidth = 1)
             return(p)
           }
         })
