@@ -16,6 +16,12 @@ require(ggbio)
     uiOutput("choose_gen"),
     uiOutput("gen_text"),
     HTML("<hr />"),
+    #dummy slider until shiny bug gets fixed
+    conditionalPanel
+    (
+      condition = '0==1',
+      sliderInput("dummyslider", "", min=0, max=1, value=0)
+    ),
     uiOutput("window"),
     HTML("<hr />"),
     uiOutput("width"),
@@ -311,7 +317,7 @@ setMethod("display",
 
         
         #  Render the text under the UCSC dropdown        
-        output$choose_gen <- .choose_gen()
+        output$choose_gen <- .choose_gen(...)
         
         #  Dynamically build tabs for checkbox groups for metadata subsetting
         args <- reactive({

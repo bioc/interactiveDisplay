@@ -34,6 +34,12 @@ selDataTableOutput <- function (outputId){
     uiOutput("choose_gen"),
     uiOutput("gen_text"),
     HTML("<hr />"),
+    #dummy slider until shiny bug gets fixed
+    conditionalPanel
+    (
+      condition = '0==1',
+      sliderInput("dummyslider", "", min=0, max=1, value=0)
+    ),
     uiOutput("window"),
     HTML("<hr />"),
     uiOutput("width"),
@@ -43,8 +49,8 @@ selDataTableOutput <- function (outputId){
     actionButton("bankbutton", "Deposit Ranges in View"),
     HTML("<hr />"),
     actionButton("clearbutton", "Clear Deposit"),
-    actionButton("savebutton", "Save Deposited to Console"),
-    actionButton("btnSend", "Save Highlighted Ranges to Console")
+    actionButton("savebutton", "Save Deposited to Console")
+    #actionButton("btnSend", "Save Highlighted Ranges to Console")
     
   )
 }
@@ -313,7 +319,7 @@ setMethod("display",
         })
         
         #  Render the UCSC dropdown
-        output$choose_gen <- .choose_gen()
+        output$choose_gen <- .choose_gen(...)
 
         #  Render the text under the UCSC dropdown        
         output$gen_text <- renderText({
@@ -365,16 +371,16 @@ setMethod("display",
         })
         
         #  Manual Save Button  
-        observe({
-          if (input$btnSend > 0){
-            isolate({
-              len <- length(names(as.data.frame(object)))
-              df <- as.data.frame(matrix(input$fulltable,ncol=len,byrow=TRUE))
-              names(df) <- names(as.data.frame(object))
-              stopApp(returnValue = df)
-            })
-          }
-        })
+        #observe({
+        #  if (input$btnSend > 0){
+        #    isolate({
+        #      len <- length(names(as.data.frame(object)))
+        #      df <- as.data.frame(matrix(input$fulltable,ncol=len,byrow=TRUE))
+        #      names(df) <- names(as.data.frame(object))
+        #      stopApp(returnValue = df)
+        #    })
+        #  }
+        #})
         
         #  Deposit Button
         observe({
