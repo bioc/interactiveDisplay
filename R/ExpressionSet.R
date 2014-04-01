@@ -26,6 +26,8 @@ heatcolor3 <- function(inputId3) {
 
 .ES_setSidebarPanel <- function(){
   sidebarPanel(
+    h3("Expression Set", align = "center"),
+    HTML("<hr />"),
     tableOutput("expinfo"),
     HTML("<hr />"),
     selectInput("either", "Network/Dendrogram View:  Sample or Probe:",
@@ -144,8 +146,9 @@ setMethod("display",
       ui =
         bootstrapPage(
           #.jstags(),
-          h3("Expression Set"),
-          .loading_gif(),
+          fluidRow(
+            column(1, .loading_gif())
+          ),
           .ES_setSidebarPanel(),
           .ES_setMainPanel()
         ),

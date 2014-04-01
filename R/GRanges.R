@@ -29,10 +29,13 @@ selDataTableOutput <- function (outputId){
 ## helper for setting up sidebar
 .setSidebarPanel <- function(){
   sidebarPanel(
+    h3("Genomic Ranges", align="center"),
+    HTML("<hr />"),
     uiOutput("choose_chrom"),
     HTML("<hr />"),
     uiOutput("choose_gen"),
     uiOutput("gen_text"),
+    checkboxInput("suppress","Suppress Ideogram"),
     HTML("<hr />"),
     #dummy slider until shiny bug gets fixed
     conditionalPanel
@@ -86,8 +89,9 @@ setMethod("display",
 
         ")
         ),
-        h3("Genomic Ranges"),
-        .loading_gif(),
+        fluidRow(
+          column(1, .loading_gif())
+        ),
         .setSidebarPanel(),
         .GR_GRL_setMainPanel(sflag)
       ),
@@ -96,6 +100,9 @@ setMethod("display",
         
         # This stores parameters for subsetted GRanges per chromosome as a list.
         bank <- list()
+        
+        # Allow for more types of GRanges data
+        options(ucscChromosomeNames=FALSE)
         
         #  This GRanges object is subsetted by user input in the shiny widget.
         s_object <- reactive({
@@ -148,7 +155,7 @@ setMethod("display",
         
         #  Ideogram Track
         itr <- reactive({
-          if(!is.null(input$chr)){
+          if(!is.null(input$chr) && input$suppress == FALSE){
             IdeogramTrack(genome=input$ucscgen,
                           chromosome=input$chr,
                           showId=TRUE,
@@ -165,9 +172,16 @@ setMethod("display",
             itr <- itr()
             gtr <- gtr()
             atr <- atr()
-            pt <- plotTracks(list(itr, gtr, atr),
-                             from=input$window[1],
-                             to=input$window[2])
+            if(input$suppress == FALSE){
+              pt <- plotTracks(list(itr, gtr, atr),
+                               from=input$window[1],
+                               to=input$window[2])
+            }
+            else{
+              pt <- plotTracks(list(gtr, atr),
+                               from=input$window[1],
+                               to=input$window[2])
+            }
             return(pt)
           }
         })

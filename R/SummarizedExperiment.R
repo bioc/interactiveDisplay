@@ -12,10 +12,13 @@ setMethod("display",
                 
                 .jstags(),
                 
-                h3("Summarized Experiment"),
-                .loading_gif(),
+                fluidRow(
+                  column(1, .loading_gif())
+                ),
                 
                 sidebarPanel(
+                  h3("Summarized Experiment", align = "center"),
+                  HTML("<hr />"),
                   uiOutput("choose_chrom"),
                   HTML("<hr />"),
                   #dummy slider until shiny bug gets fixed

@@ -10,11 +10,14 @@ require(ggbio)
 ## helper for setting up sidebar
 .GL_setSidebarPanel <- function(){
   sidebarPanel(
+    h3("Genomic Ranges List", align="center"),
+    HTML("<hr />"),
     uiOutput("choose_grange"),
     uiOutput("choose_chrom"),
     HTML("<hr />"),
     uiOutput("choose_gen"),
     uiOutput("gen_text"),
+    checkboxInput("suppress","Suppress Ideogram"),
     HTML("<hr />"),
     #dummy slider until shiny bug gets fixed
     conditionalPanel
@@ -47,8 +50,9 @@ setMethod("display",
       ui = bootstrapPage(        
         .jstags(),  
         .csstags(),
-        h3("Genomic Ranges List"),
-        .loading_gif(),
+        fluidRow(
+          column(1, .loading_gif())
+        ),
         .GL_setSidebarPanel(),
         .GR_GRL_setMainPanel(sflag)
       ),
@@ -57,6 +61,9 @@ setMethod("display",
         
         # This stores parameters for subsetted GRanges per chromosome as a list.
         bank <- list()
+        
+        # Allow for more types of GRanges data
+        options(ucscChromosomeNames=FALSE)
         
         t_object <- reactive({
           if(!is.null(input$gr)){
@@ -121,7 +128,7 @@ setMethod("display",
         
         #  Ideogram Track
         itr <- reactive({
-          if(!is.null(input$chr)){
+          if(!is.null(input$chr) && input$suppress == FALSE){
             IdeogramTrack(genome=input$ucscgen, chromosome=input$chr,
             showId=TRUE, showBandId=TRUE)
           }
@@ -136,8 +143,14 @@ setMethod("display",
             itr <- itr()
             gtr <- gtr()
             atr <- atr()
-            pt <- plotTracks(list(itr, gtr, atr), from=input$window[1],
-              to=input$window[2])
+            if(input$suppress == FALSE){
+              pt <- plotTracks(list(itr, gtr, atr), from=input$window[1],
+                to=input$window[2])
+            }
+            else{
+              pt <- plotTracks(list(gtr, atr), from=input$window[1],
+                               to=input$window[2])
+            }
             return(pt)
           }
         })
@@ -318,6 +331,19 @@ setMethod("display",
         
         #  Render the text under the UCSC dropdown        
         output$choose_gen <- .choose_gen(...)
+        
+        #  Render the text under the UCSC dropdown        
+        output$gen_text <- renderText({
+          ucsc_df <- ucscGenomes()
+          ucsc_vec <- as.character(ucsc_df$db)
+          i <- which(ucsc_vec==input$ucscgen)
+          ucsc_text <- paste(as.character(ucscGenomes()[i,2:4]),
+                             collapse="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+          if(nchar(ucsc_text)==0){
+            return()
+          }
+          ucsc_text
+        })
         
         #  Dynamically build tabs for checkbox groups for metadata subsetting
         args <- reactive({
