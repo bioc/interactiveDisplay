@@ -18,6 +18,12 @@ setMethod("display",
                 sidebarPanel(
                   uiOutput("choose_chrom"),
                   HTML("<hr />"),
+                  #dummy slider until shiny bug gets fixed
+                  conditionalPanel
+                  (
+                    condition = '0==1',
+                    sliderInput("dummyslider", "", min=0, max=1, value=0)
+                  ),
                   uiOutput("binsui"),
                   HTML("<hr />"),
                   uiOutput("window"),
