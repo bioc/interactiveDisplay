@@ -11,11 +11,7 @@ setMethod("display",
                 bootstrapPage(
                 
                 .jstags(),
-                
-                fluidRow(
-                  column(1, .loading_gif())
-                ),
-                
+                                
                 sidebarPanel(
                   h3("Summarized Experiment", align = "center"),
                   HTML("<hr />"),
@@ -70,7 +66,7 @@ setMethod("display",
                 
                     ")
                   ),
-                  
+                  .loading_gif(),
                   uiOutput("heat")
                 )
               ),

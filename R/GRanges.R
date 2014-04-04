@@ -30,6 +30,7 @@ selDataTableOutput <- function (outputId){
     HTML("<hr />"),
     uiOutput("choose_gen"),
     uiOutput("gen_text"),
+    HTML("<hr />"),
     checkboxInput("suppress","Suppress Ideogram"),
     HTML("<hr />"),
     #dummy slider until shiny bug gets fixed
@@ -85,9 +86,7 @@ setMethod("display",
 
         ")
         ),
-        fluidRow(
-          column(1, .loading_gif())
-        ),
+
         .setSidebarPanel(),
         .GR_GRL_setMainPanel(sflag)
       ),

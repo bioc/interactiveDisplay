@@ -28,7 +28,7 @@ heatcolor3 <- function(inputId3) {
   sidebarPanel(
     h3("Expression Set", align = "center"),
     HTML("<hr />"),
-    tableOutput("expinfo"),
+    div(tableOutput("expinfo"), align = "center"),
     HTML("<hr />"),
     selectInput("either", "Network/Dendrogram View:  Sample or Probe:",
       choices = c("probe","sample")),
@@ -107,6 +107,7 @@ heatcolor3 <- function(inputId3) {
 
     ")
     ),
+    .loading_gif(),
     tabsetPanel(
       tabPanel("Heat Plot",
                HTML("Use the mouse to drag and pan the heatmap.  Use the 
@@ -146,9 +147,6 @@ setMethod("display",
       ui =
         bootstrapPage(
           #.jstags(),
-          fluidRow(
-            column(1, .loading_gif())
-          ),
           .ES_setSidebarPanel(),
           .ES_setMainPanel()
         ),

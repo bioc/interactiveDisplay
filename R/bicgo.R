@@ -1,12 +1,12 @@
 
 ## The loading gif/panel
-.loading_gif <- function(){
-  list(
-    conditionalPanel(condition="$('html').hasClass('shiny-busy')", img(src = 
-      "http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif")),
-    conditionalPanel(condition="!($('html').hasClass('shiny-busy'))", br())
-  )
-}
+#.loading_gif <- function(){
+#  list(
+#    conditionalPanel(condition="$('html').hasClass('shiny-busy')", img(src = 
+#      "http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif")),
+#    conditionalPanel(condition="!($('html').hasClass('shiny-busy'))", br())
+#  )
+#}
 
 .bicgo <- function(object, ...){
             

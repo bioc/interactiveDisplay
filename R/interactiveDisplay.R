@@ -73,8 +73,8 @@ source("http://bioconductor.org/biocLite.R")
 .loading_gif <- function(){
   list(
   conditionalPanel(condition="$('html').hasClass('shiny-busy')",
-  img(src = 
-        "http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif")),
+                   div("Loading...", style = "color:blue")),
+#img(src="http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif")),
   conditionalPanel(condition="!($('html').hasClass('shiny-busy'))", br())
   )
 }
@@ -97,6 +97,7 @@ source("http://bioconductor.org/biocLite.R")
     ")
     ),
     #progressInit(),
+    .loading_gif(),
     tabsetPanel(
       tabPanel("Static Circle Plot",
                HTML("Use the mouse to drag and pan the circle plot.  Use the 
