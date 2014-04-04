@@ -121,7 +121,16 @@ source("http://bioconductor.org/biocLite.R")
 ################################################################################
 
 
-ggheat <- function(my_mat,tweak,color_samples,color_probes,hc,hc2,c1,c2,c3,rainbow){
+ggheat <- function(my_mat,
+                   tweak,
+                   color_samples,
+                   color_probes,
+                   hc,
+                   hc2,
+                   c1,
+                   c2,
+                   c3,
+                   rainbow){
   melted <- melt(my_mat)
   names(melted) <- c("Var1","Var2","value")
   

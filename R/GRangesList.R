@@ -255,7 +255,8 @@ setMethod("display",
             return(NULL)
           }
           else{
-            return(as.numeric(max(ranges(t_object[seqnames(t_object)==input$chr])@width)))
+            return(as.numeric(max(ranges(t_object[seqnames(
+              t_object)==input$chr])@width)))
           }
         })
         
@@ -266,7 +267,8 @@ setMethod("display",
             return(NULL)
           }
           else{
-            return(as.numeric(min(ranges(t_object[seqnames(t_object)==input$chr])@width)))
+            return(as.numeric(min(ranges(t_object[seqnames(
+              t_object)==input$chr])@width)))
           }
         })
         

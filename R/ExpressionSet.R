@@ -250,7 +250,10 @@ setMethod("display",
               if(class(pkg)=="ChipDb"){
                 res <- suppressWarnings(select(pkg, input$probe,
                   c("ENTREZID","GENENAME","GO"), "PROBEID"))
-                res2 <- (suppressWarnings(select(GO.db, res$GO, "TERM", "GOID")))
+                res2 <- (suppressWarnings(select(GO.db,
+                                                 res$GO,
+                                                 "TERM",
+                                                 "GOID")))
                 return(res2)
               }
               else{
@@ -283,8 +286,10 @@ setMethod("display",
                 siggenes <- hc$labels[cutree(hc,nc)==input$gogroup]
                 
                 if(length(siggenes) > 1){
-                  res <- suppressWarnings(select(pkg, keys(hgu95av2.db),
-                                                 c("ENTREZID","GENENAME","GO"), "PROBEID"))
+                  res <- suppressWarnings(select(pkg,
+                                                 keys(hgu95av2.db),
+                                                 c("ENTREZID","GENENAME","GO"),
+                                                 "PROBEID"))
                   resa <- cbind(res$PROBEID,res$GO)
                   resb <- resa[!duplicated(resa),]
                   resc <- resb[!is.na(resb[,2]),]
@@ -295,11 +300,14 @@ setMethod("display",
                   names(map) <- c("PROBEID","GOID","TERM")
                   
                   #sets <- Filter(function(x) length(x) >= 10, split(map$PROBEID, map$PFAM))
-                  sets <- Filter(function(x) length(x) >= input$setsize, split(map$PROBEID, map$TERM))
+                  sets <- Filter(function(x) length(x) >= input$setsize,
+                                 split(map$PROBEID, map$TERM))
                   
                   universe <- unlist(sets, use.names=FALSE)
                   
-                  sigsets <- Map(function(x, y) x[x %in% y], sets, MoreArgs=list(y=siggenes))
+                  sigsets <- Map(function(x, y) x[x %in% y],
+                                 sets,
+                                 MoreArgs=list(y=siggenes))
                   result <- as.data.frame(hyperg(sets, sigsets, universe))
                   result <- result[rev(order(as.numeric(result[,6]))),]
                   result <- cbind(rownames(result),result)
@@ -320,7 +328,12 @@ setMethod("display",
         })
         
         output$gogroupui <- renderUI({
-          numericInput("gogroup", "Group Wide GO Summary", 1, min = 1, max = input$con_knum, step = 1)
+          numericInput("gogroup",
+                       "Group Wide GO Summary",
+                       1,
+                       min = 1,
+                       max = input$con_knum,
+                       step = 1)
         })
                 
         #  Data for network view, sample or probe

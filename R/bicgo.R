@@ -72,7 +72,8 @@
           tabsetPanel(
             #HTML("<hr />"),
             #HTML("GO Summary of Selected Probes"),
-            tabPanel("GO Summary of Selected Probes", dataTableOutput("GOtable"))
+            tabPanel("GO Summary of Selected Probes",
+                     dataTableOutput("GOtable"))
           )
         )
       ),
@@ -80,7 +81,7 @@
     server = function(input,output) {
       
       
-      ################################################################################
+################################################################################
       # Some nonreactive processing to do just once.
       
       #pkgName <- paste(annotation(object),".db",sep="")
@@ -100,11 +101,11 @@
       map <- cbind(resc[,1],map)
       names(map) <- c("PROBEID","GOID","TERM")
       
-      ################################################################################
+################################################################################
       record <- list()
       lex <- c()
       r <- 0
-      ################################################################################             
+################################################################################             
   
       observe({
         if(input$resetbutton == 0){
@@ -152,7 +153,9 @@
               return(NULL)
             }
             else{
-              if(r==0 || length(input$clusterncol) == 0 || length(input$clusternrow) == 0){
+              if(r==0 ||
+                 length(input$clusterncol) == 0 ||
+                 length(input$clusternrow) == 0){
                 lex <<- tex()
                 return(tex())
               }
@@ -160,7 +163,8 @@
                 colcut <- cutree(hclust(dist(t(lex))),input$clusterncol)
                 rowcut <- cutree(hclust(dist(lex)),input$clusternrow)
                 
-                temp <- lex[(rowcut %in% as.numeric(input$selclustrow)),(colcut %in% as.numeric(input$selclustcol))]
+                temp <- lex[(rowcut %in% as.numeric(input$selclustrow)),
+                            (colcut %in% as.numeric(input$selclustcol))]
                 if(sum(dim(lex))>3){
                   lex <<- temp
                 }
@@ -257,7 +261,10 @@
         }
         else{
           hprobes <- hprobes()
-          return(as.data.frame(select(hgu95av2.db, hprobes, c("ENTREZID","GENENAME"), "PROBEID")))
+          return(as.data.frame(select(hgu95av2.db, 
+                                      hprobes, 
+                                      c("ENTREZID","GENENAME"),
+                                      "PROBEID")))
         }
       })
       
@@ -338,7 +345,9 @@
         hsamples <- hsamples()
         ex <- ex()
         hprobes <- hprobes()
-        if(length(hprobes)==0 || length(input$clusterncol) == 0 || length(input$clusternrow) == 0){
+        if(length(hprobes)==0 ||
+           length(input$clusterncol) == 0 ||
+           length(input$clusternrow) == 0){
           return(NULL)
         }
         else{
@@ -352,19 +361,25 @@
           }
           colcolors <- unlist(lapply(colnames(ex), color.map, hsamples))
           rowcolors <- unlist(lapply(rownames(ex), color.map, hprobes))
-          return(cim(ex,trace="none",ColSideColors=colcolors,RowSideColors=rowcolors))
+          return(cim(ex,
+                     trace="none",
+                     ColSideColors=colcolors,
+                     RowSideColors=rowcolors))
         }
       })
       
       output$zoomed <- renderPlot({ 
         ex <- ex()
-        if(length(ex)==0 || length(input$clusterncol) == 0 || length(input$clusternrow) == 0){
+        if(length(ex)==0 ||
+           length(input$clusterncol) == 0 ||
+           length(input$clusternrow) == 0){
           return(NULL)
         }
         else{
           colcut <- colcut()
           rowcut <- rowcut()
-          cim(ex[(rowcut %in% as.numeric(input$selclustrow)),(colcut %in% as.numeric(input$selclustcol))],trace="none")
+          cim(ex[(rowcut %in% as.numeric(input$selclustrow)),
+                 (colcut %in% as.numeric(input$selclustcol))],trace="none")
         }
       })
                       
