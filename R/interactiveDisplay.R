@@ -26,8 +26,8 @@ function(object){
 source("http://bioconductor.org/biocLite.R")
 .usePackage <- function(p) {
   if (!is.element(p, installed.packages()[,1])){
-    #biocLite(p)
-    stop(paste("The required package, '",p,"', is missing.  Please install it by typing biocLite('",p,"') in the console", sep=""))
+    stop(paste("The required package, '",p,"', is missing.  Please install it by
+               typing biocLite('",p,"') in the console", sep=""))
   }
   require(p, character.only = TRUE)
 }
@@ -74,11 +74,27 @@ source("http://bioconductor.org/biocLite.R")
   list(
   conditionalPanel(condition="$('html').hasClass('shiny-busy')",
                    div("Loading...", style = "color:blue")),
-#img(src="http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif")),
   conditionalPanel(condition="!($('html').hasClass('shiny-busy'))", br())
   )
 }
 
+#selDataTableOutput <- function (outputId){
+#  tagList(singleton(tags$head(tags$link(rel = "stylesheet", 
+#    type = "text/css", href = "shared/datatables/css/DT_bootstrap.css"),
+#    tags$style(type="text/css", ".rowsSelected td{background-color: rgba(112,164,255,0.2) !important}"),
+#    tags$style(type="text/css", ".selectable div table tbody tr{cursor: hand; cursor: pointer;}"),
+#    tags$style(type="text/css",".selectable div table tbody tr td{
+#      -webkit-touch-callout: none;
+#      -webkit-user-select: none;
+#      -khtml-user-select: none;
+#      -moz-user-select: none;
+#      -ms-user-select: none;
+#      user-select: none;}"),                          
+#    tags$script(src = "shared/datatables/js/jquery.dataTables.min.js"), 
+#    tags$script(src = "shared/datatables/js/DT_bootstrap.js"),
+#    tags$script(src = "/js/DTbinding.js"))),
+#  div(id = outputId, class = "shiny-datatable-output selectable"))
+#}
 
 ## helper for setting up main panel
 .GR_GRL_setMainPanel <- function(sflag){
@@ -96,7 +112,6 @@ source("http://bioconductor.org/biocLite.R")
 
     ")
     ),
-    #progressInit(),
     .loading_gif(),
     tabsetPanel(
       tabPanel("Static Circle Layout",
@@ -105,9 +120,7 @@ source("http://bioconductor.org/biocLite.R")
                HTML("<hr />"),
                svgcheckout("cplot",sflag)),
       tabPanel("Interactive Plot", plotOutput("plotname")),
-      #tabPanel("Circle Plot", svgcheckout("cplot",sflag)),
-      #tabPanel("All Ranges in Object", dataTableOutput("fulltable")),
-      tabPanel("All Ranges in Object", selDataTableOutput("fulltable")),
+      tabPanel("All Ranges in Object", dataTableOutput("fulltable")),
       tabPanel("Selected Ranges in Current View", dataTableOutput("rtable")),
       tabPanel("Deposited Selections", dataTableOutput("btable"))
     ),
@@ -157,7 +170,6 @@ ggheat <- function(my_mat,
   }
     
   gp <- ggplot(melted, aes(x = Var2, y = Var1, fill = value))
-  #, height = 30*dim(my_mat)[1], width =30*dim(my_mat)[2]))
   gp <- gp + geom_tile()
   gp <- gp + coord_fixed()
   gp <- gp + scale_fill_gradientn(colours = myPalette(100))
@@ -175,8 +187,6 @@ ggheat <- function(my_mat,
                                               colour = color_probes))
   gp <- gp + xlab("Samples")
   gp <- gp + ylab("Probes")
-  #gp <- gp + ggtitle("Heatmap") + 
-  #  theme(plot.title = element_text(lineheight=.8, face="bold", vjust = 2))
   gp
 }
 
@@ -229,8 +239,13 @@ subgr <- function(gr,chr,strand,window1,window2,width1,width2,mcolnames,input){
   }else{
     temp2 <- temp1[strand(temp1)==strand]
   }
-  temp3 <- temp2[ranges(temp2)@width > as.numeric(width1)]
-  temp4 <- temp3[ranges(temp3)@width < as.numeric(width2)]
+  if(!is.null(width1) && !is.null(width2)){
+    temp3 <- temp2[ranges(temp2)@width > as.numeric(width1)]
+    temp4 <- temp3[ranges(temp3)@width < as.numeric(width2)]
+  }
+  else{
+    temp4 <- temp2
+  }
   temp5 <- temp4[start(temp4) > as.numeric(window1)]
   temp6 <- temp5[end(temp5) < as.numeric(window2)]  
   for(i in mcolnames){
@@ -249,8 +264,13 @@ subgr2 <- function(gr,chr,strand,width,window,mcolnames,input){
   }else{
     temp2 <- temp1[strand(temp1)==strand]
   }
-  temp3 <- temp2[ranges(temp2)@width > width[1]]
-  temp4 <- temp3[ranges(temp3)@width < width[2]]
+  if(!is.null(width)){
+    temp3 <- temp2[ranges(temp2)@width > width[1]]
+    temp4 <- temp3[ranges(temp3)@width < width[2]]
+  }
+  else{
+    temp4 <- temp2
+  }
   temp5 <- temp4[start(temp4) > window[1]]
   temp6 <- temp5[end(temp5) < window[2]]
   for(i in mcolnames){
@@ -273,26 +293,3 @@ subgr2 <- function(gr,chr,strand,width,window,mcolnames,input){
   })
 }
 
-################################################################################
-
-#myRunApp <- function(...){
-#  try(hostname <- suppressWarnings(system2(c("hostname", "-d"), stdout=TRUE, 
-#  stderr=NULL)), silent=TRUE)
-#  if(exists("hostname") && length(hostname) && grepl("ec2\\.internal",
-#  hostname)){
-#    dots <- list(...)
-#    dots[["launch.browser"]] <- FALSE
-#    if (is.null(dots[['port']])) dots[['port']] <- 8100L
-#    public.dns <- 
-#  httr::content(GET("http://169.254.169.254/latest/meta-data/public-hostname"))
-#    url <- paste0("http://", public.dns, ":", dots[["port"]])
-#    cat("If you don't see a new window, ")
-#    cat("try disabling your popup blocker and try again.\n")
-#    cat("Press ESCAPE in this window when done.\n")
-#    browseURL(url)
-#    do.call(runApp, dots)
-#  }
-#  else{
-#    runApp(...)
-#  }
-#}

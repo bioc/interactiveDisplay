@@ -49,9 +49,6 @@ heatcolor3 <- function(inputId3) {
                 label = "Tweak Axis Label Font Size",
                 min = -1, max = 1, value = 0, step = .1),
     HTML("<hr />"),
-    #sliderInput(inputId = "con_knum",
-    #            label = "Number of Clusters",
-    #            min = 1, max = 100, value = 4, step = 1),
     uiOutput("edge"),
     uiOutput("gen_text"),
     HTML("<hr />"),
@@ -146,7 +143,6 @@ setMethod("display",
     app <- list(
       ui =
         bootstrapPage(
-          #.jstags(),
           .ES_setSidebarPanel(),
           .ES_setMainPanel()
         ),
@@ -181,8 +177,6 @@ setMethod("display",
             p <- p[seq_len(input$pmeancutoff)]
             s <- s[seq_len(input$smeancutoff)]
             
-            #p <- rev(order(apply(tmpdata,1,mean)))[1:input$pmeancutoff]
-            #s <- rev(order(apply(tmpdata,2,mean)))[1:input$smeancutoff]
             tmpdata <- tmpdata[p,s]
             return(tmpdata)
           }
@@ -299,7 +293,6 @@ setMethod("display",
                   map <- cbind(resc[,1],map)
                   names(map) <- c("PROBEID","GOID","TERM")
                   
-                  #sets <- Filter(function(x) length(x) >= 10, split(map$PROBEID, map$PFAM))
                   sets <- Filter(function(x) length(x) >= input$setsize,
                                  split(map$PROBEID, map$TERM))
                   
@@ -327,6 +320,7 @@ setMethod("display",
           }
         })
         
+        # Group Wide GO Summary
         output$gogroupui <- renderUI({
           numericInput("gogroup",
                        "Group Wide GO Summary",
@@ -354,9 +348,7 @@ setMethod("display",
         
         #  Subset probes by average expression
         output$pmeancutoff <- renderUI({
-          textInput("pmeancutoff", "Number of Probes to Display", 20)   
-          #textInput("pmeancutoff", "Top Probes by Average Expression",
-          #dim(exprs(object))[1])
+          textInput("pmeancutoff", "Number of Probes to Display", 20)
         })
         
         #  Subset samples by average expression
@@ -370,7 +362,6 @@ setMethod("display",
         cutoff <- reactive({
           data <- data()
           if(length(data)!=0){
-            #val <- cor(data())
             val <- dm(data())
             diag(val) <- NA
             val[lower.tri(val)] <- NA
@@ -387,7 +378,6 @@ setMethod("display",
         cutoff_max <- reactive({
           data <- data()
           if(length(data)!=0){
-            #val <- cor(data())
             val <- dm(data())
             diag(val) <- NA
             val[lower.tri(val)] <- NA
@@ -411,14 +401,12 @@ setMethod("display",
           data <- data[,hc$order]
           cutoff <- cutoff()
           if(length(data)!=0){
-            #val <- cor(data())
             val <- dm(data())
             if (is.null(val)){
               return(list(names=character(), links=list(source=-1, target=-1)))
             }
             diag(val) <- NA
             val[lower.tri(val)] <- NA
-            #cutoff <- sort(val[!is.na(val)],decreasing=TRUE)[input$edgenum]
             if(sum(cutoff)==0){
               val[] <- NA
             }else{
@@ -431,11 +419,8 @@ setMethod("display",
               conns <- list(source=-1, target=-1, weight=0)
             }
             net <- list()
-            net[["names"]] <- colnames(val)#hc$labels[hc$order]
+            net[["names"]] <- colnames(val)
             net[["links"]] <- conns
-            #net[["groups"]] <- as.numeric(cutree(hclust(as.dist(1-val)) ,
-            #  k=input$con_knum))
-            #net[["groups"]] <- as.numeric(cutree(hclust(as.dist(1-val)) , k=1))
             net[["groups"]] <- as.numeric(cutree(hc, k=input$con_knum))
             net[["titles"]] <- hc$labels[hc$order]
             net[["colors"]] <- 
@@ -443,12 +428,6 @@ setMethod("display",
                       alpha=NULL)[cutree(hc,input$con_knum)[colnames(val)]]
             net[["charge"]] <- input$charge 
             net[["linkDistance"]] <- input$linkDistance
-            #if(input$either=="sample"){
-            #  net[["colors"]] <- colorx()
-            #}
-            #if(input$either=="probe"){
-            #  net[["colors"]] <- colory()
-            #}
             
             return(net)
           }
@@ -464,9 +443,6 @@ setMethod("display",
           if(length(data)!=0 && length(cutoff_max)!=0 ){
             sliderInput(inputId = "edgenum",
                         label = "Edge Number:",
-                        #min = 0, 
-                        #max = (((length(data[1,]))^2)/2 - length(data[1,])/2),
-                        #value = 1, step = 1,
                         min = 0, max = cutoff_max, value = 1, step = 1,
                         animate=animationOptions(interval=2000, loop=FALSE))
           }
@@ -474,6 +450,8 @@ setMethod("display",
             return(NULL)
           }
         })
+        
+        #  Show Distance Threshold
         output$gen_text <- renderText({
           cutoff <- cutoff()
           if(length(cutoff)!=0){
@@ -507,18 +485,17 @@ setMethod("display",
           }
         })
         
-        #Clustering
+        #  Clustering
         hc <- function(d){
           hclust(dist(t(d),method = input$dist_method), input$hc_method)
         }
         
-        #Distance Matrix
-        
+        #  Distance Matrix
         dm <- function(d){
           as.matrix(dist(t(d), diag=TRUE, upper=TRUE, method=input$dist_method))
         }
                        
-        #Color Dendrogram
+        #  Color Dendrogram
         output$dendro <- renderPlot({
           nc <- input$con_knum
           hc <- hc(data())
@@ -545,7 +522,7 @@ setMethod("display",
           plot(dL)
         })
         
-        #More cluster group coloring for x/y axis and network nodes
+        #  More cluster group coloring for x/y axis and network nodes
         color_samples <- reactive({
           d <- tmpdata()
           hc <- hc(d)
@@ -574,6 +551,3 @@ setMethod("display",
     #myRunApp(app, ...)
     runApp(app, ...)
   })
-  
-
-

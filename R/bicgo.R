@@ -1,18 +1,8 @@
 
-## The loading gif/panel
-#.loading_gif <- function(){
-#  list(
-#    conditionalPanel(condition="$('html').hasClass('shiny-busy')", img(src = 
-#      "http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif")),
-#    conditionalPanel(condition="!($('html').hasClass('shiny-busy'))", br())
-#  )
-#}
-
 .bicgo <- function(object, ...){
             
   .usePackage('shiny')
   .usePackage('GOstats')
-  #.usePackage('biclust')
   .usePackage('hgu95av2.db')
   .usePackage('GO.db')
   .usePackage('gplots')
@@ -40,21 +30,19 @@
                        label= "Min probe pop for GO term",
                        min=1,max=1000,value=10,step=1),
           HTML("<hr />"),
-          #submitButton("Update View"),
           actionButton("gobutton", "View/Update GO Summary"),
           HTML("<hr />"),
           HTML("Each GO Summary submission will be bundled and returned to the console"),
           HTML("<hr />"),
           actionButton("stopbutton", "Stop/Save")      
         ),
+        
         mainPanel(
-          
           tags$head(
             tags$style(type='text/css', 
                        "#geneT { background-color: #DCE8BE; } 
                         #GOtable { background-color: #CABEE8 }")),                    
           .loading_gif(),
-          
           tabsetPanel(
             tabPanel("Plots",
                      HTML("Overview"),
@@ -70,8 +58,6 @@
             )
           ),
           tabsetPanel(
-            #HTML("<hr />"),
-            #HTML("GO Summary of Selected Probes"),
             tabPanel("GO Summary of Selected Probes",
                      dataTableOutput("GOtable"))
           )
@@ -79,8 +65,7 @@
       ),
     
     server = function(input,output) {
-      
-      
+         
 ################################################################################
       # Some nonreactive processing to do just once.
       
@@ -106,7 +91,6 @@
       lex <- c()
       r <- 0
 ################################################################################             
-  
       observe({
         if(input$resetbutton == 0){
           return()
@@ -175,7 +159,6 @@
         }
       })
   
-  
       output$clusterncol <- renderUI({
         ex <- ex()
         maxsamples <- dim(ex)[2]
@@ -232,6 +215,7 @@
                            tx,
                            selected=tx)
       })
+
       output$selclustrow <- renderUI({
         tx <- seq(input$clusternrow)
         if(length(tx) == 0){
@@ -419,3 +403,4 @@ setMethod("bicgo",
           function(object, ...){
             .bicgo(object=object, ...)
           })
+

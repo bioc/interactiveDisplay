@@ -2,25 +2,6 @@
 ###   GRanges
 ################################################################################
 
-selDataTableOutput <- function (outputId){
-  tagList(singleton(tags$head(tags$link(rel = "stylesheet", 
-    type = "text/css", href = "shared/datatables/css/DT_bootstrap.css"),
-    tags$style(type="text/css", ".rowsSelected td{background-color: rgba(112,164,255,0.2) !important}"),
-    tags$style(type="text/css", ".selectable div table tbody tr{cursor: hand; cursor: pointer;}"),
-    tags$style(type="text/css",".selectable div table tbody tr td{
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -khtml-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;}"),                          
-    tags$script(src = "shared/datatables/js/jquery.dataTables.min.js"), 
-    tags$script(src = "shared/datatables/js/DT_bootstrap.js"),
-    tags$script(src = "/js/DTbinding.js"))),
-  div(id = outputId, class = "shiny-datatable-output selectable"))
-}
-
-
 ## helper for setting up sidebar
 .setSidebarPanel <- function(){
   sidebarPanel(
@@ -49,8 +30,7 @@ selDataTableOutput <- function (outputId){
     HTML("<hr />"),
     actionButton("clearbutton", "Clear Deposit"),
     actionButton("savebutton", "Save Deposited to Console")
-    #actionButton("btnSend", "Save Highlighted Ranges to Console")
-    
+    #actionButton("btnSend", "Save Highlighted Ranges to Console") 
   )
 }
 
@@ -84,9 +64,7 @@ setMethod("display",
           height: 800px;
         }
 
-        ")
-        ),
-
+        ")),
         .setSidebarPanel(),
         .GR_GRL_setMainPanel(sflag)
       ),
@@ -183,10 +161,8 @@ setMethod("display",
         outputOptions(output, "plotname", suspendWhenHidden = FALSE)
         
         # The circle plot
-
         cplot <- reactive({
           
-          #tempfix until we get an official progressbar
           if(length(input$width)==0){
             return(NULL)
           }
@@ -210,43 +186,31 @@ setMethod("display",
             return(p)
           }
         })
-
-        output$cplot <- renderUI({
-          if(length(cplot())==0){
-            return(NULL)
-          }
-          else{
-              #progress <- Progress$new(session, min=1, max=10)
-              #on.exit(progress$close())
-  
-              #progress$set(message = 'Calculation in progress',
-              #             detail = 'This may take a while...')
-  
-              #for (i in 1:10) {
-              #  progress$set(value = i)
-              #  Sys.sleep(0.1)
-              #}
-            if(sflag==TRUE){
+        
+        #Dev option for suppressing svg output
+        if(sflag==TRUE){
+          output$cplot <- renderUI({
+            if(length(cplot())==0){
+              return(NULL)
+            }
+            else{
               cplot <- cplot()
               g <- grid2jssvg(cplot)
               return(g)
             }
-            else{
-              #progress <- Progress$new(session, min=1, max=10)
-              #on.exit(progress$close())
-  
-              #progress$set(message = 'Calculation in progress',
-              #             detail = 'This may take a while...')
-  
-              #for (i in 1:10) {
-              #  progress$set(value = i)
-              #  Sys.sleep(0.1)
-              #}
-              cplot <- cplot()
-              return(cplot)
+          })
+        }
+        else{
+          output$cplot <- renderPlot({
+            if(length(cplot())==0){
+              return(NULL)
             }
-          }
-        })     
+            else{
+              cplot <- cplot()
+              return(plot(cplot))
+            }
+          })
+        }
         
         #  Sets max position for the view window slider for the current
         #  chromosome.
@@ -314,7 +278,9 @@ setMethod("display",
           max_width <- max_width()
           min_width <- min_width()
           
-          if(length(max_width)==0 || length(min_width)==0){
+          if(length(max_width)==0 ||
+             length(min_width)==0 ||
+             max_width==min_width){
             return()
           }
           
@@ -356,11 +322,9 @@ setMethod("display",
           args <- list()
           for(i in mcolnames){
             tx <- as.data.frame(object)
-            #if(dim(as.data.frame(mcols(object)[i]))[2] == 1){
               tx <- sort(unique(tx[,i]))
               args[[i]] <- tabPanel(i, checkboxGroupInput(i, 
                 paste("Select ", i,sep=""),tx,selected=tx))
-            #}
           }
           args
         })
@@ -434,4 +398,3 @@ setMethod("display",
     )
     runApp(app, ...)
   })
-

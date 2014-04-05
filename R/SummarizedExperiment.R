@@ -1,5 +1,5 @@
 ################################################################################
-###   SummarizedExperiment 2
+###   SummarizedExperiment
 ################################################################################
 
 setMethod("display", 
@@ -9,9 +9,8 @@ setMethod("display",
             app <- list(
               ui =
                 bootstrapPage(
-                
                 .jstags(),
-                                
+                
                 sidebarPanel(
                   h3("Summarized Experiment", align = "center"),
                   HTML("<hr />"),
@@ -31,14 +30,10 @@ setMethod("display",
                         mousewheel to zoom in/out."),
                   HTML("<hr />"),
                   actionButton("closebutton", "Stop Application")
-                  #HTML("<hr />"),
-                  #plotOutput("plotname")
                 ),
                 
                 mainPanel(
-                  
-                  .csstags(),
-                  
+                  .csstags(), 
                   shiny::tags$head(
                     shiny::tags$style(type='text/css', "
 
@@ -54,25 +49,13 @@ setMethod("display",
                       height: 800px;
                     }
                 
-                    ")
-                  ),
-                  
-                  shiny::tags$head(
-                    shiny::tags$style(type='text/css', "
-
-                    svg {
-                      height: 800px;
-                    }
-                
-                    ")
-                  ),
+                    ")),
                   .loading_gif(),
                   uiOutput("heat")
                 )
               ),
               
               server = function(input, output){
-                
                 
                 #  Sets max position for the view window slider for the current
                 #  chromosome.
@@ -121,22 +104,6 @@ setMethod("display",
                               min = 10, max = 100, value = 30, step = 1
                   )
                 })
-                
-                #  Ideogram Track
-                #itr <- reactive({
-                #  IdeogramTrack(genome=genome(object)[input$chr],
-                #  chromosome=input$chr,
-                #  showId=TRUE,
-                #  showBandId=TRUE)
-                #})
-                
-                #  Render the track plots.
-                #output$plotname <- renderPlot({
-                #  itr <- itr()
-                #  plotTracks(list(itr),
-                #  from=input$window[1],
-                #  to=input$window[2])
-                #})
                         
                 smaller <- reactive({
 
@@ -169,11 +136,6 @@ setMethod("display",
                                    
                 })
                 
-                #heightSize <- reactive({
-                #  smaller <- smaller()
-                #  30*dim(smaller)[1]
-                #})
-                
                 #  Render the choose chromosome dropdown.
                 cl <- as.character(unique(seqnames(rowData(object))))
                 output$choose_chrom <- renderUI({
@@ -181,13 +143,7 @@ setMethod("display",
                   names(chromChoices) <- cl
                   selectInput("chr", "Chromosome", chromChoices)
                 })
-                
-                #  Choose number of bins
-                #output$binsui <- renderUI({   
-                #  textInput("bins",
-                #  "Number of bins to reduce matrix resolution", 50)
-                #})
-                
+                              
                 #  Close Button  
                 observe({
                   if (input$closebutton == 0)
@@ -220,8 +176,6 @@ setMethod("display",
                     gp <- gp + scale_y_discrete(expand = c(0, 0))
                     gp <- gp + coord_equal()
                     gp <- gp + theme_bw()
-                    #  gp <- gp + theme(axis.text.x=element_text(angle = -45,
-                    #  hjust = 0))
                     gp <- gp + xlab(paste(
                       "Region:  ",
                       input$window[1],
@@ -248,6 +202,5 @@ setMethod("display",
                  
               }
             )
-            #myRunApp(app, ...)
             runApp(app, ...)
           })

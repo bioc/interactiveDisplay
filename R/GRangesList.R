@@ -2,8 +2,6 @@
 ###   GRangesList
 ################################################################################
 
-
-
 ## helper for setting up sidebar
 .GL_setSidebarPanel <- function(){
   sidebarPanel(
@@ -49,6 +47,14 @@ setMethod("display",
       ui = bootstrapPage(        
         .jstags(),  
         .csstags(),
+        shiny::tags$head(
+          shiny::tags$style(type='text/css', "
+
+        cplot {
+          height: 800px;
+        }
+
+        ")),
         .GL_setSidebarPanel(),
         .GR_GRL_setMainPanel(sflag)
       ),
@@ -152,8 +158,7 @@ setMethod("display",
         })
         outputOptions(output, "plotname", suspendWhenHidden = FALSE)
         
-        # The circle plot
-        
+        # The circle plot 
         cplot <- reactive({
           if(length(input$gr)==0 || length(t_object)==0){
             return(NULL)
@@ -179,24 +184,17 @@ setMethod("display",
             return(p)
           }
         })
-        
+
+        #Dev option for suppressing svg output
         if(sflag==TRUE){
           output$cplot <- renderUI({
             if(length(cplot())==0){
               return(NULL)
             }
             else{
-              #progress <- Progress$new(session, min=1, max=10)
-              #on.exit(progress$close())
-              
-              #progress$set(message = 'Calculation in progress',
-              #             detail = 'This may take a while...')
-              
-              #for (i in 1:10) {
-              #  progress$set(value = i)
-              #  Sys.sleep(0.1)
-              #}
-              return(grid2jssvg(cplot()))
+              cplot <- cplot()
+              g <- grid2jssvg(cplot)
+              return(g)
             }
           })
         }
@@ -206,22 +204,11 @@ setMethod("display",
               return(NULL)
             }
             else{
-              #progress <- Progress$new(session, min=1, max=10)
-              #on.exit(progress$close())
-              
-              #progress$set(message = 'Calculation in progress',
-              #             detail = 'This may take a while...')
-              
-              #for (i in 1:10) {
-              #  progress$set(value = i)
-              #  Sys.sleep(0.1)
-              #}
-              return(cplot())
+              cplot <- cplot()
+              return(plot(cplot))
             }
-          })        
+          })
         }
-        
-        
         
         #  Sets max position for the view window slider for the current
         #  chromosome.
@@ -314,7 +301,6 @@ setMethod("display",
         })
         
         #  Render the choose chromosome dropdown.
-        #cl <- levels(seqnames(object()))
         output$choose_chrom <- renderUI({
           t_object <- t_object()
           if(!is.null(t_object)){
@@ -324,8 +310,6 @@ setMethod("display",
             return(selectInput("chr", "Chromosome", chromChoices))
           }
         })
-        
-
         
         #  Render the text under the UCSC dropdown        
         output$choose_gen <- .choose_gen(...)
