@@ -150,7 +150,7 @@ setMethod("display",
             return(pt)
           }
         })
-        
+        outputOptions(output, "plotname", suspendWhenHidden = FALSE)
         
         # The circle plot
         
