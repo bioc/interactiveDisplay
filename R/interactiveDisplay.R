@@ -99,8 +99,8 @@ source("http://bioconductor.org/biocLite.R")
     #progressInit(),
     .loading_gif(),
     tabsetPanel(
-      tabPanel("Static Circle Plot",
-               HTML("Use the mouse to drag and pan the circle plot.  Use the 
+      tabPanel("Static Circle Layout",
+               HTML("Use the mouse to drag and pan the circle layout.  Use the 
                      mousewheel to zoom in/out."),
                HTML("<hr />"),
                svgcheckout("cplot",sflag)),
