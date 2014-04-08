@@ -219,7 +219,8 @@ setMethod("display",
             return(NULL)
           }
           else{
-            return(max(end(t_object[seqnames(t_object)==input$chr])))
+            return(suppressWarnings(
+              max(end(t_object[seqnames(t_object)==input$chr]))))
           }
         })
         
@@ -231,7 +232,8 @@ setMethod("display",
             return(NULL)
           }
           else{
-            return(min(start(t_object[seqnames(t_object)==input$chr])))
+            return(suppressWarnings(
+              min(start(t_object[seqnames(t_object)==input$chr]))))
           }
         })
         
@@ -242,8 +244,8 @@ setMethod("display",
             return(NULL)
           }
           else{
-            return(as.numeric(max(ranges(t_object[seqnames(
-              t_object)==input$chr])@width)))
+            return(as.numeric(suppressWarnings(max(ranges(t_object[seqnames(
+              t_object)==input$chr])@width))))
           }
         })
         
@@ -254,8 +256,8 @@ setMethod("display",
             return(NULL)
           }
           else{
-            return(as.numeric(min(ranges(t_object[seqnames(
-              t_object)==input$chr])@width)))
+            return(as.numeric(suppressWarnings(min(ranges(t_object[seqnames(
+              t_object)==input$chr])@width))))
           }
         })
         
@@ -263,7 +265,7 @@ setMethod("display",
         output$window <- renderUI({
           max_end <- max_end()
           min_start <- min_start()
-          if(is.null(max_end())){
+          if(is.null(max_end()) || is.infinite(max_end())){
             return()
           }
           else{
@@ -280,7 +282,7 @@ setMethod("display",
         output$width <- renderUI({
           max_width <- max_width()
           min_width <- min_width()
-          if(is.null(max_width())){
+          if(is.null(max_width()) || is.infinite(max_width())){
             return()
           }
           else{
@@ -350,21 +352,33 @@ setMethod("display",
           if (input$savebutton == 0)
             return()
           isolate({
-            tempy <- list()
-            for(i in names(bank)){
-              temp <- list()
-              tbank <- bank[[i]]
-              for(j in names(tbank)){
-                p <- unlist(tbank[[j]])
-                sgr <- subgr(object[[i]],p[2],p[3],p[4],p[5],p[6],p[7],
-                  mcolnames(),input)
-                temp[[j]] <- sgr
-              }     
-              subgrly <- GRangesList(temp)
-              tempy[[i]] <- do.call(c, unname(as.list(subgrly)))
+            if(length(bank)!=0){
+              templ <- list()
+              for(i in names(bank)){
+                tbank <- bank[[i]]
+                temp <- list()
+                for(j in names(tbank)){
+                  p <- unlist(tbank[[j]])
+                  sgr <- subgr(object[[i]],p[2],p[3],p[4],p[5],p[6],p[7],
+                    mcolnames(),input)
+                  temp[[j]] <- as.data.frame(sgr)
+                }
+                mergegr <- do.call(rbind,temp)
+                mc <- apply(mergegr[names(mergegr)[-(1:5)]],2,list)
+                gr <- GRanges(seqnames=mergegr$seqnames,
+                              IRanges(mergegr$start,mergegr$end),
+                              mergegr$strand,
+                              mc)
+                seqlengths(gr) <- seqlengths(object[[i]])[levels(seqnames(gr))]
+                templ[[i]] <- gr
+              }
+              grl <- GRangesList(templ)
+              grl <- lapply(grl,unname)
+              stopApp(returnValue=grl)
             }
-            subgrl <- GRangesList(tempy)
-            stopApp(returnValue=subgrl)
+            else{
+              stopApp()
+            }
           })
         })
         

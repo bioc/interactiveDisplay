@@ -258,7 +258,7 @@ setMethod("display",
         
         #  Render the plot range window slider.     
         output$window <- renderUI({
-          if(is.null(max_end())){
+          if(is.null(max_end()) || is.infinite(max_end())){
             return()
           }
           else{
@@ -338,16 +338,27 @@ setMethod("display",
           if (input$savebutton == 0)
             return()
           isolate({
-            temp <- list()
-            for(i in names(bank)){
-              p <- unlist(bank[[i]])
-              sgr <- subgr(object, i, p[1], p[2], p[3], p[4], p[5],
-                           mcolnames, input)
-              temp[[i]] <- sgr
+            if(length(bank)!=0){
+              temp <- list()
+              for(i in names(bank)){
+                p <- unlist(bank[[i]])
+                sgr <- subgr(object, i, p[1], p[2], p[3], p[4], p[5],
+                             mcolnames, input)              
+                temp[[i]] <- as.data.frame(sgr)
+              }
+              mergegr <- do.call(rbind,temp)
+              mc <- apply(mergegr[names(mergegr)[-(1:5)]],2,list)
+              gr <- GRanges(seqnames=mergegr$seqnames,
+                               IRanges(mergegr$start,mergegr$end),
+                               mergegr$strand,
+                               mc)
+              seqlengths(gr) <- seqlengths(object)[levels(seqnames(gr))]
+              
+              stopApp(returnValue=gr)
             }
-            subgrl <- GRangesList(temp)
-            subgr <- do.call(c, unname(as.list(subgrl)))
-            stopApp(returnValue=subgr)
+            else{
+              stopApp()
+            }
           })
         })
         
