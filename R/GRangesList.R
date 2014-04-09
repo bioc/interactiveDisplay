@@ -413,6 +413,5 @@ setMethod("display",
         
       }
     )
-    #myRunApp(app, ...)
     runApp(app, ...)
   })

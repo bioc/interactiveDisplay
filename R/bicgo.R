@@ -3,7 +3,7 @@
             
   .usePackage('shiny')
   .usePackage('GOstats')
-  .usePackage('hgu95av2.db')
+  #.usePackage('hgu95av2.db')
   .usePackage('GO.db')
   .usePackage('gplots')
   .usePackage('mixOmics')
@@ -70,21 +70,31 @@
       # Some nonreactive processing to do just once.
       
       #pkgName <- paste(annotation(object),".db",sep="")
-      pkgName <- "hgu95av2.db"
-      pkg <- get(pkgName)
-      
-      res <- suppressWarnings(
-        select(pkg, keys(hgu95av2.db),
-                              c("ENTREZID","GENENAME","GO"), "PROBEID"))
-      resa <- cbind(res$PROBEID,res$GO)
-      resb <- resa[!duplicated(resa),]
-      resc <- resb[!is.na(resb[,2]),]
-      
-      
-      map <- (suppressWarnings(
-        select(GO.db, resc[,2], "TERM")))
-      map <- cbind(resc[,1],map)
-      names(map) <- c("PROBEID","GOID","TERM")
+      #pkgName <- "hgu95av2.db"
+      #pkg <- get(pkgName)
+
+      pkgName <- paste(annotation(object),".db",sep="")
+      #try(require(pkgName,character.only=TRUE),silent=TRUE)
+      .usePackage(pkgName)
+      if(exists(pkgName)==FALSE){
+        return(as.data.frame("No annotation package available"))
+      }
+      else{
+        pkg <- get(pkgName)
+        
+        res <- suppressWarnings(
+          select(pkg, keys(pkg),
+                                c("ENTREZID","GENENAME","GO"), "PROBEID"))
+        resa <- cbind(res$PROBEID,res$GO)
+        resb <- resa[!duplicated(resa),]
+        resc <- resb[!is.na(resb[,2]),]
+        
+        
+        map <- (suppressWarnings(
+          select(GO.db, resc[,2], "TERM")))
+        map <- cbind(resc[,1],map)
+        names(map) <- c("PROBEID","GOID","TERM")
+      }
       
 ################################################################################
       record <- list()
@@ -245,7 +255,7 @@
         }
         else{
           hprobes <- hprobes()
-          return(as.data.frame(select(hgu95av2.db, 
+          return(as.data.frame(select(pkg, 
                                       hprobes, 
                                       c("ENTREZID","GENENAME"),
                                       "PROBEID")))

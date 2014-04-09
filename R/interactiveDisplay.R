@@ -128,11 +128,9 @@ source("http://bioconductor.org/biocLite.R")
   )
 }
 
-
 ################################################################################
 ###   Additional Functions
 ################################################################################
-
 
 ggheat <- function(my_mat,
                    tweak,
@@ -215,7 +213,6 @@ grid2jssvg <- function(gp){
   htmlxml
 }
 
-
 #  This pair of functions can be used in cases where it is desirable to
 #  give the user a choice between rendering a plot as svg or to use the default
 #  Shiny plot function.
@@ -278,7 +275,6 @@ subgr2 <- function(gr,chr,strand,width,window,mcolnames,input){
   }
   temp6
 }
-
 
 ################################################################################
 

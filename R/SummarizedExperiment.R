@@ -89,8 +89,7 @@ setMethod("display",
                                 min = min_start,
                                 max = max_end,
                                 value = c(min_start,max_end),
-                                step = 1
-                    )
+                                step = 1)
                   }
                   else{
                   return(NULL)                  
@@ -101,39 +100,36 @@ setMethod("display",
                 output$binsui <- renderUI({
                   sliderInput(inputId = "bins",
                               label = "Number of Bins",
-                              min = 10, max = 100, value = 30, step = 1
-                  )
+                              min = 10, max = 100, value = 30, step = 1)
                 })
                         
                 smaller <- reactive({
-
-                    if(length(input$chr)!=0 &&
-                       length(input$bins)!=0 &&
-                       length(input$window)!=0)
-                    { 
-                      si <- which(as.character(seqnames(rowData(object
-                            )))==input$chr)
-                      subr <- rowData(object)[si]
-                      
-                      subr <- subr[start(subr) > input$window[1]]
-                      subr <- subr[end(subr) < input$window[2]]
-                      
-                      orn <- subr$id[order(start(subr))]
-                      rfh <- assays(object)[[1]][orn,]
-                      ng <- dim(rfh)[1]
-                      gs <- split(1:ng,round(as.numeric(
-                            cut(1:ng,as.numeric(input$bins)))))
-                      
-                      smaller <- c()
-                      for(i in 1:length(gs)){
-                        new <- apply(rfh[gs[[i]],],2,mean)
-                        smaller <- rbind(smaller,new)
-                      }
-                      rownames(smaller) <- 1:length(gs)
-                      
-                      smaller
+                  if(length(input$chr)!=0 &&
+                     length(input$bins)!=0 &&
+                     length(input$window)!=0){
+                    
+                    si <- which(as.character(seqnames(rowData(
+                      object)))==input$chr)
+                    subr <- rowData(object)[si]
+                    
+                    subr <- subr[start(subr) > input$window[1]]
+                    subr <- subr[end(subr) < input$window[2]]
+                    
+                    orn <- subr$id[order(start(subr))]
+                    rfh <- assays(object)[[1]][orn,]
+                    ng <- dim(rfh)[1]
+                    gs <- split(1:ng,round(as.numeric(
+                          cut(1:ng,as.numeric(input$bins)))))
+                    
+                    smaller <- c()
+                    for(i in 1:length(gs)){
+                      new <- apply(rfh[gs[[i]],],2,mean)
+                      smaller <- rbind(smaller,new)
                     }
-                                   
+                    rownames(smaller) <- 1:length(gs)
+                    
+                    return(smaller)
+                  }          
                 })
                 
                 #  Render the choose chromosome dropdown.
@@ -152,7 +148,8 @@ setMethod("display",
                     stopApp()
                   })
                 })
-                    
+                  
+                #  Heat Plot
                 output$heat <- renderUI({
                   smaller <- smaller()
 

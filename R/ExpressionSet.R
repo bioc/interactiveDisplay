@@ -138,7 +138,7 @@ setMethod("display",
     .usePackage('ggbio')
     .usePackage('GOstats')
     .usePackage('GO.db')
-    .usePackage('hgu95av2.db')
+    #.usePackage('hgu95av2.db')
        
     app <- list(
       ui =
@@ -281,7 +281,7 @@ setMethod("display",
                 
                 if(length(siggenes) > 1){
                   res <- suppressWarnings(select(pkg,
-                                                 keys(hgu95av2.db),
+                                                 keys(pkg),
                                                  c("ENTREZID","GENENAME","GO"),
                                                  "PROBEID"))
                   resa <- cbind(res$PROBEID,res$GO)
@@ -320,7 +320,7 @@ setMethod("display",
           }
         })
         
-        # Group Wide GO Summary
+        #  Group Wide GO Summary
         output$gogroupui <- renderUI({
           numericInput("gogroup",
                        "Group Wide GO Summary",
@@ -547,7 +547,5 @@ setMethod("display",
         })
         
       })
-
-    #myRunApp(app, ...)
     runApp(app, ...)
   })
