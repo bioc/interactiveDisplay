@@ -353,7 +353,7 @@ setMethod("display",
                                mergegr$strand,
                                mc)
               seqlengths(gr) <- seqlengths(object)[levels(seqnames(gr))]
-              
+              gr <- unname(gr)
               stopApp(returnValue=gr)
             }
             else{
