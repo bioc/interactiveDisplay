@@ -125,7 +125,7 @@
           return(NULL)
         }
         else{
-          ex <- exprs(object)
+          ex <- exprs(object[rowSums(is.na(exprs(object)))==0,])
           tmpdata <- as.matrix(as.data.frame(ex))
           p <- rev(order(apply(tmpdata,1,var)))
           p <- p[seq_len(input$cutoff)]

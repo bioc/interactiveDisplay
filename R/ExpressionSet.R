@@ -151,7 +151,8 @@ setMethod("display",
         
         #  Subset the submitted data
         tmpdata <- reactive({
-          tmpdata <- as.matrix(as.data.frame(exprs(object)))
+          tmpdata <- as.matrix(as.data.frame(
+            exprs(object[rowSums(is.na(exprs(object)))==0,])))
           if(is.null(input$pmeancutoff)){
             return()
           }
