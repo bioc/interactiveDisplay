@@ -32,5 +32,6 @@ importFrom(XML,saveXML)
 export(display)
 exportMethods(display)
 exportMethods(gridsvgjs)
+exportMethods(gridtweak)
 exportMethods(bicgo)
 

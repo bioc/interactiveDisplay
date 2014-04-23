@@ -108,6 +108,13 @@ data(expr)
 bicgo(expr)
 ```
 
+An alternative to gridsvgjs() that allows the user to tweak ggplot 
+parameters within the browser application itself.
+
+```{r gridtweak_demo, eval=FALSE}
+gridtweak()
+```
+
 ## Acknowledgments
 
 Shiny <br/>
