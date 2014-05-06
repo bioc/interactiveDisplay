@@ -10,10 +10,12 @@ setMethod("gridsvgjs",
               ui =
                 bootstrapPage(
                   .jstags(),
-                  mainPanel( 
+                  mainPanel(
                     shiny::tags$head(
-                      shiny::tags$style(type='text/css', 
-                        ".span8 { width: 100%; align: right; }")
+                      shiny::tags$style(type='text/css', "
+                          .span8 { width: 100%; align: right; }  
+                          svg { width: 100vw; height: 100vh; }
+                        ")
                     ),                 
                     uiOutput("svgplot")
                   )
