@@ -23,19 +23,22 @@ heatcolor3 <- function(inputId3) {
   )
 }
 
-
 .ES_setSidebarPanel <- function(){
   sidebarPanel(
     h3("Expression Set", align = "center"),
     HTML("<hr />"),
     div(tableOutput("expinfo"), align = "center"),
     HTML("<hr />"),
+    checkboxInput("noheat","Suppress Heatmap"),
+    HTML("<hr />"),
     selectInput("either", "Network/Dendrogram View:  Sample or Probe:",
       choices = c("probe","sample")),
+    HTML("<hr />"),
     uiOutput("gogroupui"),
     sliderInput(inputId="setsize",
                 label= "Group Wide Summary: Min probe pop for GO term",
                 min=1,max=1000,value=100,step=1),
+    actionButton("gobutton", "View/Update Group GO Summary"),
     HTML("<hr />"),
     uiOutput("choose_probe"),
     HTML("<hr />"),
@@ -59,7 +62,7 @@ heatcolor3 <- function(inputId3) {
                 label = "Force Layout Link Distance",
                 min = 10, max = 200, value = 80, step = 1),
     HTML("<hr />"),
-    numericInput("con_knum", "Number of Clusters:", 5),
+    numericInput("con_knum", "Number of Clusters:", 2),
     selectInput("hc_method", "Hierarchical Clustering Method",
       choices = c("ward", "single", "complete", "average", 
                   "mcquitty", "median", "centroid")),
@@ -261,64 +264,68 @@ setMethod("display",
         
         #  GO summary
         output$gotest3 <- renderDataTable({
-          if(length(input$probe)!=1){
+          if (input$gobutton == 0)
             return()
-          }
-          else{
-            pkgName <- paste(annotation(object),".db",sep="")
-            try(require(pkgName,character.only=TRUE),silent=TRUE)
-            if(exists(pkgName)==FALSE){
-              return(as.data.frame("No annotation package available"))
+          isolate({
+            if(length(input$probe)!=1){
+              return()
             }
             else{
-              pkg <- get(pkgName)
-              if(class(pkg)=="ChipDb"){
-                
-                d <- tmpdata()
-                hc <- hc(t(d))
-                nc <- input$con_knum
-                
-                siggenes <- hc$labels[cutree(hc,nc)==input$gogroup]
-                
-                if(length(siggenes) > 1){
-                  res <- suppressWarnings(select(pkg,
-                                                 keys(pkg),
-                                                 c("ENTREZID","GENENAME","GO"),
-                                                 "PROBEID"))
-                  resa <- cbind(res$PROBEID,res$GO)
-                  resb <- resa[!duplicated(resa),]
-                  resc <- resb[!is.na(resb[,2]),]
-  
-                  
-                  map <- (suppressWarnings(select(GO.db, resc[,2], "TERM")))
-                  map <- cbind(resc[,1],map)
-                  names(map) <- c("PROBEID","GOID","TERM")
-                  
-                  sets <- Filter(function(x) length(x) >= input$setsize,
-                                 split(map$PROBEID, map$TERM))
-                  
-                  universe <- unlist(sets, use.names=FALSE)
-                  
-                  sigsets <- Map(function(x, y) x[x %in% y],
-                                 sets,
-                                 MoreArgs=list(y=siggenes))
-                  result <- as.data.frame(hyperg(sets, sigsets, universe))
-                  result <- result[rev(order(as.numeric(result[,6]))),]
-                  result <- cbind(rownames(result),result)
-                  
-                  return(as.data.frame(result))
-                }
-                else{
-                  return(as.data.frame("Singleton Group"))
-                }
-                
+              pkgName <- paste(annotation(object),".db",sep="")
+              try(require(pkgName,character.only=TRUE),silent=TRUE)
+              if(exists(pkgName)==FALSE){
+                return(as.data.frame("No annotation package available"))
               }
               else{
-                return(as.data.frame(
-                  "Object does not have a ChipDb annotation"))
+                pkg <- get(pkgName)
+                if(class(pkg)=="ChipDb"){
+                  
+                  d <- tmpdata()
+                  hc <- hc(t(d))
+                  nc <- input$con_knum
+                  
+                  siggenes <- hc$labels[cutree(hc,nc)==input$gogroup]
+                  
+                  if(length(siggenes) > 1){
+                    res <- suppressWarnings(select(pkg,
+                                                   keys(pkg),
+                                                   c("ENTREZID","GENENAME","GO"),
+                                                   "PROBEID"))
+                    resa <- cbind(res$PROBEID,res$GO)
+                    resb <- resa[!duplicated(resa),]
+                    resc <- resb[!is.na(resb[,2]),]
+    
+                    
+                    map <- (suppressWarnings(select(GO.db, resc[,2], "TERM")))
+                    map <- cbind(resc[,1],map)
+                    names(map) <- c("PROBEID","GOID","TERM")
+                    
+                    sets <- Filter(function(x) length(x) >= input$setsize,
+                                   split(map$PROBEID, map$TERM))
+                    
+                    universe <- unlist(sets, use.names=FALSE)
+                    
+                    sigsets <- Map(function(x, y) x[x %in% y],
+                                   sets,
+                                   MoreArgs=list(y=siggenes))
+                    result <- as.data.frame(hyperg(sets, sigsets, universe))
+                    result <- result[rev(order(as.numeric(result[,6]))),]
+                    result <- cbind(rownames(result),result)
+                    
+                    return(as.data.frame(result))
+                  }
+                  else{
+                    return(as.data.frame("Singleton Group"))
+                  }
+                  
+                }
+                else{
+                  return(as.data.frame(
+                    "Object does not have a ChipDb annotation"))
+                }
               }
             }
-          }
+          })
         })
         
         #  Group Wide GO Summary
@@ -474,7 +481,7 @@ setMethod("display",
         output$heat <- renderUI({
           my_mat <- tmpdata()
           
-          if(is.null(my_mat)){
+          if(is.null(my_mat) || input$noheat == TRUE){
             return()
           }
           else{
@@ -495,6 +502,7 @@ setMethod("display",
             gp <- ggheat(my_mat,exp(input$tweak),color_samples(),color_probes(),
                          hc(t(tmpdata())),hc(tmpdata()),
                          c1,c2,c3,input$rainbow)
+            
             svgjs <- grid2jssvg(gp)
             return(svgjs)
           }
