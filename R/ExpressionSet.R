@@ -478,9 +478,23 @@ setMethod("display",
             return()
           }
           else{
+            
+            if (input$rainbow == 'default'){
+              isolate({
+                c1 <- input$color1
+                c2 <- input$color2
+                c3 <- input$color3
+              })
+            }
+            else{
+                c1 <- input$color1
+                c2 <- input$color2
+                c3 <- input$color3
+            }
+            
             gp <- ggheat(my_mat,exp(input$tweak),color_samples(),color_probes(),
                          hc(t(tmpdata())),hc(tmpdata()),
-                         input$color1,input$color2,input$color3,input$rainbow)
+                         c1,c2,c3,input$rainbow)
             svgjs <- grid2jssvg(gp)
             return(svgjs)
           }
