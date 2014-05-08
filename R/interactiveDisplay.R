@@ -141,7 +141,8 @@ ggheat <- function(my_mat,
                    c1,
                    c2,
                    c3,
-                   rainbow){
+                   rainbow,
+                   flip){
   melted <- melt(my_mat)
   names(melted) <- c("Var1","Var2","value")
   
@@ -175,17 +176,32 @@ ggheat <- function(my_mat,
   gp <- gp + scale_y_discrete(expand = c(0, 0))
   gp <- gp + coord_equal()
   gp <- gp + theme_bw()
-  gp <- gp + theme(axis.ticks = element_blank(),
-                   axis.text.x = element_text(size = 
-                                                tweak*150/sqrt(length(my_mat)),
-                                              angle = -45,
-                                              hjust = 0,
-                                              colour=color_samples),
-              axis.text.y = element_text(size = tweak*150/sqrt(length(my_mat)),
-                                              colour = color_probes))
   gp <- gp + xlab("Samples")
   gp <- gp + ylab("Probes")
-  gp
+   
+  if(flip==TRUE){
+    gp <- gp + theme(axis.ticks = element_blank(),
+                     axis.text.x = element_text(size = 
+                                                tweak*150/sqrt(length(my_mat)),
+                                                angle = -45,
+                                                hjust = 0,
+                                                colour=color_probes),
+                     axis.text.y = element_text(size = tweak*150/sqrt(length(my_mat)),
+                                                colour = color_samples))
+    gp <- gp + coord_flip() 
+  }
+  else{
+    gp <- gp + theme(axis.ticks = element_blank(),
+                     axis.text.x = element_text(size = 
+                                                tweak*150/sqrt(length(my_mat)),
+                                                angle = -45,
+                                                hjust = 0,
+                                                colour=color_samples),
+                     axis.text.y = element_text(size = tweak*150/sqrt(length(my_mat)),
+                                                colour = color_probes))
+  }
+  
+  return(gp)
 }
 
 ################################################################################

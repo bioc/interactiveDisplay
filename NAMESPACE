@@ -34,4 +34,5 @@ exportMethods(display)
 exportMethods(gridsvgjs)
 exportMethods(gridtweak)
 exportMethods(bicgo)
+exportMethods(simplenet)
 

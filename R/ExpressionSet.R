@@ -2,6 +2,8 @@
 ###   ExpressionSet
 ################################################################################
 
+
+
 heatcolor1 <- function(inputId1) {
   tagList(
     shiny::tags$input(id = inputId1, class = "color", value = "EDF8B1",
@@ -30,6 +32,7 @@ heatcolor3 <- function(inputId3) {
     div(tableOutput("expinfo"), align = "center"),
     HTML("<hr />"),
     checkboxInput("noheat","Suppress Heatmap"),
+    checkboxInput("flip","Transpose Heatmap"),
     HTML("<hr />"),
     selectInput("either", "Network/Dendrogram View:  Sample or Probe:",
       choices = c("probe","sample")),
@@ -52,7 +55,8 @@ heatcolor3 <- function(inputId3) {
                 label = "Tweak Axis Label Font Size",
                 min = -1, max = 1, value = 0, step = .1),
     HTML("<hr />"),
-    uiOutput("edge"),
+    #uiOutput("edge"),
+    numericInput("edgenum", "Number of Edges:", 1),
     uiOutput("gen_text"),
     HTML("<hr />"),
     sliderInput(inputId = "charge",
@@ -82,7 +86,7 @@ heatcolor3 <- function(inputId3) {
   )
 }
 
-.ES_setMainPanel <- function(){
+.ES_setMainPanel <- function(sflag){
   mainPanel(
     tags$link(rel="stylesheet", type="text/css",
         href="/css/interactiveDisplay.css"),
@@ -102,7 +106,7 @@ heatcolor3 <- function(inputId3) {
     }
 
     svg {
-      height: 800px;
+      height: 100vh;
     }
 
     ")
@@ -113,7 +117,8 @@ heatcolor3 <- function(inputId3) {
                HTML("Use the mouse to drag and pan the heatmap.  Use the 
                      mousewheel to zoom in/out."),
                HTML("<hr />"),
-               uiOutput("heat")),
+               #uiOutput("heat")),
+               svgcheckout("heat",sflag)),
       tabPanel("Network View",uiOutput("svg")),
       tabPanel("Dendrogram",plotOutput("dendro"))
     ),
@@ -136,7 +141,7 @@ heatcolor3 <- function(inputId3) {
 
 setMethod("display",  
   signature(object = c("ExpressionSet")), 
-  function(object, ...){
+  function(object, sflag = TRUE, ...){
     
     .usePackage('ggbio')
     .usePackage('GOstats')
@@ -147,7 +152,7 @@ setMethod("display",
       ui =
         bootstrapPage(
           .ES_setSidebarPanel(),
-          .ES_setMainPanel()
+          .ES_setMainPanel(sflag)
         ),
       
       server = function(input, output){
@@ -374,6 +379,9 @@ setMethod("display",
             diag(val) <- NA
             val[lower.tri(val)] <- NA
             cutoff <- sort(val[!is.na(val)],decreasing=FALSE)[input$edgenum]
+            if(isNA(cutoff || is.null(cutoff))){
+              cutoff <- 0
+            }
             return(cutoff)
           }
           else{
@@ -383,24 +391,24 @@ setMethod("display",
         
         #  This determines the distance threshold needed for the desired 
         #  number of edges
-        cutoff_max <- reactive({
-          data <- data()
-          if(length(data)!=0){
-            val <- dm(data())
-            diag(val) <- NA
-            val[lower.tri(val)] <- NA
-            cutoff <- 1
-            edgenum <- 1
-            while(!is.na(cutoff)){
-              cutoff <- sort(val[!is.na(val)],decreasing=FALSE)[edgenum]
-              edgenum <- edgenum + 1
-            }
-            return(edgenum - 2)
-          }
-          else{
-            return()
-          }
-        })
+        #cutoff_max <- reactive({
+        #  data <- data()
+        #  if(length(data)!=0){
+        #    val <- dm(data())
+        #    diag(val) <- NA
+        #    val[lower.tri(val)] <- NA
+        #    cutoff <- 1
+        #    edgenum <- 1
+        #    while(!is.na(cutoff)){
+        #      cutoff <- sort(val[!is.na(val)],decreasing=FALSE)[edgenum]
+        #      edgenum <- edgenum + 1
+        #    }
+        #    return(edgenum - 2)
+        #  }
+        #  else{
+        #    return()
+        #  }
+        #})
         
         #  Build the network
         output$net <- reactive({
@@ -445,19 +453,19 @@ setMethod("display",
         })
         
         #  Edge number slider with animation and threshold shown underneith.
-        output$edge <- renderUI({
-          data <- data()
-          cutoff_max <- cutoff_max()
-          if(length(data)!=0 && length(cutoff_max)!=0 ){
-            sliderInput(inputId = "edgenum",
-                        label = "Edge Number:",
-                        min = 0, max = cutoff_max, value = 1, step = 1,
-                        animate=animationOptions(interval=2000, loop=FALSE))
-          }
-          else{
-            return(NULL)
-          }
-        })
+        #output$edge <- renderUI({
+        #  data <- data()
+        #  cutoff_max <- cutoff_max()
+        #  if(length(data)!=0 && length(cutoff_max)!=0 ){
+        #    sliderInput(inputId = "edgenum",
+        #                label = "Edge Number:",
+        #                min = 0, max = cutoff_max, value = 1, step = 1,
+        #                animate=animationOptions(interval=2000, loop=FALSE))
+        #  }
+        #  else{
+        #    return(NULL)
+        #  }
+        #})
         
         #  Show Distance Threshold
         output$gen_text <- renderText({
@@ -476,37 +484,68 @@ setMethod("display",
             "<div id=\"net\" class=\"shiny-network-output\"><svg /></div>",
             sep=""))
         })
-        
+                
         #  The heatmap SVG
-        output$heat <- renderUI({
-          my_mat <- tmpdata()
-          
-          if(is.null(my_mat) || input$noheat == TRUE){
-            return()
-          }
-          else{
+        if(sflag==TRUE){
+          output$heat <- renderUI({
+            my_mat <- tmpdata()
             
-            if (input$rainbow == 'default'){
-              isolate({
-                c1 <- input$color1
-                c2 <- input$color2
-                c3 <- input$color3
-              })
+            if(is.null(my_mat) || input$noheat == TRUE){
+              return()
             }
             else{
+              
+              if (input$rainbow == 'default'){
+                isolate({
+                  c1 <- input$color1
+                  c2 <- input$color2
+                  c3 <- input$color3
+                })
+              }
+              else{
+                  c1 <- input$color1
+                  c2 <- input$color2
+                  c3 <- input$color3
+              }
+              
+              gp <- ggheat(my_mat,exp(input$tweak),color_samples(),color_probes(),
+                           hc(t(tmpdata())),hc(tmpdata()),
+                           c1,c2,c3,input$rainbow,input$flip)
+  
+              svgjs <- grid2jssvg(gp)
+              return(svgjs)
+            }
+          })
+        }
+        else{
+          output$heat <- renderPlot({
+            my_mat <- tmpdata()
+            
+            if(is.null(my_mat) || input$noheat == TRUE){
+              return()
+            }
+            else{
+              
+              if (input$rainbow == 'default'){
+                isolate({
+                  c1 <- input$color1
+                  c2 <- input$color2
+                  c3 <- input$color3
+                })
+              }
+              else{
                 c1 <- input$color1
                 c2 <- input$color2
                 c3 <- input$color3
+              }
+              
+              gp <- ggheat(my_mat,exp(input$tweak),color_samples(),color_probes(),
+                           hc(t(tmpdata())),hc(tmpdata()),
+                           c1,c2,c3,input$rainbow,input$flip)
+              return(print(gp))
             }
-            
-            gp <- ggheat(my_mat,exp(input$tweak),color_samples(),color_probes(),
-                         hc(t(tmpdata())),hc(tmpdata()),
-                         c1,c2,c3,input$rainbow)
-            
-            svgjs <- grid2jssvg(gp)
-            return(svgjs)
-          }
-        })
+          })
+        }
         
         #  Clustering
         hc <- function(d){
