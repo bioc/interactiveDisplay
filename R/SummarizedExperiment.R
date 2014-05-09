@@ -5,6 +5,8 @@
 setMethod("display", 
           signature(object = "SummarizedExperiment"), 
           function(object, ...){
+            
+            .usePackage('GenomicRanges')
 
             app <- list(
               ui =
