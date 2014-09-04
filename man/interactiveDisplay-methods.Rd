@@ -7,6 +7,7 @@
 \alias{display,GRanges-method}
 \alias{display,GRangesList-method}
 \alias{display,SummarizedExperiment-method}
+\alias{display,MRexperiment-method}
 
 
 \title{display: Open a Shiny application for a Bioconductor object}
@@ -53,6 +54,10 @@ display(mmgrl)
 ## draw an ExpressionSet object
 data(expr)
 display(expr)
+
+## draw an MRexperiment object (placeholder!!!)
+data(mr)
+display(mr)
 
 }
 
