@@ -1,3 +1,8 @@
+<!--
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{interactiveDisplay: A package for enabling interactive visualization of Bioconductor objects
+}
+-->
 \documentclass{article}
 \usepackage{url}
 \usepackage{cite, graphicx, Bioconductor}
