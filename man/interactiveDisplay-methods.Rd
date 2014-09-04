@@ -7,7 +7,7 @@
 \alias{display,GRanges-method}
 \alias{display,GRangesList-method}
 \alias{display,SummarizedExperiment-method}
-\alias{display,data.frame-method}
+
 
 \title{display: Open a Shiny application for a Bioconductor object}
 \description{
@@ -53,12 +53,6 @@ display(mmgrl)
 ## draw an ExpressionSet object
 data(expr)
 display(expr)
-
-## draw a data.frame
-display(mtcars)
-
-## subset a data.frame:
-mtcars2 <- display(mtcars)
 
 }
 
