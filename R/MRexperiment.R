@@ -103,6 +103,7 @@ setMethod("display",
     
     .usePackage('metagenomeSeq')
     .usePackage('vegan')
+    .usePackage('gplots')
 
     app <- list(
       ui =
@@ -146,7 +147,7 @@ setMethod("display",
           trials = pd()[,input$pd]
           heatmapColColors=brewer.pal(12,"Set3")[as.integer(factor(trials))];
           heatmapCols = colorRampPalette(brewer.pal(9, "RdBu"))(50)
-          heatmap.2(my_mat,trace="none",cexRow=.8,cexCol=.8,col = heatmapCols,ColSideColors = heatmapColColors)
+          gplots::heatmap.2(my_mat,trace="none",cexRow=.8,cexCol=.8,col = heatmapCols,ColSideColors = heatmapColColors)
         },height=850)
                 
         output$plot2 <- renderPlot({
