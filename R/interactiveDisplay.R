@@ -23,7 +23,7 @@ function(object){
 ###   Helper Functions
 ################################################################################
 
-source("http://bioconductor.org/biocLite.R")
+# source("http://bioconductor.org/biocLite.R")
 .usePackage <- function(p) {
   if (!is.element(p, installed.packages()[,1])){
     stop(paste("The required package, '",p,"', is missing.  Please install it by
