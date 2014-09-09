@@ -49,7 +49,7 @@
 .MGS_setMainPanel <- function(){
   mainPanel(
     tags$link(rel="stylesheet", type="text/css",
-        href="/css/interactiveDisplay.css"),
+        href="/css-interactiveDisplay/interactiveDisplay.css"),
     tags$script(src="http://d3js.org/d3.v2.js"),
     .jstags(),
     .csstags(),

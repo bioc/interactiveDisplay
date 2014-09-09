@@ -89,7 +89,7 @@ heatcolor3 <- function(inputId3) {
 .ES_setMainPanel <- function(sflag){
   mainPanel(
     tags$link(rel="stylesheet", type="text/css",
-        href="/css/interactiveDisplay.css"),
+        href="/css-interactiveDisplay/interactiveDisplay.css"),
     tags$script(src="http://d3js.org/d3.v2.js"),
     tags$script(src="/js-interactiveDisplay/graph.js"),
     .jstags(),
