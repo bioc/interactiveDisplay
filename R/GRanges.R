@@ -36,7 +36,7 @@
 
 setMethod("display", 
   signature(object = "GRanges"), 
-  function(object, sflag = TRUE, ...){
+  function(object, sflag = FALSE, ...){
     
     .usePackage('GenomicRanges')
     .usePackage('Gviz')

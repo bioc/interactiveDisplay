@@ -32,7 +32,7 @@ heatcolor3 <- function(inputId3) {
     div(tableOutput("expinfo"), align = "center"),
     HTML("<hr />"),
     checkboxInput("noheat","Suppress Heatmap"),
-    checkboxInput("flip","Transpose Heatmap"),
+    checkboxInput("flip","Transpose Heatmap", TRUE),
     HTML("<hr />"),
     selectInput("either", "Network/Dendrogram View:  Sample or Probe:",
       choices = c("probe","sample")),
@@ -114,9 +114,8 @@ heatcolor3 <- function(inputId3) {
     .loading_gif(),
     tabsetPanel(
       tabPanel("Heat Plot",
-               HTML("Use the mouse to drag and pan the heatmap.  Use the 
-                     mousewheel to zoom in/out."),
-               HTML("<hr />"),
+               #HTML("Use the mouse to drag and pan the heatmap.  Use the mousewheel to zoom in/out."),
+               #HTML("<hr />"),
                #uiOutput("heat")),
                svgcheckout("heat",sflag)),
       tabPanel("Network View",uiOutput("svg")),
@@ -141,7 +140,7 @@ heatcolor3 <- function(inputId3) {
 
 setMethod("display",  
   signature(object = c("ExpressionSet")), 
-  function(object, sflag = TRUE, ...){
+  function(object, sflag = FALSE, ...){
     
     .usePackage('ggbio')
     .usePackage('GOstats')

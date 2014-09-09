@@ -115,9 +115,9 @@ source("http://bioconductor.org/biocLite.R")
     .loading_gif(),
     tabsetPanel(
       tabPanel("Static Circle Layout",
-               HTML("Use the mouse to drag and pan the circle layout.  Use the 
-                     mousewheel to zoom in/out."),
-               HTML("<hr />"),
+               #HTML("Use the mouse to drag and pan the circle layout.  Use the 
+                     #mousewheel to zoom in/out."),
+               #HTML("<hr />"),
                svgcheckout("cplot",sflag)),
       tabPanel("Interactive Plot", plotOutput("plotname")),
       tabPanel("All Ranges in Object", dataTableOutput("fulltable")),
