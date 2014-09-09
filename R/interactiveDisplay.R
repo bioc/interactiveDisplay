@@ -37,10 +37,10 @@ source("http://bioconductor.org/biocLite.R")
 
 .jstags <- function(){
   list(
-  tags$script(src="/js/jquery.min.js"),
-  tags$script(src="/js/d3.v2.js"),
-  tags$script(src="/js/jquery-svgpan.js"),
-  tags$script(src="/js/jscolor/jscolor.js"))
+  tags$script(src="/js-interactiveDisplay/jquery.min.js"),
+  tags$script(src="/js-interactiveDisplay/d3.v2.js"),
+  tags$script(src="/js-interactiveDisplay/jquery-svgpan.js"),
+  tags$script(src="/js-interactiveDisplay/jscolor/jscolor.js"))
 }
 
 #.shiny-output-error { visibility: hidden; }
@@ -92,7 +92,7 @@ source("http://bioconductor.org/biocLite.R")
 #      user-select: none;}"),                          
 #    tags$script(src = "shared/datatables/js/jquery.dataTables.min.js"), 
 #    tags$script(src = "shared/datatables/js/DT_bootstrap.js"),
-#    tags$script(src = "/js/DTbinding.js"))),
+#    tags$script(src = "/js-interactiveDisplay/DTbinding.js"))),
 #  div(id = outputId, class = "shiny-datatable-output selectable"))
 #}
 

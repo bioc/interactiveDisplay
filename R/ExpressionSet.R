@@ -91,7 +91,7 @@ heatcolor3 <- function(inputId3) {
     tags$link(rel="stylesheet", type="text/css",
         href="/css/interactiveDisplay.css"),
     tags$script(src="http://d3js.org/d3.v2.js"),
-    tags$script(src="/js/graph.js"),
+    tags$script(src="/js-interactiveDisplay/graph.js"),
     .jstags(),
     .csstags(),
     shiny::tags$head(
