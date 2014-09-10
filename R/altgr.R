@@ -17,7 +17,7 @@ df2gr <- function(df){
   function(outputId, ... ) 
   {   
     origStyle<- c( 
-      '<script src="shared/datatables/js/jquery.dataTables.min.js"></script>',
+      '<script src="js-interactiveDisplay/jquery.dataTables.min.js"></script>',
       '<script class="shiny-html-output" 
                   src= "/js-interactiveDisplayBase/DTbinding.js"></script>',
       '<link rel = "stylesheet", 
