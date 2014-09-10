@@ -51,6 +51,7 @@ df2gr <- function(df){
 .altgr <- function(object, ...){
   
   .usePackage('shiny')
+  .usePackage('ggbio')
   
   app <- list(
     
