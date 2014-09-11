@@ -36,4 +36,5 @@ exportMethods(gridsvgjs)
 exportMethods(gridtweak)
 exportMethods(bicgo)
 exportMethods(simplenet)
+exportMethods(altgr)
 
