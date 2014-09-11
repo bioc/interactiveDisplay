@@ -59,7 +59,15 @@
         em(p("Click to select all rows on page")),
         br(),
         tags$button("Deselect All Rows", class="btn", id="deselect_all_rows"),
-        em(p("Click to deselect all rows on page"))
+        em(p("Click to deselect all rows on page")),
+        #br(),
+        #selectInput("plotchoice", "Plot:",
+        #            c("Circle" = "circle",
+        #              "Karyogram" = "karyogram")),
+        #em(p("Choose plot type")),
+        br(),
+        uiOutput("choose_meta"),
+        em(p("Choose metadata column for coloration"))
       ),
       .loading_gif(),
       plotOutput("plot1", height="800"),
@@ -71,6 +79,13 @@
       
       grv <- apply(as.data.frame(object),1,
                    function(x){gsub(" ","",paste(x,collapse=""),fixed=TRUE)})
+      
+      #  Metadata based choices
+      output$choose_meta <- renderUI({
+        mChoices <- names(elementMetadata(object))
+        names(mChoices) <- mChoices
+        selectInput("meta", label=NULL, mChoices)
+      })
 
       grdf <- reactive({
         dfVec <- input$myTable
@@ -94,29 +109,40 @@
         }
         mgr
       })
-      
+            
       output$plot1 <- renderPlot({
         mgr <- mgr()
         if(length(mgr)>1){
-          p <- ggplot()
-          p <- p + layout_circle(mgr,
-                                 geom = "ideo",
-                                 radius = 30,
-                                 trackWidth = 4,
-                                 aes(fill=seqnames))
-          p <- p + layout_circle(mgr,
-                                 geom = "scale",
-                                 size = 2, radius = 35,
-                                 trackWidth = 2)
-          p <- p + layout_circle(mgr, 
-                                 geom = "rect", 
-                                 color = "steelblue4", 
-                                 radius = 23 , 
-                                 trackWidth = 6)
-          plot(p)
+          #if(input$plotchoice=="karyogram"){
+            p <- eval(parse(text=paste0("
+                          autoplot(mgr,
+                          layout='karyogram',
+                          aes(color = ",input$meta,",
+                              fill = ",input$meta,"))
+                      ")))
+            return(p)
+          #}
+          #if(input$plotchoice=="circle"){
+          #  p <- ggplot()
+          #  p <- p + layout_circle(mgr,
+          #                         geom = "ideo",
+          #                         radius = 30,
+          #                         trackWidth = 4,
+          #                         aes(fill=seqnames))
+          #  p <- p + layout_circle(mgr,
+          #                         geom = "scale",
+          #                         size = 2, radius = 35,
+          #                         trackWidth = 2)
+          #  p <- p + layout_circle(mgr, 
+          #                         geom = "rect", 
+          #                         color = "steelblue4", 
+          #                         radius = 23 , 
+          #                         trackWidth = 6)
+          #  return(plot(p))
+          #}
         }
       })
-            
+                        
       output$myTable <- renderDataTable({
         as.data.frame(object)
       })
