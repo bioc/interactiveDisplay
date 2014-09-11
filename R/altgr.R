@@ -68,6 +68,9 @@
       ),
     
     server = function(input,output) {
+      
+      grv <- apply(as.data.frame(object),1,
+                   function(x){gsub(" ","",paste(x,collapse=""),fixed=TRUE)})
 
       grdf <- reactive({
         dfVec <- input$myTable
@@ -83,10 +86,9 @@
       mgr <- reactive({
         df <- grdf()
         if(length(df)!=0){       
-          fdf <- as.data.frame(object)
-          i <- apply(fdf,1,function(x){gsub(" ","",paste(x,collapse=""),fixed=TRUE)})
-          j <- apply(df,1,function(x){gsub(" ","",paste(x,collapse=""),fixed=TRUE)})
-          ind <- which(i %in% j)
+          j <- apply(df,1,
+                     function(x){gsub(" ","",paste(x,collapse=""),fixed=TRUE)})
+          ind <- which(grv %in% j)
           mgr <- object[ind]
           seqlevels(mgr,force=TRUE) <- sort(unique(as.character((df)$seqnames)))
         }
