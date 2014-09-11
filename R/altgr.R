@@ -5,7 +5,8 @@
 df2gr <- function(df){
 
   gr <- GRanges(seqnames = df$seqnames,
-                ranges = IRanges(start = df$start, end = df$end),
+                ranges = IRanges(start = df$start,
+                                 end = df$end),
                 strand = df$strand)
 
   md <- as(df[, setdiff(names(df),c("seqnames", "start", "end", "width", "strand"))],"DataFrame")
@@ -52,12 +53,17 @@ df2gr <- function(df){
   
   .usePackage('shiny')
   .usePackage('ggbio')
+  .usePackage('GenomicRanges')
   
   app <- list(
     
-    ui = bootstrapPage(
+    ui = fluidPage(
       .csstags(),
-      sidebarPanel(
+      absolutePanel(
+        top = 40, left = 20, width = 240,
+        draggable = TRUE,
+        style="padding:8px;border-bottom: 1px solid #CCC; background: #F5F5F5;",
+        style = "opacity: 0.90",
         h3("Genomic Ranges", align="center"),
         HTML("<hr />"),
         actionButton("btnSend", "Send Rows"),
@@ -69,12 +75,10 @@ df2gr <- function(df){
         tags$button("Deselect All Rows", class="btn", id="deselect_all_rows"),
         em(p("Click to deselect all rows on page"))
       ),
-      mainPanel(
       .loading_gif(),
-      plotOutput("plot1"),
+      plotOutput("plot1", height="800"),
       #dataTableOutput("mytest"),
       .selDataTableOutput(outputId="myTable", ...)
-      )
       ),
     
     server = function(input,output) {
@@ -86,7 +90,8 @@ df2gr <- function(df){
                                      ncol=dim(as.data.frame(object))[2],
                                      byrow=TRUE))
           df <- cbind(df[,1],apply(df[,(2:4)],2,as.numeric),df[,-(1:4)])
-          names(df) <- names(as.data.frame(object))   
+          names(df) <- names(as.data.frame(object))
+          df <- as.data.frame(df)
           return(df)
         }
       })
@@ -142,7 +147,14 @@ df2gr <- function(df){
     
     }
   )
-  runApp(app, ...)
+  # runApp(app, ...)
+  # selectively use the RStudio viewer pane (if available)
+  viewer <- getOption("viewer")
+  if (!is.null(viewer)){
+    runApp(app, launch.browser = rstudio::viewer, ...)
+  }else{
+    runApp(app, ...)
+  }
 }
 
 ################################################################################
