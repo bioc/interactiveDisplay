@@ -2,43 +2,29 @@
 #  altgr
 ################################################################################
 
-df2gr <- function(df){
-
-  gr <- GRanges(seqnames = df$seqnames,
-                ranges = IRanges(start = df$start,
-                                 end = df$end),
-                strand = df$strand)
-
-  md <- as(df[, setdiff(names(df),c("seqnames", "start", "end", "width", "strand"))],"DataFrame")
-  elementMetadata(gr) <- md
-  gr
-}
-
-.selDataTableOutput <- 
-  function(outputId, ... ) 
-  {   
-    origStyle<- c( 
-      '<script src="js-interactiveDisplay/jquery.dataTables.min.js"></script>',
-      '<script class="shiny-html-output" 
-                  src= "/js-interactiveDisplayBase/DTbinding.js"></script>',
-      '<link rel = "stylesheet", 
-                type = "text/css", 
-                href = "shared/datatables/css/DT_bootstrap.css"></link>',
-      '<style type="text/css">
-                .rowsSelected td{
-                background-color: rgba(112,164,255,0.2) 
-                !important})  </style>',
-      '<style type="text/css"> .selectable div table tbody tr{
-                cursor: hand; cursor: pointer;}</style>',
-      '<style type="text/css"> .selectable div table tbody tr td{
-                -webkit-touch-callout: none;
-                -webkit-user-select: none;
-                -khtml-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;} </style>',
-      '<style type="text/css">
-                #myTable tfoot {display:table-header-group;}</style>')     
+.selDataTableOutput <- function(outputId, ... ){   
+  origStyle <- c( 
+    '<script src="js-interactiveDisplay/jquery.dataTables.min.js"></script>',
+    '<script class="shiny-html-output" 
+                src= "/js-interactiveDisplayBase/DTbinding.js"></script>',
+    '<link rel = "stylesheet", 
+              type = "text/css", 
+              href = "shared/datatables/css/DT_bootstrap.css"></link>',
+    '<style type="text/css">
+              .rowsSelected td{
+              background-color: rgba(112,164,255,0.2) 
+              !important})  </style>',
+    '<style type="text/css"> .selectable div table tbody tr{
+              cursor: hand; cursor: pointer;}</style>',
+    '<style type="text/css"> .selectable div table tbody tr td{
+              -webkit-touch-callout: none;
+              -webkit-user-select: none;
+              -khtml-user-select: none;
+              -moz-user-select: none;
+              -ms-user-select: none;
+              user-select: none;} </style>',
+    '<style type="text/css">
+              #myTable tfoot {display:table-header-group;}</style>')
     
     tagList(
       singleton(
@@ -89,37 +75,38 @@ df2gr <- function(df){
           df <- as.data.frame(matrix(data=dfVec,
                                      ncol=dim(as.data.frame(object))[2],
                                      byrow=TRUE))
-          df <- cbind(df[,1],apply(df[,(2:4)],2,as.numeric),df[,-(1:4)])
           names(df) <- names(as.data.frame(object))
-          df <- as.data.frame(df)
           return(df)
         }
       })
       
-      mygr <- reactive({
+      mgr <- reactive({
         df <- grdf()
-        if(length(df)!=0){
-          mygr <- df2gr(df)
-          seqlevels(mygr,force=TRUE) <- sort(unique(as.character((df)$seqnames)))
-          seqlengths(mygr) <- seqlengths(object)[sort(unique(as.character((df)$seqnames)))]
+        if(length(df)!=0){       
+          fdf <- as.data.frame(object)
+          i <- apply(fdf,1,function(x){gsub(" ","",paste(x,collapse=""),fixed=TRUE)})
+          j <- apply(df,1,function(x){gsub(" ","",paste(x,collapse=""),fixed=TRUE)})
+          ind <- which(i %in% j)
+          mgr <- object[ind]
+          seqlevels(mgr,force=TRUE) <- sort(unique(as.character((df)$seqnames)))
         }
-        mygr
+        mgr
       })
       
       output$plot1 <- renderPlot({
-        mygr <- mygr()
-        if(length(mygr)>1){
+        mgr <- mgr()
+        if(length(mgr)>1){
           p <- ggplot()
-          p <- p + layout_circle(mygr,
+          p <- p + layout_circle(mgr,
                                  geom = "ideo",
                                  radius = 30,
                                  trackWidth = 4,
                                  aes(fill=seqnames))
-          p <- p + layout_circle(mygr,
+          p <- p + layout_circle(mgr,
                                  geom = "scale",
                                  size = 2, radius = 35,
                                  trackWidth = 2)
-          p <- p + layout_circle(mygr, 
+          p <- p + layout_circle(mgr, 
                                  geom = "rect", 
                                  color = "steelblue4", 
                                  radius = 23 , 
@@ -140,8 +127,8 @@ df2gr <- function(df){
       observe({
         if(input$btnSend > 0)
           isolate({
-            mygr <- mygr()
-            stopApp(returnValue = mygr)
+            mgr <- mgr()
+            stopApp(returnValue = mgr)
           })
       })
     
