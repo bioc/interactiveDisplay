@@ -76,9 +76,12 @@
       ),
     
     server = function(input,output) {
-      
-      grv <- apply(as.data.frame(object),1,
-                   function(x){gsub(" ","",paste(x,collapse=""),fixed=TRUE)})
+            
+      obdf <- as.data.frame(object)
+      obnames <- names(obdf)
+      r <- 1:dim(obdf)[1]
+      obdf <- cbind(r,obdf)
+      names(obdf) <- c("row",obnames)
       
       #  Metadata based choices
       output$choose_meta <- renderUI({
@@ -91,9 +94,9 @@
         dfVec <- input$myTable
         if(length(dfVec)>9 && length(dfVec)!=0){
           df <- as.data.frame(matrix(data=dfVec,
-                                     ncol=dim(as.data.frame(object))[2],
+                                     ncol=dim(obdf)[2],
                                      byrow=TRUE))
-          names(df) <- names(as.data.frame(object))
+          names(df) <- c("row",obnames)
           return(df)
         }
       })
@@ -101,9 +104,7 @@
       mgr <- reactive({
         df <- grdf()
         if(length(df)!=0){       
-          j <- apply(df,1,
-                     function(x){gsub(" ","",paste(x,collapse=""),fixed=TRUE)})
-          ind <- which(grv %in% j)
+          ind <- as.numeric(as.character(df[,1]))
           mgr <- object[ind]
           seqlevels(mgr,force=TRUE) <- sort(unique(as.character((df)$seqnames)))
         }
@@ -144,13 +145,13 @@
       })
                         
       output$myTable <- renderDataTable({
-        as.data.frame(object)
+        obdf
       })
             
-      output$mytest <- renderDataTable({
-        df <- grdf()
-        df
-      })
+      #output$mytest <- renderDataTable({
+      #  df <- grdf()
+      #  df
+      #})
       
       observe({
         if(input$btnSend > 0)
