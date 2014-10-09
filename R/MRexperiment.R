@@ -9,7 +9,7 @@
     checkboxInput("norm","Normalize data (CSS-Normalization)",value=TRUE),
     # checkboxInput("usePD","Include")
     numericInput("pd","Phenotype column:",1,min=1),
-    selectInput("plot","Options for:",choice=c("Feature abundance","Heatmap","PCA/MDS","Diversity","OTU Richness"),
+    selectInput("plot","Options for:",choices=c("Feature abundance","Heatmap","PCA/MDS","Diversity","OTU Richness"),
       selected="Feature abundance"),
     HTML("<hr />"),
     conditionalPanel(condition='input.plot=="Feature abundance"',
