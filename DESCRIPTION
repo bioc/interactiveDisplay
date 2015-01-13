@@ -2,8 +2,8 @@ Package: interactiveDisplay
 Type: Package
 Title: Package for enabling powerful shiny web displays of Bioconductor
         objects
-Version: 1.5.0
-Date: 2014-09-17
+Version: 1.5.1
+Date: 2015-01-12
 Author: Shawn Balcome, Marc Carlson
 Maintainer: Shawn Balcome <balc0022@umn.edu>
 Imports: interactiveDisplayBase, shiny, RColorBrewer,
