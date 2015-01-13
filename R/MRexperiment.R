@@ -18,7 +18,7 @@
     ),
     conditionalPanel(condition='input.plot=="Heatmap"',
       h4("Heatmap options", align = "center"),
-      numericInput("noFeatures","Number of features:",50,min=1,max =200),
+      numericInput("noFeatures","Number of features:",10,min=1,max =200),
       radioButtons("heatMethod","Choose features by:",c("Median Absolute Deviation"="mad","Variability"="sd"))
     ),
     conditionalPanel(condition='input.plot=="PCA/MDS"',
@@ -95,15 +95,15 @@
                plotOutput("plot5"))
     ),
     tabsetPanel(
-      tabPanel("Feature data",
-               HTML("Feature information"),
-               HTML("<hr />"),
-               dataTableOutput("table1")
-      ),
       tabPanel("Phenotype data",
                HTML("Phenotype information"),
                HTML("<hr />"),
                dataTableOutput("table2")
+      ),
+      tabPanel("Feature data",
+               HTML("Feature information"),
+               HTML("<hr />"),
+               dataTableOutput("table1")
       )
     )
   )
@@ -172,7 +172,7 @@ setMethod("display",
         output$plot3 <- renderPlot({
           useDist = input$useDist
           pdata  = factor(pd()[,input$pd])
-          plotOrd(data(),n=100,pch=21,bg=pdata,usePCA=input$pcaOrMds,
+          plotOrd(data(),n=min(100,nrow(data())),pch=21,bg=pdata,usePCA=input$pcaOrMds,
             comp=c(input$dimensionx,input$dimensiony),
             useDist=useDist,distfun=vegan::vegdist,dist.method=input$distance)
           legend("topleft",levels(pdata),fill=factor(levels(pdata)),box.col="NA")
