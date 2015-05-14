@@ -4,7 +4,7 @@ import(AnnotationDbi)
 #import(gridSVG)
 #importFrom(httr, content, GET)
 #importFrom(grid, grid.newpage, upViewport)
-#importFrom(GenomicRanges, seqnames,rowData,mcols,'seqlevels<-')
+#importFrom(GenomicRanges, seqnames, mcols,'seqlevels<-')
 
 import(methods)
 import(BiocGenerics)

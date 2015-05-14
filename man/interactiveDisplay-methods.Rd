@@ -6,7 +6,7 @@
 \alias{display,ExpressionSet-method}
 \alias{display,GRanges-method}
 \alias{display,GRangesList-method}
-\alias{display,SummarizedExperiment-method}
+\alias{display,RangedSummarizedExperiment-method}
 \alias{display,MRexperiment-method}
 
 
@@ -34,7 +34,7 @@ display(object, ...)
 
 if(interactive()) {
 
-## draw a SummarizedExperiment object
+## draw a RangedSummarizedExperiment object
 data(se)
 display(se)
 

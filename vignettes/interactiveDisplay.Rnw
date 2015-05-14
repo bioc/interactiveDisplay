@@ -54,7 +54,7 @@ interactiveDisplay: A package for enabling interactive visualization of Biocondu
 
 interactiveDisplay makes use of Bioconductor visualization packages, the Shiny\cite{shiny} web framework, the D3.js visualization JavaScript library, and other libraries to produce various web applications built around Bioconductor objects.
 
-Four popular Bioconductor data objects are currently supported: \textit{GRanges}, \textit{GRangesList}, \textit{ExpressionSet} and \textit{SummarizedExperiment}.  In addition, the second April 2014 release version now includes a method for data frames and is imported by the AnnotationHub\cite{AnnotationHub} package.
+Four popular Bioconductor data objects are currently supported: \textit{GRanges}, \textit{GRangesList}, \textit{ExpressionSet} and \textit{RangedSummarizedExperiment}.  In addition, the second April 2014 release version now includes a method for data frames and is imported by the AnnotationHub\cite{AnnotationHub} package.
 
 This vignette will provide some background and guidance on the use of the current supported methods.
 
@@ -601,7 +601,7 @@ These summary tables provide Entrez ID and gene names for the selected probe and
 
 This tab provides a table of the results of the hyperg() function from the GOstats package\cite{GOstats}.  Ranked in order of p-value, the results give a general GO summary across the group of selected probes.  Much like the previous table, this provides an interactive tool for characterizing differentially expressed sets of probes.
 
-\subsection{\textit{SummarizedExperiment}}
+\subsection{\textit{RangedSummarizedExperiment}}
 
 \subsubsection{Object Background}
 
@@ -610,7 +610,7 @@ data(se)
 se
 @
 
-The \textit{SummarizedExperiment} class is similar to a dataframe where rows represent ranges (using \textit{GRanges}/\textit{GRangesList}) and columns represent samples (with sample data summarized as a dataframe).  It can contain one or more assays.  Ranges have read counts associated with them\cite{GenomicRanges}.
+The \textit{RangedSummarizedExperiment} class is similar to a dataframe where rows represent ranges (using \textit{GRanges}/\textit{GRangesList}) and columns represent samples (with sample data summarized as a dataframe).  It can contain one or more assays.  Ranges have read counts associated with them\cite{GenomicRanges}.
 
 \subsubsection{Method}
 
@@ -630,12 +630,12 @@ display(se)
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=5cm,keepaspectratio]{summarizedExperimentUI}
-\caption{\textit{SummarizedExperiment} UI}
+\caption{\textit{RangedSummarizedExperiment} UI}
 \label{fig:summarizedExperimentUI}
 \end{figure}
 \FloatBarrier
 
-The UI for the \textit{SummarizedExperiment} method is relatively simple.  It is the best candidate of the existing methods for future development.  The \textit{SummarizedExperiment} class is widely used, data rich object and has a lot of potential for improvement.
+The UI for the \textit{RangedSummarizedExperiment} method is relatively simple.  It is the best candidate of the existing methods for future development.  The \textit{RangedSummarizedExperiment} class is widely used, data rich object and has a lot of potential for improvement.
 
 \subsubsection{Plot}
 

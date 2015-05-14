@@ -1,12 +1,12 @@
 ################################################################################
-###   SummarizedExperiment
+###   RangedSummarizedExperiment
 ################################################################################
 
 setMethod("display", 
-          signature(object = "SummarizedExperiment"), 
+          signature(object = "RangedSummarizedExperiment"), 
           function(object, ...){
             
-            .usePackage('GenomicRanges')
+            .usePackage('SummarizedExperiment')
 
             app <- list(
               ui =
@@ -14,7 +14,7 @@ setMethod("display",
                 .jstags(),
                 
                 sidebarPanel(
-                  h3("Summarized Experiment", align = "center"),
+                  h3("Ranged Summarized Experiment", align = "center"),
                   HTML("<hr />"),
                   uiOutput("choose_chrom"),
                   HTML("<hr />"),
@@ -110,9 +110,9 @@ setMethod("display",
                      length(input$bins)!=0 &&
                      length(input$window)!=0){
                     
-                    si <- which(as.character(seqnames(rowData(
+                    si <- which(as.character(seqnames(rowRanges(
                       object)))==input$chr)
-                    subr <- rowData(object)[si]
+                    subr <- rowRanges(object)[si]
                     
                     subr <- subr[start(subr) > input$window[1]]
                     subr <- subr[end(subr) < input$window[2]]
@@ -135,7 +135,7 @@ setMethod("display",
                 })
                 
                 #  Render the choose chromosome dropdown.
-                cl <- as.character(unique(seqnames(rowData(object))))
+                cl <- as.character(unique(seqnames(rowRanges(object))))
                 output$choose_chrom <- renderUI({
                   chromChoices <- cl
                   names(chromChoices) <- cl

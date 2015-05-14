@@ -1,8 +1,8 @@
 \name{se}
 \alias{se}
-\title{An Example SummarizedExperiment Object}
+\title{An Example RangedSummarizedExperiment Object}
 \description{
-A toy SummarizedExperiment object for demonstration purposes.
+A toy RangedSummarizedExperiment object for demonstration purposes.
 }
 \examples{
 data(se)
