@@ -201,5 +201,5 @@ setMethod("display",
                  
               }
             )
-            runApp(app, ...)
+            interactiveDisplayBase::.runApp(app, ...)
           })

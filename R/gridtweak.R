@@ -55,5 +55,5 @@ print(gp)"),
                 })
               }
                   )
-            runApp(app, ...)
+            interactiveDisplayBase::.runApp(app, ...)
           })

@@ -163,14 +163,7 @@
     
     }
   )
-  # runApp(app, ...)
-  # selectively use the RStudio viewer pane (if available)
-  viewer <- getOption("viewer")
-  if (!is.null(viewer)){
-    runApp(app, launch.browser = rstudio::viewer, ...)
-  }else{
-    runApp(app, ...)
-  }
+  interactiveDisplayBase::.runApp(app, ...)
 }
 
 ################################################################################

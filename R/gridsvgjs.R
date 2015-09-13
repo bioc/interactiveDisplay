@@ -45,5 +45,5 @@ setMethod("gridsvgjs",
                 })
               }
             )
-            runApp(app, ...)
+            interactiveDisplayBase::.runApp(app, ...)
           })
