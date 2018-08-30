@@ -71,16 +71,18 @@ And the development version is available at:
 It can also be installed within the R console using biocLite().
 
 <<install1, eval=FALSE, results='asis'>>=
-source("http://bioconductor.org/biocLite.R")
-biocLite("interactiveDisplay")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("interactiveDisplay")
 @
 
 interactiveDisplay is actively maintained and it may be desirable to use the developer branch of the package.  If the user is willing to install development versions of Bioconductor packages, this can be accomplished by toggling the setting with useDevel() and reinstalling packages with biocLite().  The development branch is actively changed, so users should expect to encounter errors.  Generally, development and release versions of packages should not be mixed.
 
 <<install2, eval=FALSE, results='asis'>>=
-source("http://bioconductor.org/biocLite.R")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
 useDevel(TRUE)
-biocLite("interactiveDisplay")
+BiocManager::install("interactiveDisplay")
 @
 
 Because interactiveDisplay depends on many different R packages, some of which are used in only one individual method, many dependencies are suggested and will only be required when a method is run for the first time.  This helps with load time when other packages (currently AnnotationHub) import methods from interactiveDisplay.  If a required package is missing when a method is run, a message with instructions on obtaining it will be output in the R console.
