@@ -28,7 +28,7 @@ if (!requireNamespace("BiocManager", quietly=TRUE))
 .usePackage <- function(p) {
   if (!is.element(p, installed.packages()[,1])){
     stop(paste("The required package, '",p,"', is missing.  Please install it by
-               typing biocLite('",p,"') in the console", sep=""))
+               typing BiocManager::install('",p,"') in the console", sep=""))
   }
   require(p, character.only = TRUE)
 }

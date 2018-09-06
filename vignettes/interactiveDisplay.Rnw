@@ -68,7 +68,7 @@ And the development version is available at:
 
 \url{http://bioconductor.org/packages/devel/bioc/html/interactiveDisplay.html} 	 	
 
-It can also be installed within the R console using biocLite().
+It can also be installed within the R console using BiocManager::install().
 
 <<install1, eval=FALSE, results='asis'>>=
 if (!requireNamespace("BiocManager", quietly=TRUE))
@@ -76,7 +76,7 @@ if (!requireNamespace("BiocManager", quietly=TRUE))
 BiocManager::install("interactiveDisplay")
 @
 
-interactiveDisplay is actively maintained and it may be desirable to use the developer branch of the package.  If the user is willing to install development versions of Bioconductor packages, this can be accomplished by toggling the setting with useDevel() and reinstalling packages with biocLite().  The development branch is actively changed, so users should expect to encounter errors.  Generally, development and release versions of packages should not be mixed.
+interactiveDisplay is actively maintained and it may be desirable to use the developer branch of the package.  If the user is willing to install development versions of Bioconductor packages, this can be accomplished by toggling the setting with useDevel() and reinstalling packages with BiocManager::install().  The development branch is actively changed, so users should expect to encounter errors.  Generally, development and release versions of packages should not be mixed.
 
 <<install2, eval=FALSE, results='asis'>>=
 if (!requireNamespace("BiocManager", quietly=TRUE))
