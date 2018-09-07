@@ -76,12 +76,12 @@ if (!requireNamespace("BiocManager", quietly=TRUE))
 BiocManager::install("interactiveDisplay")
 @
 
-interactiveDisplay is actively maintained and it may be desirable to use the developer branch of the package.  If the user is willing to install development versions of Bioconductor packages, this can be accomplished by toggling the setting with useDevel() and reinstalling packages with BiocManager::install().  The development branch is actively changed, so users should expect to encounter errors.  Generally, development and release versions of packages should not be mixed.
+interactiveDisplay is actively maintained and it may be desirable to use the developer branch of the package.  If the user is willing to install development versions of Bioconductor packages, this can be accomplished by toggling the setting and reinstalling packages with BiocManager::install(version = "devel").  The development branch is actively changed, so users should expect to encounter errors.  Generally, development and release versions of packages should not be mixed.
 
 <<install2, eval=FALSE, results='asis'>>=
 if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
-useDevel(TRUE)
+BiocManager::install(version = "devel")
 BiocManager::install("interactiveDisplay")
 @
 
