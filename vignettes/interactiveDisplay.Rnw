@@ -127,10 +127,10 @@ Each row in the \textit{GRanges} object represents an individual range using the
 
 \subsubsection{Object Background - \textit{GRangesList}}
 
-The \textit{GRangesList} class is a container for storing a list of \textit{GRanges} objects, the class is produced with the function GenomicRangesList().  
+The \textit{GRangesList} class is a container for storing a list of \textit{GRanges} objects, the class is instanciated with constructor function GRangesList().
 
 <<grl, eval=TRUE, results='tex'>>=
-grl <- GenomicRangesList(list(mmgr,mmgr))
+grl <- GRangesList(list(mmgr,mmgr))
 @
 
 \textit{GRangesList} objects are useful for compound objects, an example given in the documentation being spliced transcripts that are are made up of exons\cite{GenomicRanges}
