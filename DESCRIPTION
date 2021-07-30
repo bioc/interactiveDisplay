@@ -2,10 +2,14 @@ Package: interactiveDisplay
 Type: Package
 Title: Package for enabling powerful shiny web displays of Bioconductor
         objects
-Version: 1.31.0
+Version: 1.31.2
 Date: 2020-11-12
-Author: Shawn Balcome, Marc Carlson
-Maintainer: Shawn Balcome <balc0022@umn.edu>
+Authors@R: c(
+    person("Bioconductor Package", "Maintainer", email="maintainer@bioconductor.org",
+             role="cre"),
+    person("Shawn", "Balcome", role = c("aut"),
+        email = "balc0022@umn.edu"),
+    person("Marc", "Carlson", role = "ctb"))
 Imports: interactiveDisplayBase (>= 1.7.3), shiny, RColorBrewer,
         ggplot2, reshape2, plyr, gridSVG, XML, Category, AnnotationDbi
 Depends: R (>= 2.10), methods, BiocGenerics, grid
@@ -25,3 +29,4 @@ VignetteBuilder: knitr
 biocViews: GO, GeneExpression, Microarray, Sequencing, Classification,
         Network, QualityControl, Visualization, Visualization,
         Genetics, DataRepresentation, GUI, AnnotationData
+RoxygenNote: 7.1.1

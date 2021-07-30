@@ -401,7 +401,7 @@
       
     }
   )
-  .interactiveDisplayBase::.runApp(app, ...)
+  interactiveDisplayBase::.runApp(app, ...)
 }
 
 setGeneric("bicgo", function(object, ...)
