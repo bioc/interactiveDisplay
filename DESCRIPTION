@@ -2,7 +2,7 @@ Package: interactiveDisplay
 Type: Package
 Title: Package for enabling powerful shiny web displays of Bioconductor
         objects
-Version: 1.36.0
+Version: 1.37.0
 Date: 2021-11-17
 Authors@R: c(
     person("Bioconductor Package", "Maintainer", email="maintainer@bioconductor.org",
