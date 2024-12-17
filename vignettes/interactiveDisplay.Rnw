@@ -116,6 +116,7 @@ options(continue=" ")
 suppressMessages(library(ggplot2))
 suppressMessages(library(interactiveDisplay))
 suppressMessages(library(Biobase))
+suppressMessages(library(GenomicRanges))
 @
 
 <<data_mmgr, eval=TRUE, results='tex'>>=
